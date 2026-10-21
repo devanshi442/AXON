@@ -1,0 +1,199 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   AXON LunarSight — Global styles
+   Design tokens live in tailwind.config.js (authoritative source).
+   This file handles: base resets, CSS custom properties, Leaflet overrides,
+   Plotly overrides, and any utility classes that Tailwind can't express.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* ── CSS custom properties (mirrored from Tailwind tokens for plain CSS use) */
+:root {
+  /* Light mode (fallback — default is dark, toggle via .dark on <html>) */
+  --bg-app:     #f4f5fa;
+  --bg-panel:   #ffffff;
+  --bg-card:    #f0f1f8;
+  --text-primary:   #0b0e1e;
+  --text-secondary: #252c4a;
+  --text-muted:     #6574a8;
+  --border:     #c5cce0;
+
+  /* Colour-blind-safe semantic colours */
+  --color-sun:   #f59e0b;   /* amber  — Sun (NOT green) */
+  --color-earth: #06b6d4;   /* cyan   — Earth (NOT red) */
+  --color-verified:   #3b82f6;
+  --color-unverified: #6b7280;
+
+  /* Status colours */
+  --status-success:  #3b82f6;
+  --status-partial:  #f59e0b;
+  --status-failed:   #8b5cf6;
+  --status-planned:  #6b7280;
+  --status-launched: #60a5fa;
+  --status-unknown:  #374151;
+}
+
+.dark {
+  --bg-app:     #0b0e1e;
+  --bg-panel:   #121629;
+  --bg-card:    #1a1f38;
+  --text-primary:   #e8eaf5;
+  --text-secondary: #c5cce0;
+  --text-muted:     #6574a8;
+  --border:     #252c4a;
+}
+
+/* ── Base ──────────────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg-app);
+  color: var(--text-primary);
+  min-height: 100vh;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* ── Focus visible (accessibility) ─────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--color-earth);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ── Scrollbars ─────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 9999px;
+}
+
+/* ── Leaflet overrides ──────────────────────────────────────────────────────── */
+.leaflet-container {
+  background: #05060f;   /* space-950 — match dark app background */
+  font-family: inherit;
+}
+.dark .leaflet-control-attribution {
+  background: rgba(11, 14, 30, 0.8);
+  color: #6574a8;
+}
+.dark .leaflet-control-zoom a {
+  background: #1a1f38;
+  color: #e8eaf5;
+  border-color: #252c4a;
+}
+.dark .leaflet-control-zoom a:hover {
+  background: #252c4a;
+}
+.dark .leaflet-popup-content-wrapper {
+  background: #121629;
+  color: #e8eaf5;
+  border: 1px solid #252c4a;
+  border-radius: 0.875rem;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+}
+.dark .leaflet-popup-tip {
+  background: #121629;
+}
+
+/* ── Mission marker styles ──────────────────────────────────────────────────── */
+/* Actual landing site marker */
+.marker-actual {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid #e8eaf5;
+  background: var(--color-sun);
+  box-shadow: 0 0 8px 2px rgba(245, 158, 11, 0.5);
+}
+/* Planned landing site marker */
+.marker-planned {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px dashed #6574a8;
+  background: transparent;
+}
+/* Planned region center marker */
+.marker-region {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  border: 2px dashed #6574a8;
+  background: rgba(6, 182, 212, 0.15);
+  transform: rotate(45deg);
+}
+/* Selected state */
+.marker-selected {
+  box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.4) !important;
+}
+
+/* ── Utility classes ────────────────────────────────────────────────────────── */
+.text-sun   { color: var(--color-sun); }
+.text-earth { color: var(--color-earth); }
+.bg-sun     { background-color: var(--color-sun); }
+.bg-earth   { background-color: var(--color-earth); }
+
+/* Gradient background for app sections */
+.bg-space-gradient {
+  background: linear-gradient(135deg, #0b0e1e 0%, #121629 50%, #0b0e1e 100%);
+}
+
+/* Glass card effect */
+.glass-card {
+  background: rgba(18, 22, 41, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(37, 44, 74, 0.8);
+}
+.light .glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(197, 204, 224, 0.8);
+}
+
+/* Shimmer animation for loading states */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg,
+    var(--bg-card) 25%,
+    var(--border)  50%,
+    var(--bg-card) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: 0.375rem;
+}
+
+/* ── Accessibility ──────────────────────────────────────────────────────────── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border-width: 0;
+}

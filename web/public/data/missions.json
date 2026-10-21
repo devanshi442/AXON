@@ -1,0 +1,243 @@
+{
+  "generated_at": "2026-10-21T08:29:08.887550+00:00",
+  "schema_version": 1,
+  "compiled_on": "2026-10-21",
+  "missions": [
+    {
+      "id": "peregrine-m1",
+      "name": "Peregrine Mission One",
+      "program_label": null,
+      "clps_task_order": null,
+      "provider": "Astrobotic",
+      "lander": "Peregrine",
+      "status": "failed",
+      "dates": {
+        "launch": {"date": "2024-01", "precision": "month", "kind": "actual"},
+        "landing": {"date": null, "precision": null, "kind": null}
+      },
+      "site": {
+        "name": "Sinus Viscositatis (intended)",
+        "region_type": "nearside_mare",
+        "lat": null, "lon": null,
+        "coord_kind": "unknown",
+        "elevation_m": null, "uncertainty_km": null,
+        "terrain_tier": "T3"
+      },
+      "payload_highlights": [],
+      "notes": "Flew only five of 11 agency-funded instruments (per Jatan.space). Never landed, so no surface geometry applies. Good example of a failed mission for the UI.",
+      "sources": [
+        {"url": "https://spaceq.ca/astrobotic-unveils-griffin-1-lunar-lander-ahead-of-critical-tests/", "title": "SpaceQ: Astrobotic unveils Griffin-1", "accessed": "2026-10-21", "supports": "Peregrine propellant leak, burned up in atmosphere, early-2024 launch"},
+        {"url": "https://jatan.space/nasa-clps-moon-missions/", "title": "Jatan.space CLPS overview", "accessed": "2026-10-21", "supports": "5 of 11 NASA instruments flew"}
+      ],
+      "verified": false
+    },
+    {
+      "id": "im-1",
+      "name": "IM-1 (Odysseus)",
+      "program_label": null,
+      "clps_task_order": "TO2-IM",
+      "provider": "Intuitive Machines",
+      "lander": "Nova-C \"Odysseus\"",
+      "status": "landed_partial",
+      "dates": {
+        "launch": {"date": "2024-02-15", "precision": "day", "kind": "actual"},
+        "landing": {"date": "2024-02-22", "precision": "day", "kind": "actual"}
+      },
+      "site": {
+        "name": "Near Malapert A",
+        "region_type": "south_polar_highlands",
+        "lat": -80.13, "lon": 1.44,
+        "coord_kind": "actual",
+        "elevation_m": 2579, "uncertainty_km": null,
+        "terrain_tier": "T1"
+      },
+      "payload_highlights": ["Six payloads returned data (per Orbit Codex summary)"],
+      "notes": "Landed within a degraded ~1 km crater on a ~12 degree slope, about 1.5 km from the intended point (Intuitive Machines via LROC). NASA text gives 80.13 S, 1.44 E, 2579 m.",
+      "sources": [
+        {"url": "https://www.nasa.gov/missions/lro/nasas-lro-images-intuitive-machines-odysseus-lander/", "title": "NASA: LRO images Odysseus", "accessed": "2026-10-21", "supports": "coordinates, elevation, 12 deg slope, landing at Malapert A"},
+        {"url": "https://meetingorganizer.copernicus.org/EGU25-20315.html", "title": "EGU25-20315 landing-site characterization", "accessed": "2026-10-21", "supports": "80.13 S, 1.44 E independent confirmation"}
+      ],
+      "verified": false
+    },
+    {
+      "id": "blue-ghost-m1",
+      "name": "Blue Ghost Mission 1",
+      "program_label": null,
+      "clps_task_order": null,
+      "provider": "Firefly Aerospace",
+      "lander": "Blue Ghost",
+      "status": "landed_success",
+      "dates": {
+        "launch": {"date": "2025-01-15", "precision": "day", "kind": "actual"},
+        "landing": {"date": "2025-03-02", "precision": "day", "kind": "actual"}
+      },
+      "site": {
+        "name": "Eastern Mare Crisium, near Mons Latreille",
+        "region_type": "nearside_mare",
+        "lat": 18.56, "lon": 61.81,
+        "coord_kind": "planned_region_center",
+        "elevation_m": null, "uncertainty_km": null,
+        "terrain_tier": "T2"
+      },
+      "payload_highlights": ["Stereo cameras", "Regolith drill"],
+      "notes": "Surface operations ran 2025-03-02 to 2025-03-16 (about 14 days). Landed within ~100 m of the expected zone (Sky & Telescope). Replace lat/lon with a precise actual position from LROC/Firefly when you find one.",
+      "sources": [
+        {"url": "https://lroc.im-ldi.com/image_tags/Mare", "title": "LROC featured images (landing region 18.56 N, 61.81 E)", "accessed": "2026-10-21", "supports": "planned region center"},
+        {"url": "https://www.dlr.de/en/latest/news/2025/perfect-moon-landing-in-mare-crisium/blue-ghost-s-landing-site-in-mare-crisium", "title": "DLR / LROC: touchdown at 19 N, 62 E", "accessed": "2026-10-21", "supports": "approximate actual position, landing date"},
+        {"url": "https://lroc.im-ldi.com/featured_sites/71", "title": "LROC Blue Ghost 1 flip book", "accessed": "2026-10-21", "supports": "dates, payloads, 14 days of ops"}
+      ],
+      "verified": false
+    },
+    {
+      "id": "im-2",
+      "name": "IM-2 (Athena)",
+      "program_label": null,
+      "clps_task_order": null,
+      "provider": "Intuitive Machines",
+      "lander": "Nova-C \"Athena\"",
+      "status": "landed_partial",
+      "dates": {
+        "launch": {"date": "2025-02-27", "precision": "day", "kind": "actual"},
+        "landing": {"date": "2025-03-06", "precision": "day", "kind": "actual"}
+      },
+      "site": {
+        "name": "Mons Mouton",
+        "region_type": "south_polar_massif",
+        "lat": -84.7906, "lon": 29.1957,
+        "coord_kind": "actual",
+        "elevation_m": null, "uncertainty_km": null,
+        "terrain_tier": "T1"
+      },
+      "planned_site": {"lat": -84.78, "lon": 29.13, "source_note": "LROC intended landing site"},
+      "payload_highlights": [
+        "Neutron-spectrometer drone for Marston crater PSR (could not deploy per reports)",
+        "Lunar Outpost MAPP rover (not deployed)"
+      ],
+      "notes": "Landed about 250 m from intended site, on its side, in a crater; IM said it did not expect Athena to recharge. Prefer an LROC/NASA actual coordinate over the Wikipedia one before the final demo.",
+      "sources": [
+        {"url": "https://en.wikipedia.org/wiki/IM-2", "title": "Wikipedia IM-2 (secondary)", "accessed": "2026-10-21", "supports": "landing time and coordinates 84.7906 S, 29.1957 E"},
+        {"url": "https://lroc.im-ldi.com/images/1401", "title": "LROC IM-2 landing region", "accessed": "2026-10-21", "supports": "intended site -84.78, 29.13"},
+        {"url": "https://spaceflightnow.com/2025/03/07/intuitive-machines-im-2-mission-ends-with-lander-on-its-side-on-the-moon/", "title": "Spaceflight Now", "accessed": "2026-10-21", "supports": "250 m from intended site, on its side, no recharge"}
+      ],
+      "verified": false
+    },
+    {
+      "id": "griffin-1",
+      "name": "Griffin Mission One (Moon Base II)",
+      "program_label": "Moon Base II",
+      "clps_task_order": "TO20A",
+      "provider": "Astrobotic",
+      "lander": "Griffin",
+      "status": "planned",
+      "dates": {
+        "launch": {"date": "2026-11", "precision": "month", "kind": "planned"},
+        "landing": {"date": null, "precision": null, "kind": null}
+      },
+      "site": {
+        "name": "Nobile Crater region, near Mons Mouton",
+        "region_type": "south_polar_crater_region",
+        "lat": null, "lon": null,
+        "coord_kind": "unknown",
+        "elevation_m": null, "uncertainty_km": null,
+        "terrain_tier": "T1"
+      },
+      "payload_highlights": ["Astrolab FLIP rover", "More than 1,100 lb of cargo (NASA event page)"],
+      "notes": "Environmental testing at JPL concluded 2026-10-13 (Wikipedia). Launch on Falcon Heavy at Q4 2026 per Spaceflight Now; no firm date. Find a published target coordinate or use the region as a labelled candidate site.",
+      "sources": [
+        {"url": "https://en.wikipedia.org/wiki/Griffin_Mission_One", "title": "Wikipedia Griffin Mission One", "accessed": "2026-10-21", "supports": "NET Nov 2026, Moon Base II designation 2026-05-26, tests ended 2026-10-13"},
+        {"url": "https://skyandtelescope.org/astronomy-news/nasa-announces-four-new-lunar-lander-missions-for-2028/", "title": "Sky & Telescope, 2026-07-01", "accessed": "2026-10-21", "supports": "Moon Base 2 targets Mons Mouton area, FLIP rover, late 2026"},
+        {"url": "https://spaceflightnow.com/?p=73664", "title": "Spaceflight Now, 2026-06-16", "accessed": "2026-10-21", "supports": "Falcon Heavy, Q4 2026"}
+      ],
+      "verified": false
+    },
+    {
+      "id": "moon-base-1-endurance",
+      "name": "Blue Moon MK1 \"Endurance\" (Moon Base I)",
+      "program_label": "Moon Base I",
+      "clps_task_order": null,
+      "provider": "Blue Origin",
+      "lander": "Blue Moon Mark 1 \"Endurance\"",
+      "status": "planned",
+      "dates": {
+        "launch": {"date": "2027", "precision": "year", "kind": "planned"},
+        "landing": {"date": null, "precision": null, "kind": null}
+      },
+      "site": {
+        "name": "Near the lunar south pole",
+        "region_type": "south_polar",
+        "lat": null, "lon": null,
+        "coord_kind": "unknown",
+        "elevation_m": null, "uncertainty_km": null,
+        "terrain_tier": "T1"
+      },
+      "payload_highlights": [],
+      "notes": "Check latest schedule; this mission was reported as likely to shift to 2027.",
+      "sources": [
+        {"url": "https://skyandtelescope.org/astronomy-news/nasa-announces-four-new-lunar-lander-missions-for-2028/", "title": "Sky & Telescope, 2026-07-01", "accessed": "2026-10-21", "supports": "south pole target; likely 2027"}
+      ],
+      "verified": false
+    },
+    {
+      "id": "im-3-reiner-gamma",
+      "name": "IM-3 (Moon Base III)",
+      "program_label": "Moon Base III",
+      "clps_task_order": null,
+      "provider": "Intuitive Machines",
+      "lander": "Nova-C \"Trinity\" (redesigned)",
+      "status": "planned",
+      "dates": {
+        "launch": {"date": "2026", "precision": "year", "kind": "planned"},
+        "landing": {"date": null, "precision": null, "kind": null}
+      },
+      "site": {
+        "name": "Reiner Gamma",
+        "region_type": "nearside_swirl",
+        "lat": null, "lon": null,
+        "coord_kind": "unknown",
+        "elevation_m": null, "uncertainty_km": null,
+        "terrain_tier": "T2"
+      },
+      "payload_highlights": [],
+      "notes": "Look up the published target coordinates from the IM-3 press kit or LROC page.",
+      "sources": [
+        {"url": "https://skyandtelescope.org/astronomy-news/nasa-announces-four-new-lunar-lander-missions-for-2028/", "title": "Sky & Telescope, 2026-07-01", "accessed": "2026-10-21", "supports": "Moon Base 3, Reiner Gamma, no firm timeline"},
+        {"url": "https://starlust.org/four-major-lunar-missions-set-to-launch-in-2026-to-support-nas-as-goal-to-stay-on-the-moon/", "title": "Starlust", "accessed": "2026-10-21", "supports": "lander named Trinity"}
+      ],
+      "verified": false
+    },
+    {
+      "id": "needs-check-farside-and-schrodinger",
+      "name": "Far-side CLPS deliveries (Blue Ghost M2; Draper to Schrodinger Basin)",
+      "program_label": null,
+      "clps_task_order": null,
+      "provider": "Firefly Aerospace; Draper",
+      "lander": "Blue Ghost M2; APEX 1.0",
+      "status": "unknown_needs_check",
+      "dates": {
+        "launch": {"date": null, "precision": null, "kind": null},
+        "landing": {"date": null, "precision": null, "kind": null}
+      },
+      "site": {
+        "name": "Lunar far side / Schrodinger Basin",
+        "region_type": "farside",
+        "lat": null, "lon": null,
+        "coord_kind": "unknown",
+        "elevation_m": null, "uncertainty_km": null,
+        "terrain_tier": "T3"
+      },
+      "payload_highlights": [],
+      "notes": "Older sources said 2026 launches; the June 2026 update did not list them. Do NOT show dates until verified. Far-side sites never see Earth directly, which makes a good UI edge case.",
+      "sources": [
+        {"url": "https://www.nasa.gov/commercial-lunar-payload-services/clps-providers/", "title": "NASA CLPS providers", "accessed": "2026-10-21", "supports": "far side and Schrodinger Basin listed as sites"}
+      ],
+      "verified": false
+    }
+  ],
+  "reference_sites": [
+    {"id": "mons-mouton-summit", "name": "Mons Mouton (summit)", "lat": -84.6, "lon": 31.0, "source": "https://en.wikipedia.org/wiki/Mons_Mouton", "note": "Formerly called Leibnitz Beta. Same place as the Gemini list's 'Leibnitz Beta'. Do not count twice."},
+    {"id": "malapert-crater", "name": "Malapert (crater)", "lat": -84.9, "lon": 12.9, "source": "https://en.wikipedia.org/wiki/Malapert_(crater)", "note": "Malapert Mountain lies in view of Earth; cited as a possible communications site."}
+  ],
+  "groups_not_yet_individual_records": [
+    "Four CLPS landers for late 2028 (two Astrobotic, one Firefly, one Intuitive Machines), contracts totalling 590.4 million USD per S&T 2026-07-01. Add as planned rows when NASA publishes sites."
+  ]
+}

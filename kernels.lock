@@ -1,0 +1,10 @@
+# kernels.lock — SHA-256 checksums for pinned NAIF SPICE kernels
+# Run `python pipeline/fetch_kernels.py` to download and print hashes.
+# After downloading, paste the hashes here and commit this file.
+# DO NOT commit the kernel binaries themselves (they are in .gitignore).
+#
+# Format: <sha256>  <filename>
+# Example:
+#   abc123...  naif0012.tls
+#
+# STATUS: kernels not yet downloaded. Run pipeline/fetch_kernels.py first.

@@ -1,0 +1,53 @@
+# ── NAIF SPICE kernels (large binary; download with pipeline/fetch_kernels.py) ──
+kernels/
+
+# ── Terrain DEMs (large binary; download with pipeline/fetch_terrain.py) ──
+terrain/
+
+# ── Python ──
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+*.cover
+
+# ── Node / frontend ──
+node_modules/
+web/node_modules/
+web/dist/
+web/.vite/
+
+# ── Generated data (reproduced by pipeline; do NOT commit) ──
+web/public/data/timeseries/
+web/public/data/events/
+web/public/data/summary/
+web/public/data/horizon/
+# missions.json IS committed (small, needed for static deploy without API)
+!web/public/data/missions.json
+
+# ── OS / editor ──
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/settings.json
+
+# ── Secrets ──
+.env
+.env.local
+*.pem
+
+# ── Logs ──
+*.log
+npm-debug.log*
