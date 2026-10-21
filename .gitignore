@@ -20,6 +20,7 @@ build/
 htmlcov/
 .coverage
 *.cover
+*.tsbuildinfo
 
 # ── Node / frontend ──
 node_modules/
