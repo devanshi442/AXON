@@ -1,10 +1,6 @@
-# kernels.lock — SHA-256 checksums for pinned NAIF SPICE kernels
-# Run `python pipeline/fetch_kernels.py` to download and print hashes.
-# After downloading, paste the hashes here and commit this file.
-# DO NOT commit the kernel binaries themselves (they are in .gitignore).
-#
-# Format: <sha256>  <filename>
-# Example:
-#   abc123...  naif0012.tls
-#
-# STATUS: kernels not yet downloaded. Run pipeline/fetch_kernels.py first.
+# SHA-256 of NAIF kernels used by AXON LunarSight (fetched 2026-10-21)
+678e32bdb5a744117a467cd9601cd6b373f0e9bc9bbde1371d5eee39600a039b  naif0012.tls
+3dff7b1dbeceaa01f25467767d3fa25816051c85d162d1edf04acb310ee28bb1  pck00011.tpc
+c1c7feeab882263fc493a9d5a5b2ddd71b54826cdf65d8d17a76126b260a49f2  de440s.bsp
+60cd55aa401ea2ea97360636f567554bfe4e37bb829f901b4460a455dfaf783f  moon_pa_de440_200625.bpc
+a47c71e9c9f33796bdafb2c9d69a7ee447b6016ecad80f71cd6f3e479f9cf768  moon_de440_250416.tf
