@@ -34,10 +34,10 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h2 className="text-sm font-semibold text-space-100 uppercase tracking-wider">
-            30-Day Opportunity Timelines & Windows
+            30-Day Opportunity Timelines &amp; Windows
           </h2>
           <p className="text-2xs text-space-400 mt-0.5">
-            Sunlight and Direct-To-Earth line-of-sight availability calculated over 720 hours.
+            Solar Power Generation potential and Direct-to-Earth (DTE) communication availability calculated over 720 hours.
           </p>
         </div>
 
@@ -68,12 +68,17 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
 
       {/* Threshold Slider */}
       <div className="bg-space-900/80 p-3 rounded-xl border border-space-700/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <label htmlFor="threshold-slider" className="text-xs font-medium text-space-200">
-            Minimum Elevation Threshold:
-          </label>
-          <span className="text-xs font-bold font-mono text-earth-300 px-2 py-0.5 bg-space-800 rounded border border-space-700">
-            {thresholdDeg.toFixed(1)}°
+        <div className="flex flex-col gap-0.5">
+          <div className="flex items-center gap-2">
+            <label htmlFor="threshold-slider" className="text-xs font-medium text-space-200">
+              Minimum Elevation Threshold:
+            </label>
+            <span className="text-xs font-bold font-mono text-earth-300 px-2 py-0.5 bg-space-800 rounded border border-space-700">
+              {thresholdDeg.toFixed(1)}°
+            </span>
+          </div>
+          <span className="text-3xs text-space-400">
+            Minimum angle above idealized horizon for solar array illumination and antenna pointing.
           </span>
         </div>
         <div className="flex items-center gap-3 flex-1 max-w-sm">
@@ -103,7 +108,7 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="p-3 bg-space-900 rounded-xl border border-sun-500/30">
               <span className="text-3xs uppercase tracking-wider text-sun-400 font-semibold">
-                Sun Available (&gt;= {thresholdDeg}°)
+                Solar Power Generation (Sun &gt;= {thresholdDeg}°)
               </span>
               <div className="text-xl font-bold font-mono text-sun-300 mt-1">
                 {oppData.sun.total_hours} hrs
@@ -118,7 +123,7 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
 
             <div className="p-3 bg-space-900 rounded-xl border border-earth-500/30">
               <span className="text-3xs uppercase tracking-wider text-earth-400 font-semibold">
-                Earth Line-of-Sight (&gt;= {thresholdDeg}°)
+                Direct-To-Earth Comm (Earth &gt;= {thresholdDeg}°)
               </span>
               <div className="text-xl font-bold font-mono text-earth-300 mt-1">
                 {oppData.earth.total_hours} hrs
@@ -133,7 +138,7 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
 
             <div className="p-3 bg-space-900 rounded-xl border border-emerald-500/30">
               <span className="text-3xs uppercase tracking-wider text-emerald-400 font-semibold">
-                Joint Sun &amp; Earth Opportunity
+                Joint Power &amp; DTE Comm Windows
               </span>
               <div className="text-xl font-bold font-mono text-emerald-300 mt-1">
                 {oppData.joint.total_hours} hrs
@@ -156,7 +161,7 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
             {/* Sun Timeline Bar */}
             <div>
               <div className="flex justify-between text-3xs text-space-400 mb-1">
-                <span className="text-sun-400 font-medium">Sun Illumination</span>
+                <span className="text-sun-400 font-medium">Solar Power Generation Potential</span>
                 <span>{oppData.sun.total_hours} / 720 hrs</span>
               </div>
               <div className="w-full h-5 bg-space-950 rounded-lg overflow-hidden flex border border-space-700/80">
@@ -180,7 +185,7 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
             {/* Earth Timeline Bar */}
             <div>
               <div className="flex justify-between text-3xs text-space-400 mb-1">
-                <span className="text-earth-400 font-medium">Earth Direct Line-of-Sight</span>
+                <span className="text-earth-400 font-medium">Direct-to-Earth (DTE) Line-of-Sight Window</span>
                 <span>{oppData.earth.total_hours} / 720 hrs</span>
               </div>
               <div className="w-full h-5 bg-space-950 rounded-lg overflow-hidden flex border border-space-700/80">
@@ -204,7 +209,7 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
             {/* Joint Timeline Bar */}
             <div>
               <div className="flex justify-between text-3xs text-space-400 mb-1">
-                <span className="text-emerald-400 font-medium">Joint Sun &amp; Earth Windows</span>
+                <span className="text-emerald-400 font-medium">Joint Solar Power &amp; DTE Comm Windows</span>
                 <span>{oppData.joint.total_hours} / 720 hrs</span>
               </div>
               <div className="w-full h-5 bg-space-950 rounded-lg overflow-hidden flex border border-space-700/80">

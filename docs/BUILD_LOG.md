@@ -144,12 +144,20 @@ needs-check-farside are null. These missions will show in the list but not on th
   - `web/src/pages/MethodsPage.tsx`: Detailed science documentation, conventions, JPL Horizons benchmark comparison table, SHA-256 kernel checksums, and explicit scientific limitations.
 - Added ESLint configuration (`web/.eslintrc.cjs`) and unit tests (`web/tests/scenario.test.ts`).
 
+**D-013: Problem Statement Realignment & Educational Framing**
+- Realigned UX terminology directly with updated challenge requirements:
+  - Solar illumination metrics labeled as **"Solar Power Generation Potential (Sun)"**.
+  - Earth line-of-sight metrics labeled as **"Direct-to-Earth (DTE) Communication Windows (Earth)"**.
+  - Added dedicated **"🏔️ South Pole Focus"** filter to isolate polar target missions (`im-1`, `im-2`, `mons-mouton-summit`, `malapert-crater`).
+  - Added visual **South Pole Polar Target Band (< -70°)** boundary and annotation to the 2D Moon Map.
+  - Added collapsible Educational Guide Card: *"Why the Moon's South Pole? — Extreme Lighting & Communication Constraints"* explaining the Moon's 1.54° axial tilt, 27.3-day libration cycle, and the joint power/comm operational constraint for mission planners, educators, and the public.
+
 ### Test Results
-- **Python Unit Tests:** 17 passed in 1.34s (`pytest science/tests/ -v`).
-- **Frontend Unit Tests:** 4 passed in 0.27s (`npm test` via tsx).
+- **Python Unit Tests:** 17 passed in 1.92s (`pytest science/tests/ -v`).
+- **Frontend Unit Tests:** 4 passed in 1.10s (`npm test` via tsx).
 - **TypeScript Type Check:** 0 errors (`npm run type-check`).
 - **ESLint:** 0 errors/warnings (`npm run lint`).
-- **Vite Production Build:** Successfully built bundle in 2.78s (`npm run build`).
+- **Vite Production Build:** Successfully built bundle in 2.79s (`npm run build`).
 
 ### Scientific Caveats & Honest Disclosures
 - Idealized smooth spherical horizon only ($r = 1737.4\text{ km}$); local topographic shadowing from crater rims and mountains is not included.

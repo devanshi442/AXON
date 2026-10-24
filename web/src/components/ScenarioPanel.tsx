@@ -185,7 +185,7 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
             <div className="flex items-center justify-between">
               <span className="text-3xs uppercase tracking-wider text-sun-400 font-semibold flex items-center gap-1">
                 <span className="w-2 h-2 rounded-full bg-sun-500"></span>
-                Sun (Sol)
+                Sun (Solar Power)
               </span>
               <span
                 className={`px-1.5 py-0.2 rounded text-3xs font-medium ${
@@ -217,7 +217,7 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
             <div className="flex items-center justify-between">
               <span className="text-3xs uppercase tracking-wider text-earth-400 font-semibold flex items-center gap-1">
                 <span className="w-2 h-2 rounded-full bg-earth-500"></span>
-                Earth (Terra)
+                Earth (DTE Comm)
               </span>
               <span
                 className={`px-1.5 py-0.2 rounded text-3xs font-medium ${

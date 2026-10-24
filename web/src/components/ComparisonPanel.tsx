@@ -105,7 +105,7 @@ export default function ComparisonPanel({ sites }: ComparisonPanelProps) {
             {/* Instantaneous Sun Elevation */}
             <tr className="bg-space-900/40">
               <td className="py-2.5 px-3 text-sun-300 font-sans font-medium">
-                Current Sun Elevation (Center)
+                Current Sun Elevation (Solar Power Potential)
               </td>
               <td className="py-2.5 px-3 text-sun-300">
                 {elA.sunElevation !== null ? `${elA.sunElevation.toFixed(2)}°` : 'N/A'}
@@ -121,7 +121,7 @@ export default function ComparisonPanel({ sites }: ComparisonPanelProps) {
             {/* Instantaneous Earth Elevation */}
             <tr className="bg-space-900/40">
               <td className="py-2.5 px-3 text-earth-300 font-sans font-medium">
-                Current Earth Elevation (Center LOS)
+                Current Earth Elevation (Direct-to-Earth Comm)
               </td>
               <td className="py-2.5 px-3 text-earth-300">
                 {elA.earthElevation !== null ? `${elA.earthElevation.toFixed(2)}°` : 'N/A'}
@@ -137,7 +137,7 @@ export default function ComparisonPanel({ sites }: ComparisonPanelProps) {
             {/* 30-Day Sun Illumination */}
             <tr>
               <td className="py-2.5 px-3 text-space-300 font-sans font-medium">
-                30-Day Sunlight Hours (&gt;= {thresholdDeg}°)
+                30-Day Solar Power Generation Hours (&gt;= {thresholdDeg}°)
               </td>
               <td className="py-2.5 px-3 text-space-200">
                 {oppA ? `${oppA.sun.total_hours} hrs (${oppA.sun.percentage}%)` : 'N/A'}
@@ -153,7 +153,7 @@ export default function ComparisonPanel({ sites }: ComparisonPanelProps) {
             {/* 30-Day Earth Visibility */}
             <tr>
               <td className="py-2.5 px-3 text-space-300 font-sans font-medium">
-                30-Day Earth Line-of-Sight Hours (&gt;= {thresholdDeg}°)
+                30-Day Direct-to-Earth (DTE) Comm Hours (&gt;= {thresholdDeg}°)
               </td>
               <td className="py-2.5 px-3 text-space-200">
                 {oppA ? `${oppA.earth.total_hours} hrs (${oppA.earth.percentage}%)` : 'N/A'}
@@ -169,7 +169,7 @@ export default function ComparisonPanel({ sites }: ComparisonPanelProps) {
             {/* 30-Day Joint Availability */}
             <tr className="bg-emerald-950/20">
               <td className="py-2.5 px-3 text-emerald-300 font-sans font-medium">
-                30-Day Concurrent Sun &amp; Earth Hours
+                30-Day Joint Power &amp; DTE Comm Hours
               </td>
               <td className="py-2.5 px-3 text-emerald-300">
                 {oppA ? `${oppA.joint.total_hours} hrs (${oppA.joint.percentage}%)` : 'N/A'}

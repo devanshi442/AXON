@@ -83,11 +83,12 @@ export default function MoonMap({ sites }: MoonMapProps) {
           {/* Mare Tranquillitatis */}
           <ellipse cx="203" cy="82" rx="18" ry="14" fill="#1e293b" opacity="0.6" />
           <text x="203" y="83" fill="#94a3b8" fontSize="4" textAnchor="middle">Tranquillitatis</text>
-          {/* Oceanus Procellarum */}
-          <ellipse cx="130" cy="70" rx="26" ry="32" fill="#1e293b" opacity="0.5" />
-          <text x="130" y="70" fill="#94a3b8" fontSize="4" textAnchor="middle">Oceanus Procellarum</text>
-          {/* South Pole region label */}
-          <text x="180" y="174" fill="#cbd5e1" fontSize="4" textAnchor="middle">South Pole Region (CLPS Target Zone)</text>
+          {/* South Pole polar zone highlight (< -70° lat, y >= 160) */}
+          <rect x="0" y="160" width="360" height="20" fill="#0284c7" opacity="0.12" />
+          <line x1="0" y1="160" x2="360" y2="160" stroke="#38bdf8" strokeDasharray="3,3" strokeWidth="0.5" opacity="0.6" />
+          <text x="180" y="174" fill="#7dd3fc" fontSize="4.2" fontWeight="bold" textAnchor="middle">
+            South Pole Polar Target Band (&lt; -70°: Grazing Sun &amp; Earth Libration)
+          </text>
           <text x="180" y="8" fill="#64748b" fontSize="4" textAnchor="middle">North Pole</text>
         </svg>
 

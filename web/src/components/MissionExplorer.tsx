@@ -9,7 +9,8 @@ interface MissionExplorerProps {
 export default function MissionExplorer({ missions }: MissionExplorerProps) {
   const { scenarioAId, scenarioBId, setScenarioA, setScenarioB } = useScenarioStore()
   const [search, setSearch] = useState('')
-  const [statusFilter, setStatusFilter] = useState<'all' | 'landed' | 'planned' | 'failed'>('all')
+  type FilterType = 'all' | 'south_pole' | 'landed' | 'planned' | 'failed'
+  const [statusFilter, setStatusFilter] = useState<FilterType>('all')
 
   const filtered = missions.filter((m) => {
     const query = search.toLowerCase()
@@ -23,11 +24,22 @@ export default function MissionExplorer({ missions }: MissionExplorerProps) {
     if (!matchesSearch) return false
 
     if (statusFilter === 'all') return true
+    if (statusFilter === 'south_pole') {
+      return (m.site.lat !== null && m.site.lat <= -70) || m.site.region_type.includes('polar')
+    }
     if (statusFilter === 'landed') return m.status.startsWith('landed')
     if (statusFilter === 'planned') return m.status === 'planned'
     if (statusFilter === 'failed') return m.status === 'failed' || m.status === 'cancelled'
     return true
   })
+
+  const filterOptions: { id: FilterType; label: string }[] = [
+    { id: 'all', label: 'All Missions' },
+    { id: 'south_pole', label: '🏔️ South Pole Focus' },
+    { id: 'landed', label: 'Landed' },
+    { id: 'planned', label: 'Planned' },
+    { id: 'failed', label: 'Failed' },
+  ]
 
   return (
     <div className="bg-space-800 border border-space-700 rounded-2xl p-4 flex flex-col gap-4 shadow-card">
@@ -58,17 +70,19 @@ export default function MissionExplorer({ missions }: MissionExplorerProps) {
 
       {/* Filter pills */}
       <div className="flex flex-wrap gap-1.5 text-2xs">
-        {(['all', 'landed', 'planned', 'failed'] as const).map((s) => (
+        {filterOptions.map((opt) => (
           <button
-            key={s}
-            onClick={() => setStatusFilter(s)}
-            className={`px-3 py-1 rounded-full font-medium transition-colors capitalize ${
-              statusFilter === s
-                ? 'bg-earth-500/20 text-earth-300 border border-earth-500/40'
+            key={opt.id}
+            onClick={() => setStatusFilter(opt.id)}
+            className={`px-3 py-1 rounded-full font-medium transition-colors ${
+              statusFilter === opt.id
+                ? opt.id === 'south_pole'
+                  ? 'bg-amber-500/20 text-amber-300 border border-amber-500/50'
+                  : 'bg-earth-500/20 text-earth-300 border border-earth-500/40'
                 : 'bg-space-900 text-space-400 hover:text-space-200 border border-space-700'
             }`}
           >
-            {s === 'all' ? 'All Missions' : s}
+            {opt.label}
           </button>
         ))}
       </div>
