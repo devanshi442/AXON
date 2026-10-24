@@ -1,0 +1,27 @@
+{
+  "name": "farside-0N-180E",
+  "body": "sun",
+  "lat": 0.0,
+  "east_lon": 180.0,
+  "start": "2025-03-02",
+  "stop": "2025-03-30",
+  "note": "Far-side control site: Earth should never be above horizon",
+  "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&MAKE_EPHEM=YES&EPHEM_TYPE=OBSERVER&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27180.0%2C0.0%2C0%27&START_TIME=%272025-03-02%27&STOP_TIME=%272025-03-30%27&STEP_SIZE=%2760+min%27&QUANTITIES=%274%27&ANG_FORMAT=%27DEG%27&APPARENT=%27AIRLESS%27&CSV_FORMAT=%27YES%27",
+  "params": {
+    "format": "json",
+    "COMMAND": "'10'",
+    "MAKE_EPHEM": "YES",
+    "EPHEM_TYPE": "OBSERVER",
+    "CENTER": "'coord@301'",
+    "COORD_TYPE": "'GEODETIC'",
+    "SITE_COORD": "'180.0,0.0,0'",
+    "START_TIME": "'2025-03-02'",
+    "STOP_TIME": "'2025-03-30'",
+    "STEP_SIZE": "'60 min'",
+    "QUANTITIES": "'4'",
+    "ANG_FORMAT": "'DEG'",
+    "APPARENT": "'AIRLESS'",
+    "CSV_FORMAT": "'YES'"
+  },
+  "approx_row_count": 0
+}

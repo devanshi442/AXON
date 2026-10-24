@@ -110,13 +110,19 @@ def main():
             "period": f"{START_UTC} to {STOP_UTC}",
             "sun_hours": opps["sun"]["total_hours"],
             "sun_percentage": opps["sun"]["percentage"],
+            "sun_windows_count": opps["sun"]["window_count"],
+            "sun_longest_window_hours": opps["sun"]["longest_window_hours"],
+            "sun_longest_dark_gap_hours": opps["sun"]["longest_dark_gap_hours"],
             "earth_hours": opps["earth"]["total_hours"],
             "earth_percentage": opps["earth"]["percentage"],
+            "earth_windows_count": opps["earth"]["window_count"],
+            "earth_longest_window_hours": opps["earth"]["longest_window_hours"],
+            "earth_longest_dark_gap_hours": opps["earth"]["longest_dark_gap_hours"],
             "joint_hours": opps["joint"]["total_hours"],
             "joint_percentage": opps["joint"]["percentage"],
-            "sun_windows_count": len(opps["sun"]["windows"]),
-            "earth_windows_count": len(opps["earth"]["windows"]),
-            "joint_windows_count": len(opps["joint"]["windows"]),
+            "joint_windows_count": opps["joint"]["window_count"],
+            "joint_longest_window_hours": opps["joint"]["longest_window_hours"],
+            "joint_longest_dark_gap_hours": opps["joint"]["longest_dark_gap_hours"],
         }
 
         # Write to outputs

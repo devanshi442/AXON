@@ -117,6 +117,9 @@ export interface BodyOpportunity {
   total_hours: number
   percentage: number
   windows: OpportunityWindow[]
+  window_count?: number
+  longest_window_hours?: number
+  longest_dark_gap_hours?: number
 }
 
 export interface OpportunityData {

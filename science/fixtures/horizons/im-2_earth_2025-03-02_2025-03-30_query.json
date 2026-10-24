@@ -1,0 +1,27 @@
+{
+  "name": "im-2",
+  "body": "earth",
+  "lat": -84.7906,
+  "east_lon": 29.1957,
+  "start": "2025-03-02",
+  "stop": "2025-03-30",
+  "note": "IM-2 at published landing coordinates (Wikipedia; LROC intended -84.78,29.13)",
+  "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27399%27&MAKE_EPHEM=YES&EPHEM_TYPE=OBSERVER&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%2729.1957%2C-84.7906%2C0%27&START_TIME=%272025-03-02%27&STOP_TIME=%272025-03-30%27&STEP_SIZE=%2760+min%27&QUANTITIES=%274%27&ANG_FORMAT=%27DEG%27&APPARENT=%27AIRLESS%27&CSV_FORMAT=%27YES%27",
+  "params": {
+    "format": "json",
+    "COMMAND": "'399'",
+    "MAKE_EPHEM": "YES",
+    "EPHEM_TYPE": "OBSERVER",
+    "CENTER": "'coord@301'",
+    "COORD_TYPE": "'GEODETIC'",
+    "SITE_COORD": "'29.1957,-84.7906,0'",
+    "START_TIME": "'2025-03-02'",
+    "STOP_TIME": "'2025-03-30'",
+    "STEP_SIZE": "'60 min'",
+    "QUANTITIES": "'4'",
+    "ANG_FORMAT": "'DEG'",
+    "APPARENT": "'AIRLESS'",
+    "CSV_FORMAT": "'YES'"
+  },
+  "approx_row_count": 0
+}

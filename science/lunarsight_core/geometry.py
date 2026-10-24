@@ -196,6 +196,26 @@ def find_intervals(
     return intervals
 
 
+def _longest_gap_hours(mask: List[bool], step_s: int) -> float:
+    """Return the longest contiguous False run in mask, in hours."""
+    longest = 0
+    current = 0
+    for v in mask:
+        if not v:
+            current += 1
+            longest = max(longest, current)
+        else:
+            current = 0
+    return round(longest * step_s / 3600.0, 2)
+
+
+def _longest_window_hours(windows: List[Dict[str, Any]]) -> float:
+    """Return the longest window duration in hours from a list of intervals."""
+    if not windows:
+        return 0.0
+    return max(w["duration_hours"] for w in windows)
+
+
 def compute_opportunities(
     timeseries: Dict[str, Any], threshold_deg: float = 5.0
 ) -> Dict[str, Any]:
@@ -203,6 +223,13 @@ def compute_opportunities(
     Compute availability windows (Sun, Earth, Joint) from time series.
     Sun up uses upper limb correction: (center elevation + SUN_ANGULAR_RADIUS_DEG) >= threshold.
     Earth visibility: center elevation >= threshold.
+
+    Returns summary metrics including:
+    - total_hours per body
+    - percentage of period
+    - windows list
+    - longest_window_hours (best case continuous illumination/visibility)
+    - longest_dark_gap_hours (worst case outage — relevant for battery sizing)
     """
     times = timeseries["times"]
     sun_el = timeseries["sun_elevation_deg"]
@@ -230,15 +257,25 @@ def compute_opportunities(
             "total_hours": round(sun_hours, 1),
             "percentage": round((sun_hours / total_hours * 100.0), 1) if total_hours else 0.0,
             "windows": sun_windows,
+            "window_count": len(sun_windows),
+            "longest_window_hours": _longest_window_hours(sun_windows),
+            "longest_dark_gap_hours": _longest_gap_hours(sun_mask, step_s),
         },
         "earth": {
             "total_hours": round(earth_hours, 1),
             "percentage": round((earth_hours / total_hours * 100.0), 1) if total_hours else 0.0,
             "windows": earth_windows,
+            "window_count": len(earth_windows),
+            "longest_window_hours": _longest_window_hours(earth_windows),
+            "longest_dark_gap_hours": _longest_gap_hours(earth_mask, step_s),
         },
         "joint": {
             "total_hours": round(joint_hours, 1),
             "percentage": round((joint_hours / total_hours * 100.0), 1) if total_hours else 0.0,
             "windows": joint_windows,
+            "window_count": len(joint_windows),
+            "longest_window_hours": _longest_window_hours(joint_windows),
+            "longest_dark_gap_hours": _longest_gap_hours(joint_mask, step_s),
         },
     }
+

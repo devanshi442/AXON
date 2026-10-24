@@ -1,0 +1,405 @@
+# AXON LunarSight — machine-readable data source manifest
+# Updated: 2026-10-25
+# Purpose: Track every external data source, its URL, local path, format,
+#          verification status, and intended use.
+# Rules: Do NOT mark verified: true unless a team member has actually downloaded
+#        and checked the file.
+
+schema_version: 1
+
+sources:
+
+  # ── SPICE Kernels (NAIF/JPL) ──────────────────────────────────────────────
+
+  - id: naif0012-tls
+    name: NAIF Leap-Seconds Kernel
+    provider: NASA / NAIF (Jet Propulsion Laboratory)
+    url: https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls
+    local_path: kernels/naif0012.tls
+    format: NAIF text LSK
+    size_bytes: 5257
+    download_date: "2026-10-21"
+    sha256: "678e32bdb5a744117a467cd9601cd6b373f0e9bc9bbde1371d5eee39600a039b"
+    sha256_source: locally computed (no official NAIF SHA-256 file)
+    license: Public domain (NASA/JPL)
+    coverage_temporal: "1972 to present + future predictions"
+    coverage_spatial: N/A (time kernel)
+    use: UTC ↔ Ephemeris Time conversion in SPICE
+    verified: true
+
+  - id: pck00011-tpc
+    name: Planetary Constants Kernel
+    provider: NASA / NAIF
+    url: https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc
+    local_path: kernels/pck00011.tpc
+    format: NAIF text PCK
+    size_bytes: 131226
+    download_date: "2026-10-21"
+    sha256: "3dff7b1dbeceaa01f25467767d3fa25816051c85d162d1edf04acb310ee28bb1"
+    sha256_source: locally computed
+    license: Public domain (NASA/JPL)
+    coverage_temporal: N/A (constants)
+    coverage_spatial: Solar system bodies
+    use: Moon radius (1737.4 km), orientation, shape model
+    verified: true
+
+  - id: de440s-bsp
+    name: JPL DE440s Planetary Ephemeris (short version)
+    provider: NASA / JPL
+    url: https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de440s.bsp
+    local_path: kernels/de440s.bsp
+    format: NAIF binary SPK
+    size_bytes: 32726016
+    download_date: "2026-10-21"
+    sha256: "c1c7feeab882263fc493a9d5a5b2ddd71b54826cdf65d8d17a76126b260a49f2"
+    sha256_source: locally computed
+    md5: "3917ee56769db332790c751e2168843d"
+    md5_source: "official NAIF published aa_checksums.txt"
+    license: Public domain (NASA/JPL)
+    coverage_temporal: "1849-12-25 23:59:18.816 UTC to 2150-01-21 23:58:50.816 UTC"
+    coverage_spatial: Sun, planets, Moon
+    use: Sun and Earth positions (NAIF IDs 10, 399) relative to Moon barycentre
+    verified: true
+
+  - id: moon-pa-de440-bpc
+    name: Moon PA Binary PCK (DE440 orientation)
+    provider: NASA / NAIF
+    url: https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/moon_pa_de440_200625.bpc
+    local_path: kernels/moon_pa_de440_200625.bpc
+    format: NAIF binary PCK
+    size_bytes: 12863488
+    download_date: "2026-10-21"
+    sha256: "60cd55aa401ea2ea97360636f567554bfe4e37bb829f901b4460a455dfaf783f"
+    sha256_source: locally computed
+    license: Public domain (NASA/JPL)
+    coverage_temporal: "1549-12-30 23:59:18.816 UTC to 2650-01-24 23:58:50.816 UTC"
+    coverage_spatial: Moon (frame 31008 MOON_PA_DE440)
+    use: Lunar principal-axis (MOON_PA) orientation for MOON_ME frame
+    verified: true
+
+  - id: moon-de440-250416-tf
+    name: Lunar Reference Frame Kernel (FK)
+    provider: NASA / NAIF (PDS4 archive)
+    url: https://naif.jpl.nasa.gov/pub/naif/generic_kernels/fk/satellites/moon_de440_250416.tf
+    pds4_record: https://naif.jpl.nasa.gov/pub/naif/pds/pds4/clps/clps_spice/spice_kernels/fk/moon_de440_250416.xml
+    local_path: kernels/moon_de440_250416.tf
+    format: NAIF text FK
+    size_bytes: 19478
+    download_date: "2026-10-21"
+    sha256: "a47c71e9c9f33796bdafb2c9d69a7ee447b6016ecad80f71cd6f3e479f9cf768"
+    sha256_source: locally computed
+    md5: "3556dde4bb7ca54a89917c301e650bbf"
+    md5_source: "official NAIF PDS4 XML published checksum"
+    license: Public domain (NASA/JPL)
+    coverage_temporal: N/A (frame definition)
+    coverage_spatial: Moon
+    use: Defines MOON_ME frame (mean-Earth/polar-axis; LOLA convention) from MOON_PA
+    notes: >
+      moon_de440_220930.tf is referenced in older documentation but returns HTTP 404
+      on the NAIF generic kernel server and was never downloaded.
+      The repository downloads and uses moon_de440_250416.tf (dated 2025-04-16), whose
+      MD5 checksum matches the official PDS4 XML manifest byte-for-byte.
+    verified: true
+
+  - id: naif-readmes-and-checksums
+    name: NAIF Kernel Readmes and Checksums
+    provider: NASA / NAIF
+    url: https://naif.jpl.nasa.gov/pub/naif/generic_kernels/
+    local_path: kernels/
+    files:
+      - aareadme_pck.txt (14,188 bytes, sha256=edc4fb94a9db7b295e21de9a542daf644db7b27dea83b135574374063d4099da)
+      - aa_checksums.txt (559 bytes, sha256=3c618bed7d51a48ee059269097eeeab1f69f3b2641ec2aeb96132757418c845b)
+      - aa_summaries.txt (12,911 bytes, sha256=2b34f045b63731a6a315a83b1e2f240dd208a4b5a19ee3419be0573485c15f87)
+      - de440_tech-comments.txt (59,339 bytes, sha256=451a4aaa7a85ce9890bdb8a2275434fd07ec21d7fd31494f1fbe8422f368ba10)
+    use: Documentation and integrity verification of SPICE kernels
+    verified: true
+
+  # ── LOLA South Pole Terrain Rasters (Tier 1 B & Extra) ─────────────────────
+
+  - id: lola-80s-40m-jp2
+    name: LOLA Lunar DEM 80°S-to-pole, 40 m/pixel (JP2)
+    provider: MIT / NASA GSFC (PDS open data)
+    url: https://imbrium.mit.edu/DATA/LOLA_GDR/POLAR/JP2/LDEM_80S_40M.JP2
+    label_url: https://imbrium.mit.edu/DATA/LOLA_GDR/POLAR/JP2/LDEM_80S_40M_JP2.LBL
+    aux_url: https://imbrium.mit.edu/DATA/LOLA_GDR/POLAR/JP2/LDEM_80S_40M_AUX.XML
+    local_path: terrain/LDEM_80S_40M.JP2
+    format: JPEG2000 raster (polar stereographic, R=1737400 m, lat_ts=-90)
+    size_bytes: 91722831
+    sha256: 7413280e83e52af1ee68278b7d1b52b5c8ca460c12f27873159dab155b8e7550
+    label_size_bytes: 6359
+    label_sha256: 56a720b79210d15c1225e0052d82afbf5086068db9bbc212da913685ca0c6fa1
+    dimensions_pixels: "15200 x 15200"
+    resolution_m_per_px: 40
+    scaling_factor: 0.5
+    offset_m: 1737400.0
+    coverage_spatial: "80°S to −90°"
+    elevation_tested:
+      im1_at_80_13S_1_44E: "+2598.0 m relative (total radius 1,739,998.0 m) at pixel (7788, 102)"
+      im2_at_84_7906S_29_1957E: "+5322.0 m relative (total radius 1,742,722.0 m) at pixel (9528, 4150)"
+    use: Terrain-aware horizon profiles for south-polar landing sites
+    verified: true
+
+  - id: lola-80s-20m-jp2
+    name: LOLA Lunar DEM 80°S-to-pole, 20 m/pixel (JP2)
+    provider: MIT / NASA GSFC (PDS open data)
+    url: https://imbrium.mit.edu/DATA/LOLA_GDR/POLAR/JP2/LDEM_80S_20M.JP2
+    label_url: https://imbrium.mit.edu/DATA/LOLA_GDR/POLAR/JP2/LDEM_80S_20M_JP2.LBL
+    aux_url: https://imbrium.mit.edu/DATA/LOLA_GDR/POLAR/JP2/LDEM_80S_20M_AUX.XML
+    local_path: terrain/LDEM_80S_20M.JP2
+    format: JPEG2000 raster
+    size_bytes: 267689172
+    sha256: a38177093626d85ab6d38ffbd48bba6ac6842d5efee610aebc41cd9c54438dc6
+    label_size_bytes: 6362
+    label_sha256: 48d80b4e0fd6dac9a5224f5e49904fa2c223119899cec1d19d8dd29f968a92ce
+    dimensions_pixels: "30400 x 30400"
+    resolution_m_per_px: 20
+    scaling_factor: 0.5
+    offset_m: 1737400.0
+    coverage_spatial: "80°S to −90°"
+    elevation_tested:
+      im1_at_80_13S_1_44E: "+2597.5 m relative (total radius 1,739,997.5 m) at pixel (15577, 203)"
+      im2_at_84_7906S_29_1957E: "+5322.5 m relative (total radius 1,742,722.5 m) at pixel (19055, 8300)"
+    use: High-resolution terrain horizon analysis for polar sites
+    verified: true
+
+  - id: lola-85s-40m-jp2
+    name: LOLA Lunar DEM 85°S-to-pole, 40 m/pixel (JP2)
+    provider: MIT / NASA GSFC (PDS open data)
+    url: https://imbrium.mit.edu/DATA/LOLA_GDR/POLAR/JP2/LDEM_85S_40M.JP2
+    label_url: https://imbrium.mit.edu/DATA/LOLA_GDR/POLAR/JP2/LDEM_85S_40M_JP2.LBL
+    aux_url: https://imbrium.mit.edu/DATA/LOLA_GDR/POLAR/JP2/LDEM_85S_40M_AUX.XML
+    local_path: terrain/LDEM_85S_40M.JP2
+    format: JPEG2000 raster
+    size_bytes: 24960972
+    sha256: 9b5e29faf57883be1e3ba1a7fc536f08ff628662184097630b19759a35ffec18
+    label_size_bytes: 6354
+    label_sha256: 91cd050ebaf588b8ec67819564c0ab15a5779926661b73ad2b32d288887cfb17
+    dimensions_pixels: "7584 x 7584"
+    resolution_m_per_px: 40
+    scaling_factor: 0.5
+    offset_m: 1737400.0
+    coverage_spatial: "85°S to −90°"
+    use: Fast polar DEM for deep south-polar landing sites
+    verified: true
+
+  - id: lola-85s-20m-jp2
+    name: LOLA Lunar DEM 85°S-to-pole, 20 m/pixel (JP2)
+    provider: MIT / NASA GSFC (PDS open data)
+    url: https://imbrium.mit.edu/DATA/LOLA_GDR/POLAR/JP2/LDEM_85S_20M.JP2
+    label_url: https://imbrium.mit.edu/DATA/LOLA_GDR/POLAR/JP2/LDEM_85S_20M_JP2.LBL
+    aux_url: https://imbrium.mit.edu/DATA/LOLA_GDR/POLAR/JP2/LDEM_85S_20M_AUX.XML
+    local_path: terrain/LDEM_85S_20M.JP2
+    format: JPEG2000 raster
+    size_bytes: 79150148
+    sha256: 66b8cafd638f7b710c11bfe962f35a5be8bffe744991e1eea848c24eb8dabc7c
+    label_size_bytes: 6359
+    label_sha256: 61b5c47cf1a83160945cb264f9e96bd89b2a88c9d892e4c9fa73bf6f80d750b6
+    dimensions_pixels: "15168 x 15168"
+    resolution_m_per_px: 20
+    scaling_factor: 0.5
+    offset_m: 1737400.0
+    coverage_spatial: "85°S to −90°"
+    use: High-resolution DEM for deep south pole
+    verified: true
+
+  - id: lola-875s-20m-jp2
+    name: LOLA Lunar DEM 87.5°S-to-pole, 20 m/pixel (JP2)
+    provider: MIT / NASA GSFC (PDS open data)
+    url: https://imbrium.mit.edu/DATA/LOLA_GDR/POLAR/JP2/LDEM_875S_20M.JP2
+    label_url: https://imbrium.mit.edu/DATA/LOLA_GDR/POLAR/JP2/LDEM_875S_20M_JP2.LBL
+    aux_url: https://imbrium.mit.edu/DATA/LOLA_GDR/POLAR/JP2/LDEM_875S_20M_AUX.XML
+    local_path: terrain/LDEM_875S_20M.JP2
+    format: JPEG2000 raster
+    size_bytes: 21462406
+    sha256: fff7c2017a192788066a0867d78fd1ccf783216e26974b5e65287669aa472bac
+    label_size_bytes: 6360
+    label_sha256: 9318f41503c7d02251ed643e6dd74b737d76378be49cd492c3abb9e05d431aaa
+    dimensions_pixels: "7584 x 7584"
+    resolution_m_per_px: 20
+    scaling_factor: 0.5
+    offset_m: 1737400.0
+    coverage_spatial: "87.5°S to −90° (Shackleton crater region)"
+    use: Highest-detail elevation around Shackleton and south pole
+    verified: true
+
+  - id: lola-75s-30m-jp2
+    name: LOLA Lunar DEM 75°S-to-pole, 30 m/pixel (JP2)
+    provider: MIT / NASA GSFC (PDS open data)
+    url: https://imbrium.mit.edu/DATA/LOLA_GDR/POLAR/JP2/LDEM_75S_30M.JP2
+    label_url: https://imbrium.mit.edu/DATA/LOLA_GDR/POLAR/JP2/LDEM_75S_30M_JP2.LBL
+    aux_url: https://imbrium.mit.edu/DATA/LOLA_GDR/POLAR/JP2/LDEM_75S_30M_AUX.XML
+    local_path: terrain/LDEM_75S_30M.JP2
+    format: JPEG2000 raster
+    size_bytes: 299122509
+    sha256: 7a1750ddd57d098179076f83869446a2716d269a01e31afeff84dcb80d40e400
+    label_size_bytes: 6362
+    label_sha256: 4d9f6ca86112e855f96191e8d459cfdfd3f7bb152ecefefebff8e071c018da5c
+    dimensions_pixels: "30496 x 30496"
+    resolution_m_per_px: 30
+    scaling_factor: 0.5
+    offset_m: 1737400.0
+    coverage_spatial: "75°S to −90°"
+    use: Extended regional elevation covering outer candidate sites and Artemis exploration zone
+    verified: true
+
+  # ── JPL Horizons Fixtures (Tier 1 C) ──────────────────────────────────────
+
+  - id: jpl-horizons-api
+    name: JPL Horizons Web Service Fixtures
+    provider: NASA / JPL Solar System Dynamics
+    url: https://ssd.jpl.nasa.gov/api/horizons.api
+    local_path: science/fixtures/horizons/*.json
+    format: JSON (raw Horizons API output + query parameter records)
+    use: Independent ground truth for topocentric Az/El validation (100% of rows tested)
+    fixtures:
+      - im-1 (2024-02-22 to 2024-03-22, 697 rows, Sun & Earth)
+      - blue-ghost-1 (2025-03-02 to 2025-03-30, 673 rows, Sun & Earth)
+      - im-2 (2025-03-02 to 2025-03-30, 673 rows, Sun & Earth + query params)
+      - shackleton-rim (2025-03-02 to 2025-03-30, 673 rows, Sun & Earth at Peak Near Shackleton -89.68S, 129.0E)
+      - apollo11 (1969-07-19 to 1969-07-21, 49 rows, Sun & Earth + query params)
+      - farside-0N-180E (2025-03-02 to 2025-03-30, 673 rows, Sun & Earth + query params; Earth el < -80°)
+      - nearlimb-0N-90E (2025-03-02 to 2025-03-30, 673 rows, Sun & Earth + query params; Earth el ~0°)
+    verified: true
+
+  # ── Mission Reference Documents (Tier 2 E) ────────────────────────────────
+
+  - id: doc-im1-press-kit
+    name: NASA CLPS IM-1 Press Kit
+    provider: NASA
+    url: https://www.nasa.gov/wp-content/uploads/2024/01/np-2023-12-016-jsc-clps-im-press-kit-web-508.pdf
+    local_path: docs/sources/im1_press_kit.pdf
+    size_bytes: 8481852
+    sha256: 4ec91714178a9c5f33d35d0b9433875219b72750a8801784113fd215bf3ff88d
+    download_date: "2026-10-25"
+    use: Pages 2-3 describe IM-1 Malapert A landing site and 6 NASA instruments
+    verified: true
+
+  - id: doc-im2-press-kit
+    name: NASA CLPS IM-2 Press Kit
+    provider: NASA
+    url: https://nasa.gov/wp-content/uploads/2025/02/np-2025-02-005-jsc-clps-intuitive-machines-press-kit-508-2-25-25.pdf
+    local_path: docs/sources/im2_press_kit.pdf
+    size_bytes: 4991261
+    sha256: 5b57f68e880635c0edb19d907e159725eb17fd1c45e2cca25fbe0cbc5dabbdef
+    download_date: "2026-10-25"
+    use: Pages 3-4 describe IM-2 Mons Mouton landing site and PRIME-1 drill
+    verified: true
+
+  - id: doc-blue-ghost-1-press-kit
+    name: NASA CLPS Firefly Blue Ghost Mission 1 Press Kit
+    provider: NASA
+    url: https://www.nasa.gov/wp-content/uploads/2025/01/np-2025-01-001-jsc-clps-firefly-press-kit-screen-508-1-10-25-final.pdf
+    local_path: docs/sources/blue_ghost_1_press_kit.pdf
+    size_bytes: 11086708
+    sha256: e667756f2cee5b45007015f5be9e3a3a4a62a77ea75425272bdded9c43bc9454
+    download_date: "2026-10-25"
+    use: Pages 3-4 describe Blue Ghost 1 Mare Crisium / Mons Latreille site and 10 instruments
+    verified: true
+
+  - id: doc-peregrine-griffin-press-kit
+    name: NASA CLPS Astrobotic Peregrine / Griffin Press Kit
+    provider: NASA
+    url: https://www.nasa.gov/wp-content/uploads/2023/12/np-2023-12-017-jsc-clps-astrobotic-press-kit-update-508.pdf
+    local_path: docs/sources/peregrine_griffin_press_kit.pdf
+    size_bytes: 3944413
+    sha256: c79ced140b1cf1102dbb295e10d9966f78b8b0ea82c10fc300984c451b92ba24
+    download_date: "2026-10-25"
+    use: Pages 2, 4, 18 describe Peregrine Sinus Viscositatis and Griffin Nobile / Mons Mouton context
+    verified: true
+
+  # ── Scientific Constants (Tier 2 F) ────────────────────────────────────────
+
+  - id: physical-constants
+    name: AXON Scientific Constants
+    provider: IAU 2015, NASA SORCE/TIM, NAIF PCK-00011, JPL Horizons DE441
+    local_path: science/lunarsight_core/constants.py
+    values:
+      solar_constant_w_m2: 1361.0   # SORCE/TIM composite; IAU 2015 nominal
+      solar_constant_horizons_banner_w_m2: 1367.6  # Historical DE441 text
+      sun_radius_km: 695700.0       # IAU 2015 nominal
+      sun_angular_radius_deg: 0.26645  # atan(R_sun / 1AU)
+      earth_radius_equatorial_km: 6378.137  # IAU 2015 / WGS-84
+      earth_angular_radius_deg: 0.9490  # atan(R_earth / 384400 km)
+      moon_radius_km: 1737.4        # IAU / NAIF pck00011.tpc
+    verified: true
+
+  # ── Optional Extras (Tier 3) ──────────────────────────────────────────────
+
+  - id: lola-global-64ppd-jp2
+    name: LOLA Global Lunar DEM (64 pixels/degree cylindrical)
+    provider: MIT / NASA GSFC (PDS open data)
+    url: https://imbrium.mit.edu/DATA/LOLA_GDR/CYLINDRICAL/JP2/LDEM_64.JP2
+    label_url: https://imbrium.mit.edu/DATA/LOLA_GDR/CYLINDRICAL/JP2/LDEM_64_JP2.LBL
+    aux_url: https://imbrium.mit.edu/DATA/LOLA_GDR/CYLINDRICAL/JP2/LDEM_64_AUX.XML
+    local_path: terrain/global/LDEM_64.JP2
+    format: JPEG2000 raster (equirectangular / simple cylindrical)
+    size_bytes: 211190204
+    sha256: 5bcdc1add91447d4386f0ccab17da2f6dd0ae8e116fbd60f56aa31d74248c096
+    dimensions_pixels: "23040 x 11520"
+    resolution_ppd: 64
+    coverage_spatial: "Global lunar surface (lon -180..+180, lat -90..+90)"
+    use: Elevation for non-polar missions (Blue Ghost 1 in Mare Crisium, IM-3 at Reiner Gamma)
+    verified: true
+
+  - id: lola-polar-psr-map-jp2
+    name: LOLA South Pole Permanently Shadowed Regions Binary Map (85°S-to-pole, 60 m/px)
+    provider: MIT / NASA GSFC (PDS open data)
+    url: https://imbrium.mit.edu/EXTRAS/ILLUMINATION/JP2/LPSR_85S_060M_201608.JP2
+    label_url: https://imbrium.mit.edu/EXTRAS/ILLUMINATION/JP2/LPSR_85S_060M_201608_JP2.LBL
+    aux_url: https://imbrium.mit.edu/EXTRAS/ILLUMINATION/JP2/LPSR_85S_060M_201608_AUX.XML
+    local_path: terrain/illumination/LPSR_85S_060M_201608.JP2
+    format: JPEG2000 raster (polar stereographic)
+    size_bytes: 5574318
+    sha256: 3a39a4c151eb67278bf46383b77bbd4751db0de78bfc5b0ba87a79f37c220e31
+    dimensions_pixels: "5058 x 5058"
+    product_definition: "Permanently Shadowed Region (PSR) binary mask (1=permanent shadow, 0=illuminated/not permanent shadow) per LPSR label and Mazarico et al. 2011; NOT a solar illumination map."
+    use: Ground truth verification of Permanently Shadowed Regions
+    verified: true
+
+  - id: pgda-psr-table-csv
+    name: LOLA Permanently Shadowed Regions Table (1 km² resolution)
+    provider: NASA GSFC Planetary Geodynamics Data Archive (PGDA Product 90)
+    url: https://pgda.gsfc.nasa.gov/data/LOLA_20mpp/LPSR_80S_20MPP_ADJ_1km2.CSV
+    local_path: terrain/pgda/LPSR_80S_20MPP_ADJ_1km2.CSV
+    format: CSV
+    size_bytes: 29642968
+    sha256: 5d914b17887b385ad53c004751dad0235d8739959f3cf9063573575832c942d5
+    status: completed_download
+    use: Permanently shadowed regions boundary and area catalog
+    verified: true
+
+  - id: pgda-hillshade-tif
+    name: LOLA 80S 80 mpp Adjusted Hillshade GeoTIFF
+    provider: NASA GSFC Planetary Geodynamics Data Archive (PGDA Product 90)
+    url: https://pgda.gsfc.nasa.gov/data/LOLA_20mpp/LDEM_80S_80MPP_ADJ_HILL.TIF
+    local_path: terrain/pgda/LDEM_80S_80MPP_ADJ_HILL.TIF
+    format: GeoTIFF
+    size_bytes: 88474342
+    sha256: f669073ea6bf05ae97bce897e5e3c08f2ee9097a663c8cd3a758db296f373ae2
+    status: completed_download
+    use: Shaded relief backdrop for south polar visualization
+    verified: true
+
+  - id: pgda-dem-80mpp-tif
+    name: LOLA 80S 80 mpp Adjusted DEM GeoTIFF
+    provider: NASA GSFC Planetary Geodynamics Data Archive (PGDA Product 90)
+    url: https://pgda.gsfc.nasa.gov/data/LOLA_20mpp/LDEM_80S_80MPP_ADJ.TIF
+    local_path: terrain/pgda/LDEM_80S_80MPP_ADJ.TIF
+    format: GeoTIFF
+    size_bytes: 189158392
+    sha256: 82030dcbdd7c4bb0c7d858e9b4b293b9f2cda5a543ba31ec0f42784bd6beee5a
+    status: completed_download
+    use: Adjusted south polar elevation GeoTIFF
+    verified: true
+
+  - id: pgda-slope-80mpp-tif
+    name: LOLA 80S 80 mpp Adjusted Slope GeoTIFF
+    provider: NASA GSFC Planetary Geodynamics Data Archive (PGDA Product 90)
+    url: https://pgda.gsfc.nasa.gov/data/LOLA_20mpp/LDSM_80S_80MPP_ADJ.TIF
+    local_path: terrain/pgda/LDSM_80S_80MPP_ADJ.TIF
+    format: GeoTIFF
+    size_bytes: 241594035
+    sha256: d1270c4a69d01a8e4eb5503bd25713f0b2251dbb4ffee6c3161ef7a792c8f059
+    status: completed_download
+    use: Slope map for lander tilt hazard evaluation
+    verified: true

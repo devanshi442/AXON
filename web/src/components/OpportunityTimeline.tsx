@@ -119,6 +119,11 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
               <div className="text-3xs text-space-400 mt-0.5">
                 {oppData.sun.windows.length} continuous interval(s)
               </div>
+              {oppData.sun.longest_dark_gap_hours != null && (
+                <div className="mt-1.5 px-2 py-1 bg-rose-950/30 border border-rose-800/40 rounded text-3xs text-rose-300 font-mono">
+                  Longest dark gap: {oppData.sun.longest_dark_gap_hours} h
+                </div>
+              )}
             </div>
 
             <div className="p-3 bg-space-900 rounded-xl border border-earth-500/30">
@@ -134,6 +139,11 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
               <div className="text-3xs text-space-400 mt-0.5">
                 {oppData.earth.windows.length} continuous interval(s)
               </div>
+              {oppData.earth.longest_dark_gap_hours != null && (
+                <div className="mt-1.5 px-2 py-1 bg-rose-950/30 border border-rose-800/40 rounded text-3xs text-rose-300 font-mono">
+                  Longest blackout: {oppData.earth.longest_dark_gap_hours} h
+                </div>
+              )}
             </div>
 
             <div className="p-3 bg-space-900 rounded-xl border border-emerald-500/30">
@@ -149,6 +159,11 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
               <div className="text-3xs text-space-400 mt-0.5">
                 {oppData.joint.windows.length} joint window(s)
               </div>
+              {oppData.joint.longest_dark_gap_hours != null && (
+                <div className="mt-1.5 px-2 py-1 bg-rose-950/30 border border-rose-800/40 rounded text-3xs text-rose-300 font-mono">
+                  Longest joint blackout: {oppData.joint.longest_dark_gap_hours} h
+                </div>
+              )}
             </div>
           </div>
 

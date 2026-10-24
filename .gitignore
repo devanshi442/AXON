@@ -1,8 +1,12 @@
-# ── NAIF SPICE kernels (large binary; download with pipeline/fetch_kernels.py) ──
-kernels/
+# ── NAIF SPICE kernels (binary kernels tracked via Git LFS in .gitattributes) ──
+!kernels/
+!kernels/**
 
 # ── Terrain DEMs (large binary; download with pipeline/fetch_terrain.py) ──
 terrain/
+
+# ── Mission reference documents (PDFs) ──
+docs/sources/*.pdf
 
 # ── Python ──
 __pycache__/

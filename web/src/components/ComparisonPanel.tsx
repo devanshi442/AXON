@@ -50,11 +50,23 @@ export default function ComparisonPanel({ sites }: ComparisonPanelProps) {
   const diffJointHours =
     oppB && oppA ? oppB.joint.total_hours - oppA.joint.total_hours : null
 
+  const diffSunDarkGap =
+    oppB && oppA
+      ? (oppB.sun.longest_dark_gap_hours ?? 0) - (oppA.sun.longest_dark_gap_hours ?? 0)
+      : null
+
+  const diffEarthDarkGap =
+    oppB && oppA
+      ? (oppB.earth.longest_dark_gap_hours ?? 0) - (oppA.earth.longest_dark_gap_hours ?? 0)
+      : null
+
   const fmtDiff = (val: number | null, unit: string = '') => {
     if (val === null) return 'N/A'
     const sign = val > 0 ? '+' : ''
     return `${sign}${val.toFixed(1)}${unit}`
   }
+
+  const fmtHrs = (val: number | null | undefined) => (val == null ? 'N/A' : `${val} h`)
 
   return (
     <div className="bg-space-800 border border-space-700 rounded-2xl p-4 flex flex-col gap-4 shadow-card">
@@ -64,6 +76,7 @@ export default function ComparisonPanel({ sites }: ComparisonPanelProps) {
         </h2>
         <p className="text-2xs text-space-400 mt-0.5">
           Direct trade-off analysis of geometry, illumination, and Earth line-of-sight metrics.
+          30-day window from selected date · Flat idealized horizon (0°).
         </p>
       </div>
 
@@ -150,6 +163,41 @@ export default function ComparisonPanel({ sites }: ComparisonPanelProps) {
               </td>
             </tr>
 
+            {/* Longest Sun Window */}
+            <tr>
+              <td className="py-2.5 px-3 text-space-300 font-sans font-medium">
+                30-Day Longest Continuous Sun Window
+              </td>
+              <td className="py-2.5 px-3 text-space-200">
+                {fmtHrs(oppA?.sun.longest_window_hours)}
+              </td>
+              <td className="py-2.5 px-3 text-space-200">
+                {fmtHrs(oppB?.sun.longest_window_hours)}
+              </td>
+              <td className="py-2.5 px-3 text-right font-bold text-space-200">
+                {fmtDiff(
+                  oppA && oppB ? (oppB.sun.longest_window_hours ?? 0) - (oppA.sun.longest_window_hours ?? 0) : null,
+                  'h'
+                )}
+              </td>
+            </tr>
+
+            {/* Longest Dark Gap (battery sizing metric) */}
+            <tr className="bg-rose-950/10">
+              <td className="py-2.5 px-3 text-rose-300 font-sans font-medium">
+                30-Day Longest Dark Gap ⚡ Battery-critical
+              </td>
+              <td className="py-2.5 px-3 text-rose-300">
+                {fmtHrs(oppA?.sun.longest_dark_gap_hours)}
+              </td>
+              <td className="py-2.5 px-3 text-rose-300">
+                {fmtHrs(oppB?.sun.longest_dark_gap_hours)}
+              </td>
+              <td className="py-2.5 px-3 text-right font-bold text-space-200">
+                {fmtDiff(diffSunDarkGap, 'h')}
+              </td>
+            </tr>
+
             {/* 30-Day Earth Visibility */}
             <tr>
               <td className="py-2.5 px-3 text-space-300 font-sans font-medium">
@@ -163,6 +211,22 @@ export default function ComparisonPanel({ sites }: ComparisonPanelProps) {
               </td>
               <td className="py-2.5 px-3 text-right font-bold text-space-200">
                 {fmtDiff(diffEarthHours, 'h')}
+              </td>
+            </tr>
+
+            {/* Longest Earth Outage */}
+            <tr className="bg-rose-950/10">
+              <td className="py-2.5 px-3 text-rose-300 font-sans font-medium">
+                30-Day Longest DTE Blackout ⚡ Comms-critical
+              </td>
+              <td className="py-2.5 px-3 text-rose-300">
+                {fmtHrs(oppA?.earth.longest_dark_gap_hours)}
+              </td>
+              <td className="py-2.5 px-3 text-rose-300">
+                {fmtHrs(oppB?.earth.longest_dark_gap_hours)}
+              </td>
+              <td className="py-2.5 px-3 text-right font-bold text-space-200">
+                {fmtDiff(diffEarthDarkGap, 'h')}
               </td>
             </tr>
 
@@ -186,8 +250,12 @@ export default function ComparisonPanel({ sites }: ComparisonPanelProps) {
       </div>
 
       <div className="p-3 bg-space-900/60 rounded-xl border border-space-700/60 text-3xs text-space-400">
-        <strong className="text-space-200">Comparison Context:</strong> Near-side mare sites (like Blue Ghost in Mare Crisium) enjoy steady Earth line-of-sight and standard ~14-day diurnal illumination cycles. South polar sites (like IM-1 near Malapert A and IM-2 at Mons Mouton) experience grazing Sun angles and libration wobble that dips Earth near the local horizon.
+        <strong className="text-space-200">Comparison Context:</strong> Near-side mare sites (like Blue Ghost in Mare Crisium) enjoy steady Earth line-of-sight and standard ~14-day diurnal illumination cycles. South polar sites (like IM-1 near Malapert A and IM-2 at Mons Mouton) experience grazing Sun angles and libration wobble that dips Earth near the local horizon. The <span className="text-rose-300 font-medium">dark gap</span> shows the longest period a lander must survive on battery alone — a key sizing constraint for polar missions.
+      </div>
+      <div className="p-2 bg-amber-950/20 border border-amber-800/40 rounded-xl text-3xs text-amber-300">
+        ⚠️ All values use a flat idealized horizon (0°). Local terrain at south polar sites will reduce Sun and Earth windows. Geometric Earth visibility ≠ communications link budget.
       </div>
     </div>
   )
 }
+

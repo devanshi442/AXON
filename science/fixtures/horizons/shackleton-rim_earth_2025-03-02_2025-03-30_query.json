@@ -1,0 +1,26 @@
+{
+  "name": "shackleton-rim",
+  "body": "earth",
+  "lat": -89.68,
+  "east_lon": 129.0,
+  "start": "2025-03-02",
+  "stop": "2025-03-30",
+  "note": "Peak Near Shackleton (Artemis III region centroid: -89.68S, 129.0E)",
+  "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27399%27&MAKE_EPHEM=YES&EPHEM_TYPE=OBSERVER&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27129.0%2C-89.68%2C0%27&START_TIME=%272025-03-02%27&STOP_TIME=%272025-03-30%27&STEP_SIZE=%2760+min%27&QUANTITIES=%274%27&ANG_FORMAT=%27DEG%27&APPARENT=%27AIRLESS%27&CSV_FORMAT=%27YES%27",
+  "params": {
+    "format": "json",
+    "COMMAND": "'399'",
+    "MAKE_EPHEM": "YES",
+    "EPHEM_TYPE": "OBSERVER",
+    "CENTER": "'coord@301'",
+    "COORD_TYPE": "'GEODETIC'",
+    "SITE_COORD": "'129.0,-89.68,0'",
+    "START_TIME": "'2025-03-02'",
+    "STOP_TIME": "'2025-03-30'",
+    "STEP_SIZE": "'60 min'",
+    "QUANTITIES": "'4'",
+    "ANG_FORMAT": "'DEG'",
+    "APPARENT": "'AIRLESS'",
+    "CSV_FORMAT": "'YES'"
+  }
+}
