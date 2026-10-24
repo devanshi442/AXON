@@ -1,0 +1,288 @@
+import type { ChangeEvent } from 'react'
+import type { SelectableSite } from '../types/mission'
+import {
+  useScenarioStore,
+  getElevationAtTime,
+  SUN_UPPER_LIMB_DEG,
+} from '../stores/scenarioStore'
+
+interface ScenarioPanelProps {
+  type: 'A' | 'B'
+  sites: SelectableSite[]
+}
+
+export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
+  const {
+    scenarioAId,
+    scenarioBId,
+    utcA,
+    utcB,
+    setScenarioA,
+    setScenarioB,
+    setUtcA,
+    setUtcB,
+    timeseriesCache,
+    loading,
+    error,
+  } = useScenarioStore()
+
+  const siteId = type === 'A' ? scenarioAId : scenarioBId
+  const utc = type === 'A' ? utcA : utcB
+  const setSite = type === 'A' ? setScenarioA : setScenarioB
+  const setUtc = type === 'A' ? setUtcA : setUtcB
+
+  const selectedSite = sites.find((s) => s.id === siteId)
+  const ts = timeseriesCache[siteId]
+  const isLoading = loading[siteId]
+  const hasError = error[siteId]
+
+  const elevationData = getElevationAtTime(ts, utc)
+
+  // Step UTC by delta hours
+  const stepHours = (delta: number) => {
+    const d = new Date(utc)
+    d.setUTCHours(d.getUTCHours() + delta)
+    setUtc(d.toISOString())
+  }
+
+  // Format date for datetime-local input (YYYY-MM-DDTHH:mm)
+  const dtLocalValue = utc.slice(0, 16)
+
+  const handleDateChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.value) return
+    setUtc(new Date(e.target.value + ':00Z').toISOString())
+  }
+
+  const isSunUp =
+    elevationData.sunElevation !== null
+      ? elevationData.sunElevation + SUN_UPPER_LIMB_DEG >= 0
+      : false
+
+  const isEarthUp =
+    elevationData.earthElevation !== null
+      ? elevationData.earthElevation >= 0
+      : false
+
+  const isScenarioA = type === 'A'
+  const accentBorder = isScenarioA ? 'border-sun-500/50' : 'border-earth-500/50'
+  const badgeBg = isScenarioA ? 'bg-sun-500/20 text-sun-300' : 'bg-earth-500/20 text-earth-300'
+
+  return (
+    <div className={`p-4 bg-space-800 border ${accentBorder} rounded-2xl flex flex-col gap-4 shadow-card`}>
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className={`px-2.5 py-0.5 rounded-lg text-xs font-bold uppercase tracking-wider ${badgeBg}`}>
+            Scenario {type}
+          </span>
+          <span className="text-xs text-space-400 font-medium">
+            {isScenarioA ? 'Primary Site Evaluation' : 'Secondary Comparison Site'}
+          </span>
+        </div>
+        {selectedSite?.lat !== null && (
+          <span className="text-3xs font-mono text-space-400">
+            {selectedSite?.lat}° Lat · {selectedSite?.lon}° Lon
+          </span>
+        )}
+      </div>
+
+      {/* Site Selector & UTC Time Control */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {/* Site dropdown */}
+        <div>
+          <label className="block text-3xs uppercase tracking-wider text-space-400 font-medium mb-1">
+            Site / Mission
+          </label>
+          <select
+            value={siteId}
+            onChange={(e) => setSite(e.target.value)}
+            className="w-full px-3 py-1.5 bg-space-900 border border-space-600 rounded-lg text-xs text-space-100 focus:outline-none focus:border-earth-500 transition-colors"
+          >
+            <optgroup label="CLPS Missions with Coordinates">
+              {sites
+                .filter((s) => s.isMission && s.lat !== null)
+                .map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.name} ({s.lat}°, {s.lon}°)
+                  </option>
+                ))}
+            </optgroup>
+            <optgroup label="Reference Lunar Anchors">
+              {sites
+                .filter((s) => !s.isMission && s.lat !== null)
+                .map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.name} ({s.lat}°, {s.lon}°)
+                  </option>
+                ))}
+            </optgroup>
+          </select>
+        </div>
+
+        {/* UTC Time input */}
+        <div>
+          <label className="block text-3xs uppercase tracking-wider text-space-400 font-medium mb-1">
+            Date & Time (UTC)
+          </label>
+          <div className="flex items-center gap-1.5">
+            <input
+              type="datetime-local"
+              value={dtLocalValue}
+              onChange={handleDateChange}
+              className="flex-1 px-2.5 py-1.5 bg-space-900 border border-space-600 rounded-lg text-xs text-space-100 font-mono focus:outline-none focus:border-earth-500"
+            />
+            <div className="flex gap-1 text-3xs">
+              <button
+                onClick={() => stepHours(-24)}
+                className="px-1.5 py-1 bg-space-700 hover:bg-space-600 text-space-200 rounded font-mono"
+                title="Back 1 day"
+              >
+                -1d
+              </button>
+              <button
+                onClick={() => stepHours(-1)}
+                className="px-1.5 py-1 bg-space-700 hover:bg-space-600 text-space-200 rounded font-mono"
+                title="Back 1 hour"
+              >
+                -1h
+              </button>
+              <button
+                onClick={() => stepHours(1)}
+                className="px-1.5 py-1 bg-space-700 hover:bg-space-600 text-space-200 rounded font-mono"
+                title="Forward 1 hour"
+              >
+                +1h
+              </button>
+              <button
+                onClick={() => stepHours(24)}
+                className="px-1.5 py-1 bg-space-700 hover:bg-space-600 text-space-200 rounded font-mono"
+                title="Forward 1 day"
+              >
+                +1d
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Geometry Status & Readouts */}
+      {isLoading ? (
+        <div className="py-6 text-center text-xs text-space-400 animate-pulse">
+          Loading precomputed ephemeris data...
+        </div>
+      ) : hasError ? (
+        <div className="p-3 bg-rose-950/40 border border-rose-800 rounded-xl text-xs text-rose-300">
+          {hasError}
+        </div>
+      ) : elevationData.isOutRange ? (
+        <div className="p-3 bg-amber-950/40 border border-amber-800 rounded-xl text-xs text-amber-300">
+          Selected time is outside precomputed coverage (2024–2028). Please choose a date within coverage.
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 gap-3">
+          {/* Sun Elevation Card */}
+          <div className="p-3 rounded-xl bg-space-900/90 border border-space-700 flex flex-col justify-between">
+            <div className="flex items-center justify-between">
+              <span className="text-3xs uppercase tracking-wider text-sun-400 font-semibold flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-sun-500"></span>
+                Sun (Sol)
+              </span>
+              <span
+                className={`px-1.5 py-0.2 rounded text-3xs font-medium ${
+                  isSunUp
+                    ? 'bg-amber-950 text-amber-300 border border-amber-800'
+                    : 'bg-space-800 text-space-400 border border-space-700'
+                }`}
+              >
+                {isSunUp ? 'Above Horizon' : 'Below Horizon'}
+              </span>
+            </div>
+            <div className="my-2">
+              <div className="text-2xl font-bold font-mono text-sun-300">
+                {elevationData.sunElevation !== null
+                  ? `${elevationData.sunElevation >= 0 ? '+' : ''}${elevationData.sunElevation.toFixed(2)}°`
+                  : 'N/A'}
+              </div>
+              <div className="text-3xs text-space-400 mt-0.5">
+                Upper Limb: {elevationData.sunElevation !== null ? `${(elevationData.sunElevation + SUN_UPPER_LIMB_DEG).toFixed(2)}°` : 'N/A'}
+              </div>
+            </div>
+            <div className="text-3xs font-mono text-space-400">
+              Azimuth: {elevationData.sunAzimuth !== null ? `${elevationData.sunAzimuth.toFixed(1)}°` : 'N/A'}
+            </div>
+          </div>
+
+          {/* Earth Elevation Card */}
+          <div className="p-3 rounded-xl bg-space-900/90 border border-space-700 flex flex-col justify-between">
+            <div className="flex items-center justify-between">
+              <span className="text-3xs uppercase tracking-wider text-earth-400 font-semibold flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-earth-500"></span>
+                Earth (Terra)
+              </span>
+              <span
+                className={`px-1.5 py-0.2 rounded text-3xs font-medium ${
+                  isEarthUp
+                    ? 'bg-cyan-950 text-cyan-300 border border-cyan-800'
+                    : 'bg-space-800 text-space-400 border border-space-700'
+                }`}
+              >
+                {isEarthUp ? 'Visible (LOS)' : 'Occulted'}
+              </span>
+            </div>
+            <div className="my-2">
+              <div className="text-2xl font-bold font-mono text-earth-300">
+                {elevationData.earthElevation !== null
+                  ? `${elevationData.earthElevation >= 0 ? '+' : ''}${elevationData.earthElevation.toFixed(2)}°`
+                  : 'N/A'}
+              </div>
+              <div className="text-3xs text-space-400 mt-0.5">
+                Geometric Center LOS
+              </div>
+            </div>
+            <div className="text-3xs font-mono text-space-400">
+              Azimuth: {elevationData.earthAzimuth !== null ? `${elevationData.earthAzimuth.toFixed(1)}°` : 'N/A'}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Visual Horizon Diagram */}
+      <div className="p-3 bg-space-900/60 rounded-xl border border-space-700/60 text-2xs">
+        <div className="flex justify-between text-3xs text-space-400 mb-1 font-mono">
+          <span>Nadir (-90°)</span>
+          <span className="text-space-300 font-semibold">Horizon Datum (0°)</span>
+          <span>Zenith (+90°)</span>
+        </div>
+        <div className="relative w-full h-4 bg-space-950 rounded-full overflow-hidden border border-space-700">
+          {/* Horizon line at center */}
+          <div className="absolute top-0 bottom-0 left-1/2 w-0.5 bg-space-600 z-10" />
+
+          {/* Sun marker */}
+          {elevationData.sunElevation !== null && (
+            <div
+              style={{
+                left: `${Math.max(0, Math.min(100, ((elevationData.sunElevation + 90) / 180) * 100))}%`,
+              }}
+              className="absolute top-0 bottom-0 w-2.5 -translate-x-1/2 bg-sun-500 rounded-full shadow-lg"
+              title={`Sun: ${elevationData.sunElevation.toFixed(2)}°`}
+            />
+          )}
+
+          {/* Earth marker */}
+          {elevationData.earthElevation !== null && (
+            <div
+              style={{
+                left: `${Math.max(0, Math.min(100, ((elevationData.earthElevation + 90) / 180) * 100))}%`,
+              }}
+              className="absolute top-0 bottom-0 w-2.5 -translate-x-1/2 bg-earth-500 rounded-full shadow-lg"
+              title={`Earth: ${elevationData.earthElevation.toFixed(2)}°`}
+            />
+          )}
+        </div>
+        <p className="mt-2 text-3xs text-space-400 leading-relaxed">
+          * Elevation is computed from the 1737.4 km lunar sphere datum. Geometric line-of-sight does not account for local topography or communication link budgets.
+        </p>
+      </div>
+    </div>
+  )
+}

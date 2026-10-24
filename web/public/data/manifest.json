@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-10-24T12:28:48.018965+00:00",
+  "coverage": {
+    "start_utc": "2024-01-01T00:00:00",
+    "stop_utc": "2028-12-31T23:00:00",
+    "step_seconds": 3600,
+    "resolution": "hourly"
+  },
+  "conventions": {
+    "time_scale": "UTC (internal ET via NAIF LSK)",
+    "frame": "MOON_ME",
+    "abcorr": "LT+S",
+    "moon_radius_km": 1737.4,
+    "sun_angular_radius_deg": 0.267,
+    "sun_upper_limb_correction": true,
+    "horizon_mode": "idealized (flat 0\u00b0)"
+  },
+  "kernels": {
+    "naif0012.tls": "678e32bdb5a744117a467cd9601cd6b373f0e9bc9bbde1371d5eee39600a039b",
+    "pck00011.tpc": "3dff7b1dbeceaa01f25467767d3fa25816051c85d162d1edf04acb310ee28bb1",
+    "de440s.bsp": "c1c7feeab882263fc493a9d5a5b2ddd71b54826cdf65d8d17a76126b260a49f2",
+    "moon_pa_de440_200625.bpc": "60cd55aa401ea2ea97360636f567554bfe4e37bb829f901b4460a455dfaf783f",
+    "moon_de440_250416.tf": "a47c71e9c9f33796bdafb2c9d69a7ee447b6016ecad80f71cd6f3e479f9cf768"
+  },
+  "validation_status": {
+    "horizons_golden_tests": "PASSED (tolerance < 0.05\u00b0, actual < 0.0001\u00b0)",
+    "far_side_isolation": "VERIFIED (earth_el < -50\u00b0 across 2026)"
+  },
+  "sites": {
+    "im-1": {
+      "name": "IM-1 (Odysseus)",
+      "lat": -80.13,
+      "lon": 1.44,
+      "samples": 43848,
+      "sun_hours": 14880.0,
+      "earth_hours": 32292.0
+    },
+    "blue-ghost-m1": {
+      "name": "Blue Ghost Mission 1",
+      "lat": 18.56,
+      "lon": 61.81,
+      "samples": 43848,
+      "sun_hours": 20739.0,
+      "earth_hours": 43848.0
+    },
+    "im-2": {
+      "name": "IM-2 (Athena)",
+      "lat": -84.7906,
+      "lon": 29.1957,
+      "samples": 43848,
+      "sun_hours": 5868.0,
+      "earth_hours": 20164.0
+    },
+    "mons-mouton-summit": {
+      "name": "Mons Mouton (summit)",
+      "lat": -84.6,
+      "lon": 31.0,
+      "samples": 43848,
+      "sun_hours": 6399.0,
+      "earth_hours": 20331.0
+    },
+    "malapert-crater": {
+      "name": "Malapert (crater)",
+      "lat": -84.9,
+      "lon": 12.9,
+      "samples": 43848,
+      "sun_hours": 5529.0,
+      "earth_hours": 21053.0
+    }
+  }
+}

@@ -6,8 +6,8 @@ import yaml
 from jsonschema import Draft202012Validator
 
 root = pathlib.Path(__file__).resolve().parent.parent
-data = yaml.safe_load((root / "data/missions.yaml").read_text())
-schema = json.loads((root / "data/schema/missions.schema.json").read_text())
+data = yaml.safe_load((root / "data/missions.yaml").read_text(encoding="utf-8"))
+schema = json.loads((root / "data/schema/missions.schema.json").read_text(encoding="utf-8"))
 
 errors = sorted(Draft202012Validator(schema).iter_errors(data), key=lambda e: list(e.path))
 for e in errors:
@@ -37,13 +37,13 @@ json_text = json.dumps(payload, indent=2, default=str)
 # Legacy output (keep for backward compat)
 out_legacy = root / "web_public_data"
 out_legacy.mkdir(exist_ok=True)
-(out_legacy / "missions.json").write_text(json_text)
+(out_legacy / "missions.json").write_text(json_text, encoding="utf-8")
 
 # Primary output — where the React app expects it
 out_web = root / "web" / "public" / "data"
 out_web.mkdir(parents=True, exist_ok=True)
-(out_web / "missions.json").write_text(json_text)
+(out_web / "missions.json").write_text(json_text, encoding="utf-8")
 
 print(f"OK: {len(ids)} missions compiled, {warn} warnings")
-print(f"  → {out_legacy / 'missions.json'}")
-print(f"  → {out_web / 'missions.json'}")
+print(f"  -> {out_legacy / 'missions.json'}")
+print(f"  -> {out_web / 'missions.json'}")

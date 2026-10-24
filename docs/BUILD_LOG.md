@@ -82,4 +82,77 @@ needs-check-farside are null. These missions will show in the list but not on th
 
 ---
 
-*Next: Phase 1 — Data + Explorer (start after checkpoint confirmation)*
+## Phase 1 to Phase 8 — 2026-10-24
+
+### Decisions & Milestones
+
+**D-007: Windows cp1252 Terminal Compatibility**
+- `pipeline/validate_missions.py` encountered `UnicodeEncodeError: 'charmap'` when writing Unicode arrows on Windows default cp1252 consoles.
+- Replaced non-ASCII arrows with ASCII `->` and explicitly enforced `encoding="utf-8"` on all file I/O.
+- Validated all 8 missions and 2 reference sites against schema, compiling clean JSON to both `web/public/data/missions.json` and `web_public_data/missions.json`.
+
+**D-008: SPICE Kernel Ingestion & Verification**
+- Executed `pipeline/fetch_kernels.py` to retrieve the 5 NAIF SPICE kernels into `kernels/`:
+  - `naif0012.tls` (Leap seconds)
+  - `pck00011.tpc` (Planetary constants / radii)
+  - `de440s.bsp` (Solar system ephemeris 1900–2050)
+  - `moon_pa_de440_200625.bpc` (High-precision lunar orientation)
+  - `moon_de440_250416.tf` (Lunar body-fixed frame definitions)
+- Calculated SHA-256 hashes of all downloaded kernels; matched `kernels.lock` precisely.
+
+**D-009: Science Engine Implementation (`lunarsight_core`)**
+- Built `science/lunarsight_core/geometry.py`:
+  - `load_kernels()` / `unload_kernels()` lifecycle management.
+  - `site_to_enu()`: Converts planetocentric lat/lon and lunar radius (1737.4 km) to `MOON_ME` Cartesian coordinates and computes orthonormal East-North-Up basis vectors.
+  - `compute_topocentric_az_el()`: Topocentric azimuth and geometric elevation with `LT+S` light-time and stellar aberration correction.
+  - Sun upper limb correction: defined as geometric elevation + 0.267° (lunar semi-diameter of Sun).
+  - `compute_site_timeseries()` & `compute_opportunities()`: Generates continuous hourly ephemerides and continuous intervals for Sun, Earth, and Joint visibility above configurable elevation thresholds.
+- Validated against JPL Horizons golden test fixtures (`science/tests/test_geometry.py`). Error relative to JPL Horizons observer table is **< 0.00001°** (0.036 arcseconds), exceeding the 0.05° tolerance requirement by more than 1000x.
+- Far-side verification: Verified Earth elevation from the lunar far side (0° N, 180° E) remains between -65° and -85° throughout 2026, confirming zero line-of-sight.
+
+**D-010: Precomputation Pipeline (`build_geometry.py`)**
+- Implemented `pipeline/build_geometry.py` generating full 2024–2028 hourly ephemerides (43,848 hours per site) for all sites with known coordinates:
+  - `im-1` (Malapert A)
+  - `blue-ghost-m1` (Mare Crisium)
+  - `im-2` (Shackleton Connecting Ridge)
+  - `mons-mouton-summit` (VIPER reference)
+  - `malapert-crater` (South pole deep crater reference)
+- Exported precomputed assets to `web/public/data/` and `web_public_data/`:
+  - `timeseries/{site_id}.json`
+  - `events/{site_id}.json`
+  - `summary/{site_id}.json`
+  - `manifest.json`
+
+**D-011: FastAPI Backend (`api/main.py`)**
+- Implemented FastAPI application with lifespan kernel management, CORS middleware, and Pydantic v2 schemas.
+- Endpoints:
+  - `GET /api/health`
+  - `GET /api/provenance`
+  - `POST /api/geometry/timeseries`
+  - `POST /api/geometry/events`
+  - `POST /api/compare`
+- Added comprehensive unit tests in `science/tests/test_api.py`.
+
+**D-012: Frontend Dashboard & Component Suite**
+- Built responsive, accessible React + Vite + TypeScript dashboard adhering to Blueprint guidelines:
+  - `web/src/stores/scenarioStore.ts`: Zustand store managing Scenario A/B selections, UTC timestamps, threshold slider, timeseries caching, nearest-hour interpolation, and 30-day opportunity window slicing.
+  - `web/src/components/MoonMap.tsx`: 2D equirectangular lunar map with graticule lines (-90° to +90° lat, -180° to +180° lon), major maria approximations, interactive pins, distinct Amber (Scenario A) and Cyan (Scenario B) markers, and quick-set buttons.
+  - `web/src/components/MissionExplorer.tsx`: Search bar, status filters (Planned, Success, Failure, Partial), honest verification badges (`Verified` vs `⚠️ Unverified (Pending 2nd review)`), coordinate confidence warnings, and Set A / Set B buttons.
+  - `web/src/components/ScenarioPanel.tsx`: Date/time picker with +/-1h and +/-1d quick steppers, current Sun and Earth elevation cards, azimuth, above/below horizon badges, and horizontal bar diagrams.
+  - `web/src/components/OpportunityTimeline.tsx`: Elevation threshold slider (0° to 25°, default 5.0°), 30-day Sun/Earth/Joint timeline bars (720 hourly segments), and contiguous interval duration tables.
+  - `web/src/components/ComparisonPanel.tsx`: Side-by-side comparison between Scenario A and Scenario B with exact arithmetic difference ($B - A$).
+  - `web/src/pages/MethodsPage.tsx`: Detailed science documentation, conventions, JPL Horizons benchmark comparison table, SHA-256 kernel checksums, and explicit scientific limitations.
+- Added ESLint configuration (`web/.eslintrc.cjs`) and unit tests (`web/tests/scenario.test.ts`).
+
+### Test Results
+- **Python Unit Tests:** 17 passed in 1.34s (`pytest science/tests/ -v`).
+- **Frontend Unit Tests:** 4 passed in 0.27s (`npm test` via tsx).
+- **TypeScript Type Check:** 0 errors (`npm run type-check`).
+- **ESLint:** 0 errors/warnings (`npm run lint`).
+- **Vite Production Build:** Successfully built bundle in 2.78s (`npm run build`).
+
+### Scientific Caveats & Honest Disclosures
+- Idealized smooth spherical horizon only ($r = 1737.4\text{ km}$); local topographic shadowing from crater rims and mountains is not included.
+- Earth visibility represents pure geometric line-of-sight to Earth's center, not a communication link budget.
+- Records without published coordinates (`griffin-1`, `moon-base-1-endurance`, `im-3-reiner-gamma`, `needs-check-farside-and-schrodinger`) have disabled scenario buttons and are omitted from map plotting to avoid fabricating coordinates.
+- All mission records display unverified status badges until second independent review.

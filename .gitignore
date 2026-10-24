@@ -33,6 +33,10 @@ web/public/data/timeseries/
 web/public/data/events/
 web/public/data/summary/
 web/public/data/horizon/
+web_public_data/timeseries/
+web_public_data/events/
+web_public_data/summary/
+graphify-out/
 # missions.json IS committed (small, needed for static deploy without API)
 !web/public/data/missions.json
 

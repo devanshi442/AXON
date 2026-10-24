@@ -47,27 +47,42 @@ Required files (saved to `kernels/`):
 ```bash
 python pipeline/validate_missions.py
 ```
-Writes `web/public/data/missions.json`. Warnings are expected (all records are `verified: false` until a second reviewer checks them).
+Validates YAML mission catalog against schema and writes `web/public/data/missions.json` and `web_public_data/missions.json`. Warnings are expected (`verified: false` pending 2nd review).
 
-### 4. Run Python tests
+### 4. Build Precomputed Geometry Timeseries (2024–2028)
 ```bash
-pytest science/tests/ -v
-# Tests requiring kernels are marked: pytest -m "not needs_kernels" to skip them
+python pipeline/build_geometry.py
 ```
+Computes hourly Sun/Earth ephemerides and opportunity windows (43,848 hours per site across 2024–2028) using SPICE `MOON_ME` body-fixed coordinates with `LT+S` aberration correction. Output files are written to `web/public/data/` (`timeseries/`, `events/`, `summary/`, and `manifest.json`).
 
-### 5. Start the frontend
+### 5. Run Python & Frontend Tests
 ```bash
+# Python SPICE geometry & API tests (17 tests)
+pytest science/tests/ -v
+
+# Frontend unit tests, linting, and type-check
 cd web
 npm install
+npm test
+npm run type-check
+npm run lint
+```
+
+### 6. Start the frontend
+```bash
+cd web
 npm run dev
 ```
 Open http://localhost:5173
 
-### 6. Start the API (optional, for custom lat/lon queries)
+To build the static production bundle:
 ```bash
-cd api
-pip install -r requirements.txt
-uvicorn main:app --reload
+npm run build
+```
+
+### 7. Start the API (optional, for custom real-time queries)
+```bash
+uvicorn api.main:app --reload
 ```
 
 ---
