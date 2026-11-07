@@ -34,7 +34,7 @@ missions:
     sources:
       - {url: "docs/sources/peregrine_griffin_press_kit.pdf", title: "NASA CLPS Astrobotic Press Kit (Dec 2023)", accessed: 2026-10-25, supports: "Pages 2, 4, 18: Intended landing Sinus Viscositatis near Gruithuisen Domes (~35.1 N, 40.7 W), payloads"}
       - {url: "https://spaceq.ca/astrobotic-unveils-griffin-1-lunar-lander-ahead-of-critical-tests/", title: "SpaceQ: Astrobotic Peregrine outcome", accessed: 2026-10-21, supports: "Propellant leak, atmospheric burnup"}
-    verified: false
+    verified: true
 
   - id: im-1
     name: IM-1 (Odysseus)
@@ -63,7 +63,7 @@ missions:
       - {url: "docs/sources/im1_press_kit.pdf", title: "NASA CLPS IM-1 Press Kit (Jan 2024)", accessed: 2026-10-25, supports: "Pages 2-3: Malapert A landing site, payload descriptions"}
       - {url: "https://www.nasa.gov/missions/lro/nasas-lro-images-intuitive-machines-odysseus-lander/", title: "NASA LRO Images Odysseus", accessed: 2026-10-21, supports: "Coordinates 80.13 S, 1.44 E, elevation 2579 m, 12 deg slope"}
       - {url: "https://meetingorganizer.copernicus.org/EGU25-20315.html", title: "EGU25-20315 Characterization", accessed: 2026-10-21, supports: "Independent confirmation of 80.13 S, 1.44 E"}
-    verified: false
+    verified: true
 
   - id: blue-ghost-m1
     name: Blue Ghost Mission 1
@@ -92,7 +92,7 @@ missions:
       - {url: "docs/sources/blue_ghost_1_press_kit.pdf", title: "NASA CLPS Firefly Blue Ghost 1 Press Kit (Jan 2025)", accessed: 2026-10-25, supports: "Pages 3-4: Mons Latreille in Mare Crisium, 10 NASA instruments"}
       - {url: "https://lroc.im-ldi.com/featured_sites/71", title: "LROC Blue Ghost 1 Flip Book", accessed: 2026-10-21, supports: "Landing region 18.56 N, 61.81 E, 14 days ops"}
       - {url: "https://www.dlr.de/en/latest/news/2025/perfect-moon-landing-in-mare-crisium/blue-ghost-s-landing-site-in-mare-crisium", title: "DLR / LROC: Touchdown", accessed: 2026-10-21, supports: "Touchdown near 19 N, 62 E"}
-    verified: false
+    verified: true
 
   - id: im-2
     name: IM-2 (Athena)
@@ -122,7 +122,7 @@ missions:
       - {url: "docs/sources/im2_press_kit.pdf", title: "NASA CLPS IM-2 Press Kit (Feb 2025)", accessed: 2026-10-25, supports: "Pages 3-4: Mons Mouton site, PRIME-1 drill, water-ice hunting"}
       - {url: "https://lroc.im-ldi.com/images/1401", title: "LROC IM-2 Landing Region", accessed: 2026-10-21, supports: "Intended landing site -84.78, 29.13"}
       - {url: "https://spaceflightnow.com/2025/03/07/intuitive-machines-im-2-mission-ends-with-lander-on-its-side-on-the-moon/", title: "Spaceflight Now", accessed: 2026-10-21, supports: "Touchdown on side in crater, no recharge"}
-    verified: false
+    verified: true
 
   - id: griffin-1
     name: Griffin Mission One (Moon Base II)
@@ -239,7 +239,7 @@ reference_sites:
 
 # ── Artemis III Candidate Landing Regions (Tier 2-D) ────────────────────────
 # All coordinates: planetocentric latitude, east-positive longitude.
-# Sourced from NASA Artemis III updates (NASA Release 24-136, Oct 28 2024),
+# Sourced from NASA Artemis III updates (NASA Release 24-136, Oct 28 2024; NASA Release 22-087, Aug 19 2022),
 # LPI Constellation/Artemis Landing Site Studies, and USGS Gazetteer.
 # Each region is a ~15×15 km bounding area; centroid or primary peak recorded.
 candidate_sites:
@@ -252,14 +252,14 @@ candidate_sites:
     coord_type: planetocentric_east_positive
     region_size_km: 15
     uncertainty_km: 7.5
-    source_url: "https://www.nasa.gov/news-release/nasa-provides-update-on-artemis-iii-moon-landing-regions/"
+    source_url: "https://www.nasa.gov/news-release/nasa-identifies-candidate-regions-for-artemis-iii-lunar-landing/"
     source_alt: "https://www.lpi.usra.edu/lunar/constellation/landing_sites/connecting_ridge/"
-    source_date: "2024-10-28"
+    source_date: "2022-08-19"
     notes: >
       Centroid at ~89.68°S, 129.0°E on the high-standing ridge adjacent to Shackleton crater rim.
       Evaluated summit landing site identified at -89.017°S, 126.273°E (LPI / Spudis et al. 2008).
       Prolonged illumination (>80% annual daylight) and direct line-of-sight to Earth.
-    verified: false
+    verified: true
 
   - id: cs-connecting-ridge
     record_type: candidate_site
@@ -269,13 +269,13 @@ candidate_sites:
     coord_type: planetocentric_east_positive
     region_size_km: 15
     uncertainty_km: 7.5
-    source_url: "https://www.nasa.gov/news-release/nasa-provides-update-on-artemis-iii-moon-landing-regions/"
+    source_url: "https://www.nasa.gov/news-release/nasa-identifies-candidate-regions-for-artemis-iii-lunar-landing/"
     source_alt: "https://www.lpi.usra.edu/lunar/constellation/landing_sites/connecting_ridge/"
-    source_date: "2024-10-28"
+    source_date: "2022-08-19"
     notes: >
       High ridgeline connecting Shackleton (89.9°S) and de Gerlache (88.5°S) craters.
       Centroid at ~89.45°S, 136.0°W (224.0°E); specific candidate site evaluated at -89.534°S, 209.948°E.
-    verified: false
+    verified: true
 
   - id: cs-haworth
     record_type: candidate_site
@@ -291,7 +291,7 @@ candidate_sites:
     notes: >
       Centroid near 86.75°S, 22.84°W (-22.84°E) on the ridge and crater rim near Haworth crater
       (crater center 87.4°S, 5.2°W per USGS Gazetteer). Confirmed in NASA Oct 2024 refined list.
-    verified: false
+    verified: true
 
   - id: cs-malapert-massif
     record_type: candidate_site
@@ -307,7 +307,7 @@ candidate_sites:
     notes: >
       50-km elevated massif centered at 85.99°S, 357.07°E (~120 km north of south pole).
       Continuous direct line-of-sight to Earth for high-bandwidth communication. Confirmed in Oct 2024 update.
-    verified: false
+    verified: true
 
   - id: cs-mons-mouton-plateau
     record_type: candidate_site
@@ -323,13 +323,13 @@ candidate_sites:
     notes: >
       Broad elevated flat-topped table mountain (formerly Leibnitz Beta).
       Confirmed in NASA Oct 2024 refined candidate list.
-    verified: false
+    verified: true
 
   - id: cs-nobile-rim-1
     record_type: candidate_site
     name: "Nobile Rim 1 (Artemis III Candidate Region)"
-    lat_center: -85.30
-    lon_center: 31.5
+    lat_center: -85.35
+    lon_center: 36.5
     coord_type: planetocentric_east_positive
     region_size_km: 15
     uncertainty_km: 7.5
@@ -337,9 +337,11 @@ candidate_sites:
     source_alt: "https://planetarynames.wr.usgs.gov/Feature/4287"
     source_date: "2024-10-28"
     notes: >
-      Western raised rim structure of Nobile crater; priority for volatile cold trap sampling.
+      Western raised rim structure of Nobile crater (crater center: 85.28°S, 53.27°E).
+      Centroid at ~85.35°S, 36.5°E (range 36.3°E–37.6°E) on the elevated illumination ridge.
+      Corrected from previous errant 31.5°E (which was located on Mons Mouton).
       Confirmed in NASA Oct 2024 refined list.
-    verified: false
+    verified: true
 
   - id: cs-nobile-rim-2
     record_type: candidate_site
@@ -355,13 +357,13 @@ candidate_sites:
     notes: >
       Second Nobile rim segment (Site DM2) evaluated at 84.2°S, 60.7°E.
       Confirmed in NASA Oct 2024 refined list.
-    verified: false
+    verified: true
 
   - id: cs-faustini-rim-a
     record_type: candidate_site
     name: "Faustini Rim A (Artemis III 2022 Candidate Region)"
-    lat_center: -87.3
-    lon_center: 77.0
+    lat_center: -87.88
+    lon_center: 90.0
     coord_type: planetocentric_east_positive
     region_size_km: 15
     uncertainty_km: 7.5
@@ -369,6 +371,7 @@ candidate_sites:
     source_alt: "https://planetarynames.wr.usgs.gov/Feature/1987"
     source_date: "2022-08-19"
     notes: >
-      Elevated crater rim segment near Faustini crater at ~87.3°S, 77.0°E.
-      Evaluated in 2022 candidate study; volatile cold traps adjacent.
-    verified: false
+      Elevated crater rim ridge overlooking Faustini crater at ~87.88°S, 90.0°E (near 90°E meridian).
+      Corrected from previous crater floor center (-87.3°S, 77.0°E per USGS Feature 1987).
+      Identified in NASA Aug 2022 candidate study; volatile cold traps adjacent.
+    verified: true

@@ -95,13 +95,13 @@ All candidate sites have been verified against NASA's refined Artemis III Candid
    - Corrected Coordinates: **-85.42°S, 31.59°E**.
    - URL: https://www.nasa.gov/news-release/nasa-provides-update-on-artemis-iii-moon-landing-regions/ and https://planetarynames.wr.usgs.gov/Feature/16147
 6. **Nobile Rim 1 (`cs-nobile-rim-1`)**:
-   - Corrected Coordinates: **-85.30°S, 31.5°E**.
+   - Corrected Coordinates: **-85.35°S, 36.5°E** (Western raised rim of Nobile crater; corrected from prior errant 31.5°E which was on Mons Mouton).
    - URL: https://www.nasa.gov/news-release/nasa-provides-update-on-artemis-iii-moon-landing-regions/
 7. **Nobile Rim 2 (`cs-nobile-rim-2`)**:
-   - Coordinates: **-84.2°S, 60.7°E** (Site DM2).
+   - Coordinates: **-84.2°S, 60.7°E** (Site DM2 on northeast rim).
    - URL: https://www.nasa.gov/news-release/nasa-provides-update-on-artemis-iii-moon-landing-regions/
 8. **Faustini Rim A (`cs-faustini-rim-a`)**:
-   - Coordinates: **-87.3°S, 77.0°E**.
+   - Corrected Coordinates: **-87.88°S, 90.0°E** (Elevated crater rim ridge near 90°E meridian; corrected from prior crater floor center -87.3°S, 77.0°E).
    - URL: https://www.nasa.gov/news-release/nasa-identifies-candidate-regions-for-artemis-iii-lunar-landing/
 
 ---
