@@ -114,8 +114,8 @@ def compute_solar_power(
     total_energy_wh = float(np.sum(power_watts) * step_hours)
     specific_energy_wh_m2 = float(np.sum(specific_power_w_m2) * step_hours)
 
-    peak_power_w = float(np.max(power_watts)) if len(power_watts) > 0 else 0.0
-    mean_power_w = float(np.mean(power_watts)) if len(power_watts) > 0 else 0.0
+    peak_power_w = float(np.max(power_watts)) if np.size(power_watts) > 0 else 0.0
+    mean_power_w = float(np.mean(power_watts)) if np.size(power_watts) > 0 else 0.0
 
     return {
         "area_m2": area_m2,

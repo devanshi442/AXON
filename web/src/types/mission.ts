@@ -79,12 +79,28 @@ export interface ReferenceSite {
   note: string | null
 }
 
+export interface CandidateSite {
+  id: string
+  name: string
+  target_region: string
+  lat_center: number | null
+  lon_center: number | null
+  uncertainty_km?: number | null
+  status?: string
+  program?: string
+  notes?: string | null
+  sources?: { url: string; title?: string; accessed?: string }[]
+  terrain_tier?: string
+  verified?: boolean
+}
+
 export interface MissionsData {
   generated_at: string
   schema_version: number
   compiled_on: string
   missions: Mission[]
   reference_sites: ReferenceSite[]
+  candidate_sites?: CandidateSite[]
 }
 
 // ── Geometry & Precomputed Ephemeris Types ───────────────────────────────────
@@ -189,9 +205,40 @@ export interface ManifestData {
   >
 }
 
+export type SiteKind = 'mission' | 'reference' | 'candidate' | 'custom'
+
+export interface HorizonProfile {
+  site_id: string
+  site_name: string
+  kind: string
+  lat: number
+  lon: number
+  coord_status: string
+  site_height_m: number
+  dem_id: string
+  resolution_m: number
+  coverage_status: string
+  default_range_km: number
+  masks: {
+    h_0_0m: number[]
+    h_1_5m: number[]
+    h_3_0m: number[]
+    h_5_0m: number[]
+    h_10_0m: number[]
+    [key: string]: number[]
+  }
+  sensitivity?: {
+    range_20km?: number[]
+    range_50km?: number[]
+    range_100km?: number[]
+  }
+  generated_at?: string
+}
+
 export interface SelectableSite {
   id: string
   name: string
+  kind: SiteKind
   lat: number | null
   lon: number | null
   isMission: boolean
@@ -200,7 +247,11 @@ export interface SelectableSite {
   lander?: string
   region_type?: string
   coord_kind?: CoordKind
+  coord_status?: 'ok' | 'skipped_null' | 'uncertain'
+  uncertainty_km?: number | null
   verified?: boolean
-  sources?: MissionSource[]
+  sources?: MissionSource[] | { url: string; title?: string }[]
   notes?: string | null
+  dem_id?: string
+  coverage_status?: string
 }

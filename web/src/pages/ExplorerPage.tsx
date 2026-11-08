@@ -13,7 +13,14 @@ export default function ExplorerPage() {
   const [error, setError] = useState<string | null>(null)
   const [showEducationalCard, setShowEducationalCard] = useState(true)
 
-  const { scenarioAId, scenarioBId, loadTimeseries } = useScenarioStore()
+  const {
+    scenarioAId,
+    scenarioBId,
+    loadTimeseries,
+    loadHorizon,
+    horizonMode,
+    mastHeightM,
+  } = useScenarioStore()
 
   useEffect(() => {
     fetch('/data/missions.json')
@@ -32,9 +39,15 @@ export default function ExplorerPage() {
   }, [])
 
   useEffect(() => {
-    if (scenarioAId) loadTimeseries(scenarioAId)
-    if (scenarioBId) loadTimeseries(scenarioBId)
-  }, [scenarioAId, scenarioBId, loadTimeseries])
+    if (scenarioAId) {
+      loadTimeseries(scenarioAId)
+      loadHorizon(scenarioAId)
+    }
+    if (scenarioBId) {
+      loadTimeseries(scenarioBId)
+      loadHorizon(scenarioBId)
+    }
+  }, [scenarioAId, scenarioBId, loadTimeseries, loadHorizon])
 
   if (loading) {
     return (
@@ -54,11 +67,12 @@ export default function ExplorerPage() {
     )
   }
 
-  // Combine missions and reference sites into unified selectable list
+  // Combine missions, candidate sites, and reference sites into unified selectable list
   const selectableSites: SelectableSite[] = [
     ...missionsData.missions.map((m) => ({
       id: m.id,
       name: m.name,
+      kind: 'mission' as const,
       lat: m.site.lat,
       lon: m.site.lon,
       isMission: true,
@@ -67,16 +81,36 @@ export default function ExplorerPage() {
       lander: m.lander,
       region_type: m.site.region_type,
       coord_kind: m.site.coord_kind,
+      coord_status: (m.site.lat !== null && m.site.lon !== null ? 'ok' : 'skipped_null') as any,
+      uncertainty_km: m.site.uncertainty_km,
       verified: m.verified,
       sources: m.sources,
       notes: m.notes,
     })),
+    ...(missionsData.candidate_sites || []).map((c) => ({
+      id: c.id,
+      name: c.name,
+      kind: 'candidate' as const,
+      lat: c.lat_center,
+      lon: c.lon_center,
+      isMission: false,
+      region_type: c.target_region,
+      coord_kind: 'planned_region_center' as const,
+      coord_status: (c.lat_center !== null && c.lon_center !== null ? 'ok' : 'skipped_null') as any,
+      uncertainty_km: c.uncertainty_km,
+      verified: c.verified ?? false,
+      sources: c.sources,
+      notes: c.notes,
+    })),
     ...missionsData.reference_sites.map((r) => ({
       id: r.id,
       name: r.name,
+      kind: 'reference' as const,
       lat: r.lat,
       lon: r.lon,
       isMission: false,
+      coord_kind: 'actual' as const,
+      coord_status: 'ok' as const,
       notes: r.note,
     })),
   ]
@@ -113,7 +147,9 @@ export default function ExplorerPage() {
           <div className="h-6 w-px bg-space-700" />
           <div>
             <div className="text-3xs text-space-400 font-medium">HORIZON MODE</div>
-            <div className="text-2xs font-mono text-space-200">Idealized Datum (0°)</div>
+            <div className="text-2xs font-mono text-emerald-400 font-semibold">
+              {horizonMode === 'terrain' ? `Terrain-Aware (${mastHeightM}m mast)` : 'Idealized Datum (0°)'}
+            </div>
           </div>
         </div>
       </div>
@@ -175,7 +211,7 @@ export default function ExplorerPage() {
       {/* Grid: Mission Explorer & Moon Map */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div className="lg:col-span-6">
-          <MissionExplorer missions={missionsData.missions} />
+          <MissionExplorer sites={selectableSites} />
         </div>
         <div className="lg:col-span-6">
           <MoonMap sites={selectableSites} />
