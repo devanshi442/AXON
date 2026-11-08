@@ -160,6 +160,11 @@ export default function MissionExplorer({ sites }: MissionExplorerProps) {
                       </span>
                     )}
                   </div>
+                  {(s.coord_kind === 'region_centre' || s.coord_kind === 'planned_region_center') && (
+                    <div className="mt-1 text-3xs text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
+                      Region centre; results can differ strongly from the crest or evaluated site.
+                    </div>
+                  )}
                 </div>
 
                 {/* Notes if available */}

@@ -250,6 +250,11 @@ export default function MoonMap({ sites }: MoonMapProps) {
             <div className="text-space-400 font-mono text-2xs mt-0.5">
               Lat: {activePin.lat}° · Lon: {activePin.lon}° · {activePin.region_type ? activePin.region_type.replace(/_/g, ' ') : 'Surface Site'}
             </div>
+            {(activePin.coord_kind === 'region_centre' || activePin.coord_kind === 'planned_region_center') && (
+              <div className="mt-1 text-3xs text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
+                Region centre; results can differ strongly from the crest or evaluated site.
+              </div>
+            )}
           </div>
           <div className="flex items-center gap-2">
             <button

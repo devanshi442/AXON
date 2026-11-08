@@ -187,6 +187,27 @@ export default function ComparisonPanel({ sites }: ComparisonPanelProps) {
               </td>
             </tr>
 
+            {/* Coordinate Kind Notice */}
+            {(siteA?.coord_kind === 'region_centre' || siteA?.coord_kind === 'planned_region_center' ||
+              siteB?.coord_kind === 'region_centre' || siteB?.coord_kind === 'planned_region_center') && (
+              <tr className="bg-amber-500/5">
+                <td className="py-2 px-3 text-amber-300 font-sans font-medium text-3xs">Coordinate Notice</td>
+                <td className="py-2 px-3 text-amber-300/90 font-sans text-3xs">
+                  {siteA?.coord_kind === 'region_centre' || siteA?.coord_kind === 'planned_region_center'
+                    ? 'Region centre; results can differ strongly from the crest or evaluated site.'
+                    : 'Specific site'}
+                </td>
+                <td className="py-2 px-3 text-amber-300/90 font-sans text-3xs">
+                  {siteB?.coord_kind === 'region_centre' || siteB?.coord_kind === 'planned_region_center'
+                    ? 'Region centre; results can differ strongly from the crest or evaluated site.'
+                    : 'Specific site'}
+                </td>
+                <td className="py-2 px-3 text-right text-space-400 font-sans text-3xs">
+                  —
+                </td>
+              </tr>
+            )}
+
             {/* DEM Tier / Source */}
             <tr>
               <td className="py-2.5 px-3 text-space-300 font-sans font-medium">Topographic DEM Source</td>

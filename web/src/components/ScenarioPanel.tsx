@@ -142,6 +142,16 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
         )}
       </div>
 
+      {/* Region Centre Caveat */}
+      {(selectedSite?.coord_kind === 'region_centre' || selectedSite?.coord_kind === 'planned_region_center') && (
+        <div className="px-3 py-2 rounded-xl bg-amber-500/10 border border-amber-500/30 text-3xs text-amber-300 flex items-center gap-2">
+          <span className="font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-200 border border-amber-500/30 shrink-0">
+            Region Centre
+          </span>
+          <span>Region centre; results can differ strongly from the crest or evaluated site.</span>
+        </div>
+      )}
+
       {/* Site Selector & UTC Time Control */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {/* Site dropdown */}
