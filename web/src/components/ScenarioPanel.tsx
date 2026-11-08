@@ -3,8 +3,15 @@ import type { SelectableSite } from '../types/mission'
 import {
   useScenarioStore,
   getElevationAtTime,
+  getMaskForMastHeight,
   SUN_UPPER_LIMB_DEG,
 } from '../stores/scenarioStore'
+import {
+  lookupHorizonElevation,
+  computeSolarFraction,
+  computeEarthVisibility,
+  computeSolarPowerWatts,
+} from '../utils/scienceMath'
 
 interface ScenarioPanelProps {
   type: 'A' | 'B'
@@ -21,7 +28,15 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
     setScenarioB,
     setUtcA,
     setUtcB,
+    horizonMode,
+    mastHeightM,
+    dteMarginDeg,
+    earthCriterion,
+    solarArrayType,
+    arrayAreaM2,
+    arrayEfficiency,
     timeseriesCache,
+    horizonCache,
     loading,
     error,
   } = useScenarioStore()
@@ -33,6 +48,7 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
 
   const selectedSite = sites.find((s) => s.id === siteId)
   const ts = timeseriesCache[siteId]
+  const horizon = horizonCache[siteId]
   const isLoading = loading[siteId]
   const hasError = error[siteId]
 
@@ -53,14 +69,46 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
     setUtc(new Date(e.target.value + ':00Z').toISOString())
   }
 
-  const isSunUp =
-    elevationData.sunElevation !== null
-      ? elevationData.sunElevation + SUN_UPPER_LIMB_DEG >= 0
-      : false
+  // Terrain mask for selected mast height
+  const mask = horizonMode === 'terrain' ? getMaskForMastHeight(horizon, mastHeightM) : null
 
+  // Horizon elevations at current azimuths
+  const sunAz = elevationData.sunAzimuth ?? 0.0
+  const earthAz = elevationData.earthAzimuth ?? 0.0
+  const sunEl = elevationData.sunElevation ?? -999.0
+  const earthEl = elevationData.earthElevation ?? -999.0
+
+  const sunHorizonEl = mask && elevationData.sunAzimuth !== null ? lookupHorizonElevation(mask, sunAz) : 0.0
+  const earthHorizonEl = mask && elevationData.earthAzimuth !== null ? lookupHorizonElevation(mask, earthAz) : 0.0
+
+  // Solar fraction & power
+  const fSun =
+    elevationData.sunElevation !== null
+      ? horizonMode === 'terrain' && mask
+        ? computeSolarFraction(sunAz, sunEl, mask)
+        : sunEl + SUN_UPPER_LIMB_DEG >= 0.0
+        ? 1.0
+        : 0.0
+      : 0.0
+
+  const solarPowerW =
+    elevationData.sunElevation !== null
+      ? computeSolarPowerWatts(
+          sunEl,
+          sunAz,
+          fSun,
+          solarArrayType,
+          arrayAreaM2,
+          arrayEfficiency
+        )
+      : 0.0
+
+  // Earth DTE visibility
   const isEarthUp =
     elevationData.earthElevation !== null
-      ? elevationData.earthElevation >= 0
+      ? horizonMode === 'terrain' && mask
+        ? computeEarthVisibility(earthAz, earthEl, mask, dteMarginDeg, earthCriterion)
+        : earthEl >= dteMarginDeg
       : false
 
   const isScenarioA = type === 'A'
@@ -80,9 +128,16 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
           </span>
         </div>
         {selectedSite?.lat !== null && (
-          <span className="text-3xs font-mono text-space-400">
-            {selectedSite?.lat}° Lat · {selectedSite?.lon}° Lon
-          </span>
+          <div className="flex items-center gap-2">
+            {horizon?.dem_id && (
+              <span className="text-3xs font-mono px-1.5 py-0.5 rounded bg-space-900 border border-space-700 text-cyan-300">
+                {horizon.dem_id}
+              </span>
+            )}
+            <span className="text-3xs font-mono text-space-400">
+              {selectedSite?.lat}° Lat · {selectedSite?.lon}° Lon
+            </span>
+          </div>
         )}
       </div>
 
@@ -98,9 +153,18 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
             onChange={(e) => setSite(e.target.value)}
             className="w-full px-3 py-1.5 bg-space-900 border border-space-600 rounded-lg text-xs text-space-100 focus:outline-none focus:border-earth-500 transition-colors"
           >
+            <optgroup label="Artemis / Candidate Landing Sites">
+              {sites
+                .filter((s) => s.kind === 'candidate' && s.lat !== null)
+                .map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.name} ({s.lat}°, {s.lon}°)
+                  </option>
+                ))}
+            </optgroup>
             <optgroup label="CLPS Missions with Coordinates">
               {sites
-                .filter((s) => s.isMission && s.lat !== null)
+                .filter((s) => s.kind === 'mission' && s.lat !== null)
                 .map((s) => (
                   <option key={s.id} value={s.id}>
                     {s.name} ({s.lat}°, {s.lon}°)
@@ -109,7 +173,7 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
             </optgroup>
             <optgroup label="Reference Lunar Anchors">
               {sites
-                .filter((s) => !s.isMission && s.lat !== null)
+                .filter((s) => s.kind === 'reference' && s.lat !== null)
                 .map((s) => (
                   <option key={s.id} value={s.id}>
                     {s.name} ({s.lat}°, {s.lon}°)
@@ -122,7 +186,7 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
         {/* UTC Time input */}
         <div>
           <label className="block text-3xs uppercase tracking-wider text-space-400 font-medium mb-1">
-            Date & Time (UTC)
+            Date &amp; Time (UTC)
           </label>
           <div className="flex items-center gap-1.5">
             <input
@@ -189,12 +253,14 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
               </span>
               <span
                 className={`px-1.5 py-0.2 rounded text-3xs font-medium ${
-                  isSunUp
+                  fSun >= 0.99
                     ? 'bg-amber-950 text-amber-300 border border-amber-800'
+                    : fSun > 0.0
+                    ? 'bg-amber-950/60 text-amber-400 border border-amber-800/80'
                     : 'bg-space-800 text-space-400 border border-space-700'
                 }`}
               >
-                {isSunUp ? 'Above Horizon' : 'Below Horizon'}
+                {fSun >= 0.99 ? 'Fully Lit' : fSun > 0 ? `Partial (${Math.round(fSun * 100)}%)` : 'In Shadow'}
               </span>
             </div>
             <div className="my-2">
@@ -203,12 +269,14 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
                   ? `${elevationData.sunElevation >= 0 ? '+' : ''}${elevationData.sunElevation.toFixed(2)}°`
                   : 'N/A'}
               </div>
-              <div className="text-3xs text-space-400 mt-0.5">
-                Upper Limb: {elevationData.sunElevation !== null ? `${(elevationData.sunElevation + SUN_UPPER_LIMB_DEG).toFixed(2)}°` : 'N/A'}
+              <div className="text-3xs text-space-400 mt-0.5 flex items-center justify-between">
+                <span>Terrain Horizon: {sunHorizonEl.toFixed(2)}°</span>
+                <span className="text-sun-400/90 font-mono font-medium">{solarPowerW.toFixed(1)} W</span>
               </div>
             </div>
-            <div className="text-3xs font-mono text-space-400">
-              Azimuth: {elevationData.sunAzimuth !== null ? `${elevationData.sunAzimuth.toFixed(1)}°` : 'N/A'}
+            <div className="text-3xs font-mono text-space-400 flex items-center justify-between">
+              <span>Azimuth: {elevationData.sunAzimuth !== null ? `${elevationData.sunAzimuth.toFixed(1)}°` : 'N/A'}</span>
+              <span>Limb: {elevationData.sunElevation !== null ? `${(elevationData.sunElevation + SUN_UPPER_LIMB_DEG).toFixed(2)}°` : 'N/A'}</span>
             </div>
           </div>
 
@@ -226,7 +294,7 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
                     : 'bg-space-800 text-space-400 border border-space-700'
                 }`}
               >
-                {isEarthUp ? 'Visible (LOS)' : 'Occulted'}
+                {isEarthUp ? 'Direct LOS' : 'Blocked / Below Horizon'}
               </span>
             </div>
             <div className="my-2">
@@ -235,12 +303,14 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
                   ? `${elevationData.earthElevation >= 0 ? '+' : ''}${elevationData.earthElevation.toFixed(2)}°`
                   : 'N/A'}
               </div>
-              <div className="text-3xs text-space-400 mt-0.5">
-                Geometric Center LOS
+              <div className="text-3xs text-space-400 mt-0.5 flex items-center justify-between">
+                <span>Terrain Horizon: {earthHorizonEl.toFixed(2)}°</span>
+                <span>Margin: +{dteMarginDeg.toFixed(1)}°</span>
               </div>
             </div>
-            <div className="text-3xs font-mono text-space-400">
-              Azimuth: {elevationData.earthAzimuth !== null ? `${elevationData.earthAzimuth.toFixed(1)}°` : 'N/A'}
+            <div className="text-3xs font-mono text-space-400 flex items-center justify-between">
+              <span>Azimuth: {elevationData.earthAzimuth !== null ? `${elevationData.earthAzimuth.toFixed(1)}°` : 'N/A'}</span>
+              <span className="capitalize">{earthCriterion.replace('_', ' ')}</span>
             </div>
           </div>
         </div>
@@ -250,12 +320,25 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
       <div className="p-3 bg-space-900/60 rounded-xl border border-space-700/60 text-2xs">
         <div className="flex justify-between text-3xs text-space-400 mb-1 font-mono">
           <span>Nadir (-90°)</span>
-          <span className="text-space-300 font-semibold">Horizon Datum (0°)</span>
+          <span className="text-space-300 font-semibold">
+            {horizonMode === 'terrain' ? `Local Skyline (${sunHorizonEl.toFixed(1)}° Sun / ${earthHorizonEl.toFixed(1)}° Earth)` : 'Datum (0°)'}
+          </span>
           <span>Zenith (+90°)</span>
         </div>
-        <div className="relative w-full h-4 bg-space-950 rounded-full overflow-hidden border border-space-700">
+        <div className="relative w-full h-5 bg-space-950 rounded-full overflow-hidden border border-space-700">
           {/* Horizon line at center */}
           <div className="absolute top-0 bottom-0 left-1/2 w-0.5 bg-space-600 z-10" />
+
+          {/* Local terrain horizon region for Sun */}
+          {horizonMode === 'terrain' && (
+            <div
+              style={{
+                left: `${Math.max(0, Math.min(100, ((sunHorizonEl + 90) / 180) * 100))}%`,
+              }}
+              className="absolute top-0 bottom-0 w-1 -translate-x-1/2 bg-amber-600/60 z-10"
+              title={`Sun Azimuth Skyline: ${sunHorizonEl.toFixed(2)}°`}
+            />
+          )}
 
           {/* Sun marker */}
           {elevationData.sunElevation !== null && (
@@ -263,8 +346,8 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
               style={{
                 left: `${Math.max(0, Math.min(100, ((elevationData.sunElevation + 90) / 180) * 100))}%`,
               }}
-              className="absolute top-0 bottom-0 w-2.5 -translate-x-1/2 bg-sun-500 rounded-full shadow-lg"
-              title={`Sun: ${elevationData.sunElevation.toFixed(2)}°`}
+              className="absolute top-0 bottom-0 w-3 -translate-x-1/2 bg-sun-500 rounded-full shadow-lg z-20 flex items-center justify-center text-[8px]"
+              title={`Sun: ${elevationData.sunElevation.toFixed(2)}° (Horizon: ${sunHorizonEl.toFixed(2)}°)`}
             />
           )}
 
@@ -274,14 +357,15 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
               style={{
                 left: `${Math.max(0, Math.min(100, ((elevationData.earthElevation + 90) / 180) * 100))}%`,
               }}
-              className="absolute top-0 bottom-0 w-2.5 -translate-x-1/2 bg-earth-500 rounded-full shadow-lg"
-              title={`Earth: ${elevationData.earthElevation.toFixed(2)}°`}
+              className="absolute top-0 bottom-0 w-3 -translate-x-1/2 bg-earth-500 rounded-full shadow-lg z-20 flex items-center justify-center text-[8px]"
+              title={`Earth: ${elevationData.earthElevation.toFixed(2)}° (Horizon: ${earthHorizonEl.toFixed(2)}°)`}
             />
           )}
         </div>
-        <p className="mt-2 text-3xs text-space-400 leading-relaxed">
-          * Elevation is computed from the 1737.4 km lunar sphere datum. Geometric line-of-sight does not account for local topography or communication link budgets.
-        </p>
+        <div className="mt-2 text-3xs text-space-400 flex items-center justify-between">
+          <span>* Mode: {horizonMode === 'terrain' ? `LOLA DEM (${horizon?.dem_id || 'DEM'}, mast: ${mastHeightM}m)` : 'Flat Lunar Datum (0°)'}</span>
+          <span className="text-space-300">Array: {solarArrayType}</span>
+        </div>
       </div>
     </div>
   )

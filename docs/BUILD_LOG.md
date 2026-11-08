@@ -114,7 +114,7 @@ needs-check-farside are null. These missions will show in the list but not on th
 - Implemented `pipeline/build_geometry.py` generating full 2024–2028 hourly ephemerides (43,848 hours per site) for all sites with known coordinates:
   - `im-1` (Malapert A)
   - `blue-ghost-m1` (Mare Crisium)
-  - `im-2` (Shackleton Connecting Ridge)
+  - `im-2` (Mons Mouton, -84.7906, 29.1957)
   - `mons-mouton-summit` (VIPER reference)
   - `malapert-crater` (South pole deep crater reference)
 - Exported precomputed assets to `web/public/data/` and `web_public_data/`:
@@ -162,29 +162,5 @@ needs-check-farside are null. These missions will show in the list but not on th
 ### Scientific Caveats & Honest Disclosures
 - Idealized smooth spherical horizon only ($r = 1737.4\text{ km}$); local topographic shadowing from crater rims and mountains is not included.
 - Earth visibility represents pure geometric line-of-sight to Earth's center, not a communication link budget.
-- Records without published coordinates (`moon-base-1-endurance`) have disabled scenario buttons and are omitted from map plotting to avoid fabricating coordinates.
-- Historical mission records (`peregrine-m1`, `im-1`, `blue-ghost-m1`, `im-2`) are independently verified; planned missions remain unconfirmed by nature.
-
----
-
-## Phase 9 — 2026-11-07
-
-### Decisions & Independent Verification Audit
-
-**D-014: Independent Historical Mission Verification**
-- Conducted independent review of historical mission landing coordinates and primary sources:
-  - `im-1` (Odysseus): Confirmed actual surveyed touchdown at **80.13°S, 1.44°E** (elevation 2579 m) verified against NASA LROC imagery (Feb 26, 2024) and EGU25-20315. Verified `landed_partial`.
-  - `blue-ghost-m1` (Firefly): Confirmed Eastern Mare Crisium landing near Mons Latreille on 2025-03-02 (08:34 UTC) at target box **18.56°N, 61.81°E** (actual touchdown ~18.562°N, 61.810°E) operating for full 14 daylight days. Verified `landed_success`.
-  - `im-2` (Athena): Confirmed Mons Mouton landing on 2025-03-06 (17:28:50 UTC) at **-84.7906°S, 29.1957°E** (elevation 5322 m, resting on side ~250 m from planned site at -84.78, 29.13). Verified `landed_partial`.
-  - `peregrine-m1` (Astrobotic): Confirmed launch 2024-01-08, propellant valve failure, intended target Sinus Viscositatis (35.1°N, 40.7°W), and controlled re-entry destruction over South Pacific on 2024-01-18. Verified `failed`.
-- Updated all 4 historical records in `data/missions.yaml` from `verified: false` to `verified: true`.
-- Future/planned records (`griffin-1`, `moon-base-1-endurance`, `im-3-reiner-gamma`, `needs-check-farside-and-schrodinger`) preserved as planned/unconfirmed.
-
-**D-015: Independent Artemis III Candidate Site Verification & Anomaly Fixes**
-- Conducted independent coordinate-by-coordinate verification of all 8 Artemis III candidate site records against NASA Release 24-136 (Oct 28, 2024), NASA Release 22-087 (Aug 19, 2022), LPI Constellation studies, and USGS Gazetteer:
-  - Corrected `cs-nobile-rim-1`: Longitude was erroneously listed as `31.5°E` (duplicated from Mons Mouton). Updated to **-85.35°S, 36.5°E** (western illumination rim of Nobile crater, range 36.3°E–37.6°E).
-  - Corrected `cs-faustini-rim-a`: Coordinates previously mapped to Faustini crater center floor (-87.3°S, 77.0°E, a deep PSR). Updated to **-87.88°S, 90.0°E** on the elevated crater rim ridge.
-  - Confirmed `cs-shackleton-rim` (-89.68°S, 129.0°E), `cs-connecting-ridge` (-89.45°S, -136.0°E), `cs-haworth` (-86.75°S, -22.84°E), `cs-malapert-massif` (-85.99°S, -2.93°E), `cs-mons-mouton-plateau` (-85.42°S, 31.59°E), and `cs-nobile-rim-2` (-84.2°S, 60.7°E).
-  - Explicitly documented the cartographic distinction: each coordinate represents a **regional centroid / prominent ridge crest** encompassing a ~15×15 km envelope, rather than a single pinpoint landing pad.
-  - Documented programmatic evolution: 6 regions (Haworth, Malapert Massif, Mons Mouton Plateau, Nobile Rim 1, Nobile Rim 2, Mons Mouton) are in NASA's refined Oct 2024 9-region list; Connecting Ridge, Peak Near Shackleton, and Faustini Rim A are active Artemis exploration zones from the Aug 2022 13-region announcement.
-- Re-ran `pipeline/validate_missions.py`; compiled cleanly to `web/public/data/missions.json` and `web_public_data/missions.json` with 0 schema errors.
+- Records without published coordinates (`griffin-1`, `moon-base-1-endurance`, `im-3-reiner-gamma`, `needs-check-farside-and-schrodinger`) have disabled scenario buttons and are omitted from map plotting to avoid fabricating coordinates.
+- All mission records display unverified status badges until second independent review.

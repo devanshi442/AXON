@@ -15,6 +15,23 @@ import spiceypy as spice
 from lunarsight_core import constants as C
 
 
+def check_kernel_file(p: Path) -> None:
+    """Check that a kernel file exists and is not an unresolved Git-LFS pointer."""
+    if not p.is_file():
+        raise FileNotFoundError(f"Missing required SPICE kernel: {p}")
+    size = p.stat().st_size
+    if size < 1000:
+        try:
+            head = p.read_bytes()[:60]
+            if b"git-lfs" in head or head.startswith(b"version https://git-lfs"):
+                raise RuntimeError(
+                    f"SPICE kernel '{p.name}' is a Git-LFS pointer ({size} bytes), not the real kernel. "
+                    f"Please run 'python pipeline/fetch_kernels.py' to download the real SPICE kernel."
+                )
+        except Exception:
+            pass
+
+
 def load_kernels(kernels_dir: Optional[Path | str] = None) -> List[str]:
     """Load standard NAIF kernels from kernels_dir or repo default."""
     if kernels_dir is None:
@@ -33,8 +50,7 @@ def load_kernels(kernels_dir: Optional[Path | str] = None) -> List[str]:
     loaded = []
     for k in expected:
         p = kernels_dir / k
-        if not p.is_file():
-            raise FileNotFoundError(f"Missing required SPICE kernel: {p}")
+        check_kernel_file(p)
         spice.furnsh(str(p))
         loaded.append(k)
     return loaded
@@ -46,7 +62,7 @@ def unload_kernels() -> None:
 
 
 def site_to_enu(
-    lat_deg: float, lon_deg: float, alt_km: float = 0.0
+    lat_deg: float, lon_deg: float, alt_km: float = 0.0, mast_height_m: float = 0.0
 ) -> Tuple[List[float], List[float], List[float], List[float]]:
     """
     Compute Cartesian position and East-North-Up basis vectors in MOON_ME frame.
@@ -60,7 +76,7 @@ def site_to_enu(
 
     lat_rad = math.radians(lat_deg)
     lon_rad = math.radians(lon_deg)
-    r = C.MOON_RADIUS_KM + alt_km
+    r = C.MOON_RADIUS_KM + alt_km + (mast_height_m / 1000.0)
 
     cos_lat = math.cos(lat_rad)
     sin_lat = math.sin(lat_rad)
@@ -93,6 +109,21 @@ def compute_topocentric_az_el(
     Azimuth: degrees clockwise from North (0° = North, 90° = East).
     Elevation: degrees above local idealized horizon.
     """
+    azi, elev, _ = compute_topocentric_state(target_id, et, pos_site, east, north, up)
+    return azi, elev
+
+
+def compute_topocentric_state(
+    target_id: int | str,
+    et: float,
+    pos_site: List[float],
+    east: List[float],
+    north: List[float],
+    up: List[float],
+) -> Tuple[float, float, float]:
+    """
+    Calculate topocentric azimuth, elevation, and 3D distance in km for target body.
+    """
     pos_target, _ = spice.spkpos(
         str(target_id), et, C.MOON_FRAME, C.ABCORR, str(C.MOON_NAIF_ID)
     )
@@ -106,9 +137,10 @@ def compute_topocentric_az_el(
     u = dx * up[0] + dy * up[1] + dz * up[2]
 
     d_horiz = math.hypot(e, n)
+    d_3d = math.sqrt(dx * dx + dy * dy + dz * dz)
     elev = math.degrees(math.atan2(u, d_horiz))
     azi = math.degrees(math.atan2(e, n)) % 360.0
-    return azi, elev
+    return azi, elev, d_3d
 
 
 def compute_site_timeseries(
@@ -118,9 +150,11 @@ def compute_site_timeseries(
     stop_utc: str,
     step_seconds: int = 3600,
     alt_km: float = 0.0,
+    mast_height_m: float = 0.0,
 ) -> Dict[str, Any]:
     """Generate hourly topocentric time series for Sun and Earth."""
-    pos_site, east, north, up = site_to_enu(lat_deg, lon_deg, alt_km)
+    effective_alt_km = alt_km + (mast_height_m / 1000.0)
+    pos_site, east, north, up = site_to_enu(lat_deg, lon_deg, effective_alt_km)
 
     et_start = spice.str2et(start_utc)
     et_stop = spice.str2et(stop_utc)
@@ -133,19 +167,31 @@ def compute_site_timeseries(
     sun_el: List[float] = []
     earth_az: List[float] = []
     earth_el: List[float] = []
+    sun_dist: List[float] = []
+    earth_dist: List[float] = []
+    sun_ang_radius: List[float] = []
+    earth_ang_radius: List[float] = []
 
     et = et_start
     while et <= et_stop + 1e-3:
         utc_str = spice.et2utc(et, "ISOC", 0) + "Z"
         times_utc.append(utc_str)
 
-        s_az, s_el = compute_topocentric_az_el(C.SUN_NAIF_ID, et, pos_site, east, north, up)
-        e_az, e_el = compute_topocentric_az_el(C.EARTH_NAIF_ID, et, pos_site, east, north, up)
+        s_az, s_el, s_dist = compute_topocentric_state(C.SUN_NAIF_ID, et, pos_site, east, north, up)
+        e_az, e_el, e_dist = compute_topocentric_state(C.EARTH_NAIF_ID, et, pos_site, east, north, up)
 
         sun_az.append(round(s_az, 4))
         sun_el.append(round(s_el, 4))
         earth_az.append(round(e_az, 4))
         earth_el.append(round(e_el, 4))
+        sun_dist.append(round(s_dist, 1))
+        earth_dist.append(round(e_dist, 1))
+
+        # True instantaneous angular radii
+        s_rad = math.degrees(math.atan(C.SUN_RADIUS_KM / s_dist))
+        e_rad = math.degrees(math.atan(C.EARTH_EQUATORIAL_RADIUS_KM / e_dist))
+        sun_ang_radius.append(round(s_rad, 5))
+        earth_ang_radius.append(round(e_rad, 5))
 
         et += step_seconds
 
@@ -158,6 +204,10 @@ def compute_site_timeseries(
         "sun_elevation_deg": sun_el,
         "earth_azimuth_deg": earth_az,
         "earth_elevation_deg": earth_el,
+        "sun_distance_km": sun_dist,
+        "earth_distance_km": earth_dist,
+        "sun_angular_radius_deg": sun_ang_radius,
+        "earth_angular_radius_deg": earth_ang_radius,
         "frame": C.MOON_FRAME,
         "abcorr": C.ABCORR,
         "horizon_mode": "idealized",
