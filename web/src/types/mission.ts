@@ -21,7 +21,7 @@ export interface MissionDate {
   kind: DateKind
 }
 
-export type CoordKind = 'actual' | 'planned' | 'planned_region_center' | 'unknown'
+export type CoordKind = 'actual' | 'planned' | 'planned_region_center' | 'specific_site' | 'region_centre' | 'unknown'
 export type TerrainTier = 'T1' | 'T2' | 'T3'
 export type RegionType =
   | 'nearside_mare'
@@ -85,6 +85,7 @@ export interface CandidateSite {
   target_region: string
   lat_center: number | null
   lon_center: number | null
+  coordinate_kind?: string
   uncertainty_km?: number | null
   status?: string
   program?: string

@@ -11,6 +11,7 @@ import {
   computeSolarFraction,
   computeEarthVisibility,
   computeSolarPowerWatts,
+  formatUtcDisplay,
 } from '../utils/scienceMath'
 
 interface ScenarioPanelProps {
@@ -141,6 +142,16 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
         )}
       </div>
 
+      {/* Region Centre Caveat */}
+      {(selectedSite?.coord_kind === 'region_centre' || selectedSite?.coord_kind === 'planned_region_center') && (
+        <div className="px-3 py-2 rounded-xl bg-amber-500/10 border border-amber-500/30 text-3xs text-amber-300 flex items-center gap-2">
+          <span className="font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-200 border border-amber-500/30 shrink-0">
+            Region Centre
+          </span>
+          <span>Region centre; results can differ strongly from the crest or evaluated site.</span>
+        </div>
+      )}
+
       {/* Site Selector & UTC Time Control */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {/* Site dropdown */}
@@ -185,9 +196,14 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
 
         {/* UTC Time input */}
         <div>
-          <label className="block text-3xs uppercase tracking-wider text-space-400 font-medium mb-1">
-            Date &amp; Time (UTC)
-          </label>
+          <div className="flex items-center justify-between mb-1">
+            <label className="text-3xs uppercase tracking-wider text-space-400 font-medium">
+              Date &amp; Time (UTC)
+            </label>
+            <span className="text-3xs font-mono text-cyan-300 font-medium">
+              {formatUtcDisplay(utc)}
+            </span>
+          </div>
           <div className="flex items-center gap-1.5">
             <input
               type="datetime-local"
@@ -321,7 +337,7 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
         <div className="flex justify-between text-3xs text-space-400 mb-1 font-mono">
           <span>Nadir (-90°)</span>
           <span className="text-space-300 font-semibold">
-            {horizonMode === 'terrain' ? `Local Skyline (${sunHorizonEl.toFixed(1)}° Sun / ${earthHorizonEl.toFixed(1)}° Earth)` : 'Datum (0°)'}
+            {horizonMode === 'terrain' ? `Local Skyline (${sunHorizonEl.toFixed(1)}° Sun / ${earthHorizonEl.toFixed(1)}° Earth)` : 'Flat sphere, 0 deg horizon'}
           </span>
           <span>Zenith (+90°)</span>
         </div>
@@ -363,7 +379,7 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
           )}
         </div>
         <div className="mt-2 text-3xs text-space-400 flex items-center justify-between">
-          <span>* Mode: {horizonMode === 'terrain' ? `LOLA DEM (${horizon?.dem_id || 'DEM'}, mast: ${mastHeightM}m)` : 'Flat Lunar Datum (0°)'}</span>
+          <span>* Mode: {horizonMode === 'terrain' ? `LOLA DEM (${horizon?.dem_id || 'DEM'}, mast: ${mastHeightM}m)` : 'Flat sphere, 0 deg horizon'}</span>
           <span className="text-space-300">Array: {solarArrayType}</span>
         </div>
       </div>

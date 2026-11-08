@@ -9,6 +9,7 @@ import {
   lookupHorizonElevation,
   computeSolarFraction,
   computeSolarPowerWatts,
+  formatUtcDisplay,
 } from '../utils/scienceMath'
 
 interface ComparisonPanelProps {
@@ -150,7 +151,7 @@ export default function ComparisonPanel({ sites }: ComparisonPanelProps) {
         </div>
         <div className="flex items-center gap-2">
           <span className="px-2 py-0.5 rounded text-3xs font-mono bg-space-900 border border-space-700 text-emerald-400">
-            Mode: {horizonMode === 'terrain' ? `Terrain (${mastHeightM}m mast)` : 'Flat (0°)'}
+            Mode: {horizonMode === 'terrain' ? `Terrain (${mastHeightM}m mast)` : 'Flat sphere, 0 deg horizon'}
           </span>
         </div>
       </div>
@@ -186,6 +187,27 @@ export default function ComparisonPanel({ sites }: ComparisonPanelProps) {
               </td>
             </tr>
 
+            {/* Coordinate Kind Notice */}
+            {(siteA?.coord_kind === 'region_centre' || siteA?.coord_kind === 'planned_region_center' ||
+              siteB?.coord_kind === 'region_centre' || siteB?.coord_kind === 'planned_region_center') && (
+              <tr className="bg-amber-500/5">
+                <td className="py-2 px-3 text-amber-300 font-sans font-medium text-3xs">Coordinate Notice</td>
+                <td className="py-2 px-3 text-amber-300/90 font-sans text-3xs">
+                  {siteA?.coord_kind === 'region_centre' || siteA?.coord_kind === 'planned_region_center'
+                    ? 'Region centre; results can differ strongly from the crest or evaluated site.'
+                    : 'Specific site'}
+                </td>
+                <td className="py-2 px-3 text-amber-300/90 font-sans text-3xs">
+                  {siteB?.coord_kind === 'region_centre' || siteB?.coord_kind === 'planned_region_center'
+                    ? 'Region centre; results can differ strongly from the crest or evaluated site.'
+                    : 'Specific site'}
+                </td>
+                <td className="py-2 px-3 text-right text-space-400 font-sans text-3xs">
+                  —
+                </td>
+              </tr>
+            )}
+
             {/* DEM Tier / Source */}
             <tr>
               <td className="py-2.5 px-3 text-space-300 font-sans font-medium">Topographic DEM Source</td>
@@ -203,8 +225,8 @@ export default function ComparisonPanel({ sites }: ComparisonPanelProps) {
             {/* Target UTC Date */}
             <tr>
               <td className="py-2.5 px-3 text-space-300 font-sans font-medium">Evaluation Date (UTC)</td>
-              <td className="py-2.5 px-3 text-space-200">{utcA}</td>
-              <td className="py-2.5 px-3 text-space-200">{utcB}</td>
+              <td className="py-2.5 px-3 text-space-200 font-mono">{formatUtcDisplay(utcA)}</td>
+              <td className="py-2.5 px-3 text-space-200 font-mono">{formatUtcDisplay(utcB)}</td>
               <td className="py-2.5 px-3 text-right text-space-400 font-sans">
                 {utcA === utcB ? 'Synchronous' : 'Asynchronous dates'}
               </td>
@@ -331,7 +353,7 @@ export default function ComparisonPanel({ sites }: ComparisonPanelProps) {
             {/* Terrain Shadow Impact Delta */}
             {horizonMode === 'terrain' && (
               <tr className="bg-amber-950/20 text-amber-300">
-                <td className="py-2.5 px-3 font-sans font-medium">Topographic Masking Loss vs Flat Datum</td>
+                <td className="py-2.5 px-3 font-sans font-medium">Terrain effect vs flat (+ gain / - loss)</td>
                 <td className="py-2.5 px-3">{oppA?.delta_sun_hours ?? 0} h sun</td>
                 <td className="py-2.5 px-3">{oppB?.delta_sun_hours ?? 0} h sun</td>
                 <td className="py-2.5 px-3 text-right font-medium">

@@ -6,6 +6,7 @@ import {
   computeEarthVisibility,
   computeSolarPowerWatts,
   computeOpportunityMetrics,
+  formatUtcDisplay,
   type EarthCriterion,
   type SolarOrientation,
 } from '../utils/scienceMath'
@@ -80,7 +81,7 @@ interface ScenarioStore {
   loadHorizon: (siteId: string) => Promise<void>
 }
 
-export function getMaskForMastHeight(profile?: HorizonProfile | null, mastHeightM: number = 0.0): number[] | null {
+export function getMaskForMastHeight(profile?: HorizonProfile | null, mastHeightM: number = 1.5): number[] | null {
   if (!profile || !profile.masks) return null
   if (mastHeightM <= 0.75) return profile.masks.h_0_0m || null
   if (mastHeightM <= 2.25) return profile.masks.h_1_5m || profile.masks.h_0_0m || null
@@ -89,11 +90,28 @@ export function getMaskForMastHeight(profile?: HorizonProfile | null, mastHeight
   return profile.masks.h_10_0m || profile.masks.h_5_0m || null
 }
 
+export function getDefaultUtcDate(nowDate?: Date): string {
+  const now = nowDate ?? new Date()
+  const year = now.getUTCFullYear()
+  const pad = (n: number) => String(n).padStart(2, '0')
+  if (year < 2024) {
+    return '2024-01-01T00:00:00Z'
+  }
+  if (year > 2028) {
+    return '2028-12-31T23:00:00Z'
+  }
+  return `${year}-${pad(now.getUTCMonth() + 1)}-${pad(now.getUTCDate())}T${pad(now.getUTCHours())}:${pad(now.getUTCMinutes())}:00Z`
+}
+
+export function getDefaultUtcDisplay(nowDate?: Date): string {
+  return formatUtcDisplay(getDefaultUtcDate(nowDate))
+}
+
 export const useScenarioStore = create<ScenarioStore>((set, get) => ({
   scenarioAId: 'im-2',
   scenarioBId: 'cs-shackleton-rim',
-  utcA: '2026-03-01T12:00:00Z',
-  utcB: '2026-03-01T12:00:00Z',
+  utcA: getDefaultUtcDate(),
+  utcB: getDefaultUtcDate(),
   thresholdDeg: 0.0,
 
   horizonMode: 'terrain',
@@ -256,7 +274,7 @@ export function getElevationAtTime(
 export function compute30DayWindows(
   ts?: GeometryTimeseries,
   startUtc?: string,
-  thresholdOrOptions: number | ComputeWindowsOptions = 5.0
+  thresholdOrOptions: number | ComputeWindowsOptions = 0.0
 ): ExtendedOpportunityData | null {
   if (!ts || !ts.times || ts.times.length === 0 || !startUtc) {
     return null
@@ -264,14 +282,14 @@ export function compute30DayWindows(
 
   const options: ComputeWindowsOptions =
     typeof thresholdOrOptions === 'number'
-      ? { thresholdDeg: thresholdOrOptions }
+      ? { sunThresholdDeg: thresholdOrOptions }
       : thresholdOrOptions
 
   const thresholdDeg =
     options.sunThresholdDeg ??
     (typeof thresholdOrOptions === 'number' ? thresholdOrOptions : 0.0)
   const mode = options.horizonMode ?? (options.horizonProfile ? 'terrain' : 'flat')
-  const mastHeightM = options.mastHeightM ?? 0.0
+  const mastHeightM = options.mastHeightM ?? 1.5
   const dteMarginDeg = options.dteMarginDeg ?? 0.0
   const earthCriterion = options.earthCriterion ?? 'center'
   const orientation = options.solarArrayType ?? 'vertical'
@@ -301,9 +319,9 @@ export function compute30DayWindows(
 
   const mask = mode === 'terrain' ? getMaskForMastHeight(options.horizonProfile, mastHeightM) : null
 
-  // Flat masks for baseline comparison
-  const flatSunMask = sliceSunEl.map((el) => el + SUN_UPPER_LIMB_DEG >= thresholdDeg)
-  const flatEarthMask = sliceEarthEl.map((el) => el >= thresholdDeg)
+  // Flat masks for baseline comparison (Sun: upper limb > threshold; Earth: el >= antenna_margin)
+  const flatSunMask = sliceSunEl.map((el) => el + SUN_UPPER_LIMB_DEG > thresholdDeg)
+  const flatEarthMask = sliceEarthEl.map((el) => el >= dteMarginDeg)
   const flatJointMask = flatSunMask.map((s, i) => s && flatEarthMask[i])
 
   // Active masks for requested mode
@@ -321,7 +339,7 @@ export function compute30DayWindows(
     if (mode === 'terrain' && mask) {
       const hSun = lookupHorizonElevation(mask, sunAz)
       const fSun = computeSolarFraction(sunAz, sunEl, mask)
-      const sunUp = fSun > 0.0 && sunEl + SUN_UPPER_LIMB_DEG - hSun >= thresholdDeg
+      const sunUp = (sunEl + SUN_UPPER_LIMB_DEG) > (hSun + thresholdDeg)
       activeSunMask.push(sunUp)
 
       const earthUp = computeEarthVisibility(earthAz, earthEl, mask, dteMarginDeg, earthCriterion)
@@ -331,9 +349,9 @@ export function compute30DayWindows(
       const pWatts = computeSolarPowerWatts(sunEl, sunAz, fSun, orientation, areaM2, efficiency)
       totalSolarPowerWh += pWatts * (ts.step_seconds / 3600.0)
     } else {
-      const sunUp = sunEl + SUN_UPPER_LIMB_DEG >= thresholdDeg
+      const sunUp = (sunEl + SUN_UPPER_LIMB_DEG) > thresholdDeg
       activeSunMask.push(sunUp)
-      const earthUp = earthEl >= thresholdDeg + dteMarginDeg
+      const earthUp = earthEl >= dteMarginDeg
       activeEarthMask.push(earthUp)
       activeJointMask.push(sunUp && earthUp)
 

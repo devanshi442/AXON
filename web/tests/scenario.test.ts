@@ -4,7 +4,10 @@ import {
   getElevationAtTime,
   compute30DayWindows,
   SUN_UPPER_LIMB_DEG,
+  getDefaultUtcDate,
+  getDefaultUtcDisplay,
 } from '../src/stores/scenarioStore'
+import { formatUtcDisplay } from '../src/utils/scienceMath'
 import type { GeometryTimeseries } from '../src/types/mission'
 
 const mockTs: GeometryTimeseries = {
@@ -69,4 +72,22 @@ test('comparison arithmetic B - A is exact', () => {
   const elB = 14.5
   const diff = elB - elA
   assert.equal(diff, 4.5)
+})
+
+test('getDefaultUtcDate clamps to 2024-2028 and formats as YYYY-MM-DD HH:mm UTC', () => {
+  // Clamped lower bound (< 2024)
+  const d2022 = new Date('2022-06-15T12:30:00Z')
+  assert.equal(getDefaultUtcDate(d2022), '2024-01-01T00:00:00Z')
+  assert.equal(getDefaultUtcDisplay(d2022), '2024-01-01 00:00 UTC')
+
+  // Clamped upper bound (> 2028)
+  const d2030 = new Date('2030-08-20T18:45:00Z')
+  assert.equal(getDefaultUtcDate(d2030), '2028-12-31T23:00:00Z')
+  assert.equal(getDefaultUtcDisplay(d2030), '2028-12-31 23:00 UTC')
+
+  // In-range date (2026)
+  const d2026 = new Date('2026-11-09T02:27:00Z')
+  assert.equal(getDefaultUtcDate(d2026), '2026-11-09T02:27:00Z')
+  assert.equal(getDefaultUtcDisplay(d2026), '2026-11-09 02:27 UTC')
+  assert.equal(formatUtcDisplay(getDefaultUtcDate(d2026)), '2026-11-09 02:27 UTC')
 })

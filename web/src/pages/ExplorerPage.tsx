@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import type { MissionsData, SelectableSite } from '../types/mission'
+import type { MissionsData, SelectableSite, CoordKind } from '../types/mission'
 import { useScenarioStore } from '../stores/scenarioStore'
 import MoonMap from '../components/MoonMap'
 import MissionExplorer from '../components/MissionExplorer'
@@ -95,7 +95,7 @@ export default function ExplorerPage() {
       lon: c.lon_center,
       isMission: false,
       region_type: c.target_region,
-      coord_kind: 'planned_region_center' as const,
+      coord_kind: (c.coordinate_kind === 'specific_site' ? 'specific_site' : 'region_centre') as CoordKind,
       coord_status: (c.lat_center !== null && c.lon_center !== null ? 'ok' : 'skipped_null') as any,
       uncertainty_km: c.uncertainty_km,
       verified: c.verified ?? false,
@@ -104,14 +104,16 @@ export default function ExplorerPage() {
     })),
     ...missionsData.reference_sites.map((r) => ({
       id: r.id,
-      name: r.name,
+      name: r.id === 'mons-mouton-summit' ? 'Mons Mouton (reference point)' : r.name,
       kind: 'reference' as const,
       lat: r.lat,
       lon: r.lon,
       isMission: false,
       coord_kind: 'actual' as const,
       coord_status: 'ok' as const,
-      notes: r.note,
+      notes: r.id === 'mons-mouton-summit'
+        ? 'Regional reference anchor point on the flank of Mons Mouton (-84.6°S, 31.0°E, 5045 m). The topographic crest rises to >10,400 m ~2 km away.'
+        : r.note,
     })),
   ]
 
@@ -148,7 +150,7 @@ export default function ExplorerPage() {
           <div>
             <div className="text-3xs text-space-400 font-medium">HORIZON MODE</div>
             <div className="text-2xs font-mono text-emerald-400 font-semibold">
-              {horizonMode === 'terrain' ? `Terrain-Aware (${mastHeightM}m mast)` : 'Idealized Datum (0°)'}
+              {horizonMode === 'terrain' ? `Terrain-Aware (${mastHeightM}m mast)` : 'Flat sphere, 0 deg horizon'}
             </div>
           </div>
         </div>

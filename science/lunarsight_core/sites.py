@@ -18,6 +18,24 @@ import yaml
 from lunarsight_core import constants as C
 
 
+# Authoritative site annotations maintained by science model (e.g. region centre vs crest findings)
+SITE_ANNOTATIONS: Dict[str, str] = {
+    "cs-malapert-massif": (
+        "Stated coordinates (-85.99°S, -2.93°E, 4841 m) are the region centre (0% Earth visibility). "
+        "A DEM-derived crest ~1.4 km away (-85.9627°S, -2.3725°E, 4993 m) reaches 100% Earth visibility. "
+        "Artemis III Candidate Region."
+    ),
+}
+
+
+def apply_site_annotations(missions_dict: Dict[str, Any]) -> None:
+    """Enrich compiled missions data dict with authoritative site annotations from sites.py."""
+    for c in missions_dict.get("candidate_sites", []):
+        cid = c.get("id")
+        if cid in SITE_ANNOTATIONS:
+            c["notes"] = SITE_ANNOTATIONS[cid]
+
+
 @dataclass
 class SiteRecord:
     id: str
@@ -166,6 +184,8 @@ def load_site_registry(data_yaml_or_json: Optional[Path | str] = None) -> List[S
         if cand.get("source_alt"):
             sources.append(cand["source_alt"])
 
+        c_notes = SITE_ANNOTATIONS.get(cid, cand.get("notes"))
+
         rec = SiteRecord(
             id=cid,
             name=cname,
@@ -173,7 +193,7 @@ def load_site_registry(data_yaml_or_json: Optional[Path | str] = None) -> List[S
             lat=lat,
             lon=lon,
             coord_status=status,
-            coord_kind="candidate_region_center",
+            coord_kind=cand.get("coordinate_kind") or cand.get("coord_kind") or "candidate_region_center",
             uncertainty_km=cand.get("uncertainty_km"),
             verified=bool(cand.get("verified", False)),
             source_urls=sources,
@@ -181,7 +201,7 @@ def load_site_registry(data_yaml_or_json: Optional[Path | str] = None) -> List[S
             metadata={
                 "region_size_km": cand.get("region_size_km"),
                 "source_date": cand.get("source_date"),
-                "notes": cand.get("notes"),
+                "notes": c_notes,
             },
         )
         registry.append(rec)

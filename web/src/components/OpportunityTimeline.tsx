@@ -4,7 +4,7 @@ import {
   useScenarioStore,
   compute30DayWindows,
 } from '../stores/scenarioStore'
-import type { EarthCriterion, SolarOrientation } from '../utils/scienceMath'
+import { type EarthCriterion, type SolarOrientation, formatUtcDisplay } from '../utils/scienceMath'
 
 interface OpportunityTimelineProps {
   sites: SelectableSite[]
@@ -118,7 +118,7 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
                     : 'text-space-400 hover:text-space-200'
                 }`}
               >
-                Flat Datum (0°)
+                Flat sphere, 0 deg horizon
               </button>
             </div>
           </div>
@@ -228,7 +228,7 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
                 <span className="text-3xs uppercase tracking-wider text-sun-400 font-semibold flex items-center justify-between">
                   <span>Solar Illumination &amp; Power</span>
                   <span className="text-space-400 font-mono font-normal">
-                    {horizonMode === 'terrain' ? 'Terrain Masked' : 'Flat Datum'}
+                    {horizonMode === 'terrain' ? 'Terrain Masked' : 'Flat sphere, 0 deg horizon'}
                   </span>
                 </span>
                 <div className="text-xl font-bold font-mono text-sun-300 mt-1">
@@ -242,6 +242,9 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
                   <span className="text-sun-400 font-mono font-medium">
                     ⚡ {oppData.solar_energy_kwh} kWh / m²
                   </span>
+                </div>
+                <div className="text-3xs text-space-400 font-mono mt-1">
+                  Daylight: 30-day window from {formatUtcDisplay(utc)}, mast 1.5 m
                 </div>
               </div>
 
@@ -332,7 +335,7 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
           <div className="p-3 bg-space-900 rounded-xl border border-space-700 flex flex-col gap-3">
             <div className="flex items-center justify-between">
               <span className="text-2xs font-semibold text-space-200">
-                30-Day Opportunity Visualizer (720 Hours Timeline from {utc.slice(0, 10)})
+                30-Day Opportunity Visualizer (720 Hours Timeline from {formatUtcDisplay(utc)})
               </span>
               <span className="text-3xs text-space-400 font-mono">
                 {horizonMode === 'terrain' ? `Topography: ${horizon?.dem_id || 'LOLA DEM'}` : 'Idealized Horizon'}

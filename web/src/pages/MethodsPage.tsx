@@ -277,6 +277,9 @@ export default function MethodsPage() {
         </h2>
         <ul className="text-xs text-space-300 space-y-2 list-disc list-inside leading-relaxed">
           <li>
+            <strong className="text-space-100">Flat Sphere (0° Horizon) vs Local Terrain Horizon:</strong> The baseline "flat sphere, 0 deg horizon" calculation models the Moon as an idealized, uniform sphere (mean radius R = 1,737.4 km, alt = 0 m) with an unoccluded 0° tangent horizon. This datum is NOT comparable to an observer situated at the site's true DEM elevation: on high peaks (such as Connecting Ridge at +1,653 m), the observer overlooks lower surrounding terrain, depressing the geometric horizon dip down to -3.37° and yielding higher solar availability than the 0° sphere. Deep crater floors lie thousands of meters below surrounding terrain, casting towering horizons that plunge the interior into permanent shadow.
+          </li>
+          <li>
             <strong className="text-space-100">Geometric Line-of-Sight vs Communication Link Budget:</strong> Earth elevation above the terrain horizon does not guarantee communications. Antenna beamwidth, transponder transmit power, receiver sensitivity, pointing jitter, multipath, and polarization loss govern actual link margin.
           </li>
           <li>

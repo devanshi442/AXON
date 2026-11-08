@@ -375,3 +375,37 @@ candidate_sites:
       Corrected from previous crater floor center (-87.3°S, 77.0°E per USGS Feature 1987).
       Identified in NASA Aug 2022 candidate study; volatile cold traps adjacent.
     verified: true
+
+  - id: cs-shackleton-ridge-site
+    record_type: candidate_site
+    name: "Peak Near Shackleton (Evaluated Site)"
+    lat_center: -89.017
+    lon_center: 126.273
+    coord_type: planetocentric_east_positive
+    coordinate_kind: specific_site
+    region_size_km: 2
+    uncertainty_km: 1.0
+    source_url: "https://www.nasa.gov/news-release/nasa-identifies-candidate-regions-for-artemis-iii-lunar-landing/"
+    source_alt: "https://www.lpi.usra.edu/lunar/constellation/landing_sites/connecting_ridge/"
+    source_date: "2022-08-19"
+    notes: >
+      Evaluated summit landing site on the high-standing ridge adjacent to Shackleton crater rim
+      at -89.017°S, 126.273°E (LPI / Spudis et al. 2008). Specific evaluated landing site.
+    verified: true
+
+  - id: cs-connecting-ridge-site
+    record_type: candidate_site
+    name: "Connecting Ridge (Evaluated Site)"
+    lat_center: -89.534
+    lon_center: -150.052
+    coord_type: planetocentric_east_positive
+    coordinate_kind: specific_site
+    region_size_km: 2
+    uncertainty_km: 1.0
+    source_url: "https://www.nasa.gov/news-release/nasa-identifies-candidate-regions-for-artemis-iii-lunar-landing/"
+    source_alt: "https://www.lpi.usra.edu/lunar/constellation/landing_sites/connecting_ridge/"
+    source_date: "2022-08-19"
+    notes: >
+      High ridgeline connecting Shackleton and de Gerlache craters. Specific candidate site evaluated
+      at -89.534°S, 209.948°E (-150.052°E).
+    verified: true
