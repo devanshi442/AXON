@@ -147,24 +147,37 @@ def test_power_model_orientations_and_flux():
 
 
 def test_monotonicity_flat_vs_terrain_and_mast():
-    """Verify flat sun >= terrain sun and higher mast >= lower mast."""
-    # Synthetic horizon mask with positive elevation (ridge at 5 degrees)
-    mask_low = {"mask_deg": [5.0] * 360, "az_step": 1.0}
-    # Higher mast sees slightly lower horizon (e.g. 4.5 degrees)
-    mask_high = {"mask_deg": [4.5] * 360, "az_step": 1.0}
+    """
+    Verify:
+    1. For flat-ground / positive obstruction: terrain sun fraction <= flat sun fraction.
+    2. For an isolated peak with negative horizon dip: terrain sun fraction >= flat sun fraction (sum(terrain) > sum(flat)).
+    3. Higher mast sees lower or equal horizon, so higher mast fraction >= lower mast fraction.
+    """
+    # 1. Flat ground / surrounding ridge (mask > 0 deg)
+    mask_ridge_low = {"mask_deg": [5.0] * 360, "az_step": 1.0}
+    mask_ridge_high = {"mask_deg": [4.5] * 360, "az_step": 1.0}
 
-    # Sun elevation ranging from -2 to 10 deg
-    els = np.linspace(-2.0, 10.0, 25)
-    azs = np.linspace(0.0, 360.0, 25)
+    # 2. Isolated peak with dip angle below datum (negative horizon, e.g. -1.0 deg)
+    mask_peak = {"mask_deg": [-1.0] * 360, "az_step": 1.0}
+
+    # Sun elevation ranging across horizon transitions
+    els = np.linspace(-2.0, 10.0, 50)
+    azs = np.linspace(0.0, 360.0, 50)
 
     v_flat = visibility.compute_sun_visibility(els, azs, mask=None, threshold_deg=0.0)
-    v_terr_low = visibility.compute_sun_visibility(els, azs, mask=mask_low, threshold_deg=0.0)
-    v_terr_high = visibility.compute_sun_visibility(els, azs, mask=mask_high, threshold_deg=0.0)
+    v_terr_low = visibility.compute_sun_visibility(els, azs, mask=mask_ridge_low, threshold_deg=0.0)
+    v_terr_high = visibility.compute_sun_visibility(els, azs, mask=mask_ridge_high, threshold_deg=0.0)
+    v_terr_peak = visibility.compute_sun_visibility(els, azs, mask=mask_peak, threshold_deg=0.0)
 
-    # Check flat fraction >= terrain fraction everywhere
-    assert np.all(v_flat["fraction"] >= v_terr_low["fraction"])
-    # Check higher mast fraction >= lower mast fraction everywhere
-    assert np.all(v_terr_high["fraction"] >= v_terr_low["fraction"])
+    # For flat-ground / obstruction: terrain <= flat
+    assert np.all(np.array(v_terr_low["fraction"]) <= np.array(v_flat["fraction"]))
+
+    # For isolated peak: terrain >= flat everywhere, and strictly greater total illumination
+    assert np.all(np.array(v_terr_peak["fraction"]) >= np.array(v_flat["fraction"]))
+    assert np.sum(v_terr_peak["fraction"]) > np.sum(v_flat["fraction"])
+
+    # Higher mast sees >= lower mast
+    assert np.all(np.array(v_terr_high["fraction"]) >= np.array(v_terr_low["fraction"]))
 
 
 def test_psr_crater_sanity_assertion():

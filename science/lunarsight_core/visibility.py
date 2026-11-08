@@ -70,7 +70,10 @@ def compute_sun_visibility(
     r_sun = np.asarray(sun_ang_radius_deg, dtype=np.float64)
 
     mask_el = get_mask_elevation(mask, az)
-    effective_horizon = np.maximum(mask_el, threshold_deg)
+    if mask is not None:
+        effective_horizon = mask_el + threshold_deg
+    else:
+        effective_horizon = threshold_deg
 
     # Local-flat-mask approximation: linear fraction of disk above mask
     # 0 = completely below horizon, 1 = completely above horizon
