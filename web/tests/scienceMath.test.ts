@@ -77,6 +77,23 @@ test('computeEarthVisibility handles clearance margins and criteria', () => {
   assert.equal(computeEarthVisibility(90, 6.0, mask, 0.0, 'full_disk'), true)
 })
 
+test('raised margin never increases availability', () => {
+  const mask = [2.5, 3.0, 1.5, 2.0]
+  const els = [-2.0, 0.0, 2.0, 3.0, 4.0, 5.0, 8.0]
+  const azs = [0, 90, 180, 270, 45, 135, 225]
+
+  // Earth margin monotonicity
+  let prevEarthCount = Infinity
+  for (const margin of [0.0, 0.5, 1.0, 2.0, 5.0]) {
+    let count = 0
+    for (let i = 0; i < els.length; i++) {
+      if (computeEarthVisibility(azs[i], els[i], mask, margin)) count++
+    }
+    assert.ok(count <= prevEarthCount, `Earth availability increased with margin ${margin}`)
+    prevEarthCount = count
+  }
+})
+
 test('extractIntervals and computeOpportunityMetrics work accurately', () => {
   const times = ['2026-03-01T00:00:00Z', '2026-03-01T01:00:00Z', '2026-03-01T02:00:00Z', '2026-03-01T03:00:00Z']
   const active = [true, true, false, true]

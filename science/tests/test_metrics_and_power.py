@@ -180,6 +180,36 @@ def test_monotonicity_flat_vs_terrain_and_mast():
     assert np.all(np.array(v_terr_high["fraction"]) >= np.array(v_terr_low["fraction"]))
 
 
+def test_raised_margin_never_increases_availability():
+    """
+    Verify monotonicity with respect to margins:
+    A raised threshold/margin NEVER increases availability (sunlit or DTE visible hours).
+    """
+    els = np.linspace(-3.0, 12.0, 100)
+    azs = np.linspace(0.0, 360.0, 100)
+    mask = {"mask_deg": [2.5] * 360, "az_step": 1.0}
+
+    # 1. Sun margin monotonicity (threshold_deg)
+    prev_sun_sum = float("inf")
+    prev_sun_vis_count = float("inf")
+    for thresh in [0.0, 0.5, 1.0, 2.0, 5.0]:
+        v = visibility.compute_sun_visibility(els, azs, mask=mask, threshold_deg=thresh)
+        curr_sum = float(np.sum(v["fraction"]))
+        curr_count = int(np.sum(v["visible"]))
+        assert curr_sum <= prev_sun_sum + 1e-9, f"Sun fraction increased with threshold {thresh}"
+        assert curr_count <= prev_sun_vis_count, f"Sun visible count increased with threshold {thresh}"
+        prev_sun_sum = curr_sum
+        prev_sun_vis_count = curr_count
+
+    # 2. Earth margin monotonicity (margin_deg)
+    prev_earth_vis_count = float("inf")
+    for margin in [0.0, 0.5, 1.0, 2.0, 5.0]:
+        v = visibility.compute_earth_visibility(els, azs, mask=mask, margin_deg=margin)
+        curr_count = int(np.sum(v["visible"]))
+        assert curr_count <= prev_earth_vis_count, f"Earth visible count increased with margin {margin}"
+        prev_earth_vis_count = curr_count
+
+
 def test_psr_crater_sanity_assertion():
     """
     Permanently Shadowed Region (PSR) check:

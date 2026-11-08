@@ -132,7 +132,7 @@ def build_all_geometry(verbose: bool = True):
         site_metrics = metrics.compute_site_flat_and_terrain_metrics(
             timeseries=ts,
             horizon_mask=horizon_mask,
-            sun_threshold_deg=5.0,
+            sun_threshold_deg=0.0,
             dte_margin_deg=0.0,
             site_lat=lat,
             site_lon=lon,
@@ -153,7 +153,7 @@ def build_all_geometry(verbose: bool = True):
             "period": f"{START_UTC} to {STOP_UTC}",
             "step_seconds": STEP_S,
             "total_period_hours": flat_m.get("total_period_hours", 0.0),
-            "threshold_deg": 5.0,
+            "threshold_deg": 0.0,
             "terrain_coverage": terr_m.get("coverage_status", "unavailable"),
             "dem_id": terr_m.get("dem_id", "NONE"),
             "site_height_m": horizon_mask.get("site_height_m") if horizon_mask else None,

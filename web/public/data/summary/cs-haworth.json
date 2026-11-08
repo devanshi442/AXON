@@ -8,91 +8,539 @@
   "period": "2024-01-01T00:00:00Z to 2028-12-31T23:00:00Z",
   "step_seconds": 3600,
   "total_period_hours": 43848.0,
-  "threshold_deg": 5.0,
+  "threshold_deg": 0.0,
   "terrain_coverage": "full",
   "dem_id": "LDEM_85S_20M",
   "site_height_m": 1630.44,
-  "sun_hours": 238.0,
-  "sun_percentage": 0.5,
-  "sun_windows_count": 7,
-  "sun_longest_window_hours": 53.0,
-  "sun_longest_dark_gap_hours": 8469.0,
+  "sun_hours": 23292.0,
+  "sun_percentage": 53.1,
+  "sun_windows_count": 63,
+  "sun_longest_window_hours": 487.0,
+  "sun_longest_dark_gap_hours": 444.0,
   "earth_hours": 27573.0,
   "earth_percentage": 62.9,
   "earth_windows_count": 68,
   "earth_longest_window_hours": 438.0,
   "earth_longest_dark_gap_hours": 262.0,
-  "joint_hours": 238.0,
-  "joint_percentage": 0.5,
-  "joint_windows_count": 7,
-  "joint_longest_window_hours": 53.0,
-  "joint_longest_dark_gap_hours": 8469.0,
+  "joint_hours": 14625.0,
+  "joint_percentage": 33.4,
+  "joint_windows_count": 65,
+  "joint_longest_window_hours": 431.0,
+  "joint_longest_dark_gap_hours": 902.0,
   "flat": {
     "mode": "flat",
     "coverage_status": "idealized",
     "dem_id": null,
     "total_period_hours": 43848.0,
     "sun": {
-      "total_hours": 238.0,
-      "percentage": 0.5,
-      "windows_count": 7,
-      "longest_window_hours": 53.0,
-      "longest_dark_gap_hours": 8469.0,
+      "total_hours": 23292.0,
+      "percentage": 53.1,
+      "windows_count": 63,
+      "longest_window_hours": 487.0,
+      "longest_dark_gap_hours": 444.0,
       "windows": [
         {
-          "start": "2024-01-27T05:00:00Z",
-          "end": "2024-01-28T10:00:00Z",
-          "start_utc": "2024-01-27T05:00:00Z",
-          "end_utc": "2024-01-28T10:00:00Z",
-          "duration_hours": 30.0,
+          "start": "2024-01-01T00:00:00Z",
+          "end": "2024-01-08T10:00:00Z",
+          "start_utc": "2024-01-01T00:00:00Z",
+          "end_utc": "2024-01-08T10:00:00Z",
+          "duration_hours": 179.0,
           "precision": "hourly"
         },
         {
-          "start": "2024-12-16T17:00:00Z",
-          "end": "2024-12-18T15:00:00Z",
-          "start_utc": "2024-12-16T17:00:00Z",
-          "end_utc": "2024-12-18T15:00:00Z",
-          "duration_hours": 47.0,
+          "start": "2024-01-17T18:00:00Z",
+          "end": "2024-02-06T17:00:00Z",
+          "start_utc": "2024-01-17T18:00:00Z",
+          "end_utc": "2024-02-06T17:00:00Z",
+          "duration_hours": 480.0,
           "precision": "hourly"
         },
         {
-          "start": "2025-12-06T04:00:00Z",
-          "end": "2025-12-07T18:00:00Z",
-          "start_utc": "2025-12-06T04:00:00Z",
-          "end_utc": "2025-12-07T18:00:00Z",
-          "duration_hours": 39.0,
+          "start": "2024-02-16T22:00:00Z",
+          "end": "2024-03-06T10:00:00Z",
+          "start_utc": "2024-02-16T22:00:00Z",
+          "end_utc": "2024-03-06T10:00:00Z",
+          "duration_hours": 445.0,
           "precision": "hourly"
         },
         {
-          "start": "2026-11-25T16:00:00Z",
-          "end": "2026-11-26T20:00:00Z",
-          "start_utc": "2026-11-25T16:00:00Z",
-          "end_utc": "2026-11-26T20:00:00Z",
-          "duration_hours": 29.0,
+          "start": "2024-03-18T13:00:00Z",
+          "end": "2024-04-03T20:00:00Z",
+          "start_utc": "2024-03-18T13:00:00Z",
+          "end_utc": "2024-04-03T20:00:00Z",
+          "duration_hours": 392.0,
           "precision": "hourly"
         },
         {
-          "start": "2027-10-16T13:00:00Z",
-          "end": "2027-10-17T15:00:00Z",
-          "start_utc": "2027-10-16T13:00:00Z",
-          "end_utc": "2027-10-17T15:00:00Z",
-          "duration_hours": 27.0,
+          "start": "2024-04-18T08:00:00Z",
+          "end": "2024-05-02T06:00:00Z",
+          "start_utc": "2024-04-18T08:00:00Z",
+          "end_utc": "2024-05-02T06:00:00Z",
+          "duration_hours": 335.0,
           "precision": "hourly"
         },
         {
-          "start": "2027-11-15T07:00:00Z",
-          "end": "2027-11-15T19:00:00Z",
-          "start_utc": "2027-11-15T07:00:00Z",
-          "end_utc": "2027-11-15T19:00:00Z",
-          "duration_hours": 13.0,
+          "start": "2024-05-18T21:00:00Z",
+          "end": "2024-05-30T22:00:00Z",
+          "start_utc": "2024-05-18T21:00:00Z",
+          "end_utc": "2024-05-30T22:00:00Z",
+          "duration_hours": 290.0,
           "precision": "hourly"
         },
         {
-          "start": "2028-10-04T08:00:00Z",
-          "end": "2028-10-06T12:00:00Z",
-          "start_utc": "2028-10-04T08:00:00Z",
-          "end_utc": "2028-10-06T12:00:00Z",
-          "duration_hours": 53.0,
+          "start": "2024-06-18T00:00:00Z",
+          "end": "2024-06-29T00:00:00Z",
+          "start_utc": "2024-06-18T00:00:00Z",
+          "end_utc": "2024-06-29T00:00:00Z",
+          "duration_hours": 265.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2024-07-17T11:00:00Z",
+          "end": "2024-07-28T17:00:00Z",
+          "start_utc": "2024-07-17T11:00:00Z",
+          "end_utc": "2024-07-28T17:00:00Z",
+          "duration_hours": 271.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2024-08-15T08:00:00Z",
+          "end": "2024-08-28T00:00:00Z",
+          "start_utc": "2024-08-15T08:00:00Z",
+          "end_utc": "2024-08-28T00:00:00Z",
+          "duration_hours": 305.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2024-09-12T21:00:00Z",
+          "end": "2024-09-27T16:00:00Z",
+          "start_utc": "2024-09-12T21:00:00Z",
+          "end_utc": "2024-09-27T16:00:00Z",
+          "duration_hours": 356.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2024-10-11T06:00:00Z",
+          "end": "2024-10-28T10:00:00Z",
+          "start_utc": "2024-10-11T06:00:00Z",
+          "end_utc": "2024-10-28T10:00:00Z",
+          "duration_hours": 413.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2024-11-08T18:00:00Z",
+          "end": "2024-11-27T22:00:00Z",
+          "start_utc": "2024-11-08T18:00:00Z",
+          "end_utc": "2024-11-27T22:00:00Z",
+          "duration_hours": 461.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2024-12-07T14:00:00Z",
+          "end": "2024-12-27T19:00:00Z",
+          "start_utc": "2024-12-07T14:00:00Z",
+          "end_utc": "2024-12-27T19:00:00Z",
+          "duration_hours": 486.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-01-06T04:00:00Z",
+          "end": "2025-01-25T22:00:00Z",
+          "start_utc": "2025-01-06T04:00:00Z",
+          "end_utc": "2025-01-25T22:00:00Z",
+          "duration_hours": 475.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-02-05T11:00:00Z",
+          "end": "2025-02-23T13:00:00Z",
+          "start_utc": "2025-02-05T11:00:00Z",
+          "end_utc": "2025-02-23T13:00:00Z",
+          "duration_hours": 435.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-03-08T06:00:00Z",
+          "end": "2025-03-23T22:00:00Z",
+          "start_utc": "2025-03-08T06:00:00Z",
+          "end_utc": "2025-03-23T22:00:00Z",
+          "duration_hours": 377.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-04-08T01:00:00Z",
+          "end": "2025-04-21T09:00:00Z",
+          "start_utc": "2025-04-08T01:00:00Z",
+          "end_utc": "2025-04-21T09:00:00Z",
+          "duration_hours": 321.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-05-08T13:00:00Z",
+          "end": "2025-05-20T03:00:00Z",
+          "start_utc": "2025-05-08T13:00:00Z",
+          "end_utc": "2025-05-20T03:00:00Z",
+          "duration_hours": 279.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-06-07T12:00:00Z",
+          "end": "2025-06-18T09:00:00Z",
+          "start_utc": "2025-06-07T12:00:00Z",
+          "end_utc": "2025-06-18T09:00:00Z",
+          "duration_hours": 262.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-07-06T19:00:00Z",
+          "end": "2025-07-18T07:00:00Z",
+          "start_utc": "2025-07-06T19:00:00Z",
+          "end_utc": "2025-07-18T07:00:00Z",
+          "duration_hours": 277.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-08-04T12:00:00Z",
+          "end": "2025-08-17T16:00:00Z",
+          "start_utc": "2025-08-04T12:00:00Z",
+          "end_utc": "2025-08-17T16:00:00Z",
+          "duration_hours": 317.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-09-01T23:00:00Z",
+          "end": "2025-09-17T09:00:00Z",
+          "start_utc": "2025-09-01T23:00:00Z",
+          "end_utc": "2025-09-17T09:00:00Z",
+          "duration_hours": 371.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-09-30T08:00:00Z",
+          "end": "2025-10-18T01:00:00Z",
+          "start_utc": "2025-09-30T08:00:00Z",
+          "end_utc": "2025-10-18T01:00:00Z",
+          "duration_hours": 426.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-10-28T20:00:00Z",
+          "end": "2025-11-17T10:00:00Z",
+          "start_utc": "2025-10-28T20:00:00Z",
+          "end_utc": "2025-11-17T10:00:00Z",
+          "duration_hours": 471.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-11-26T20:00:00Z",
+          "end": "2025-12-17T02:00:00Z",
+          "start_utc": "2025-11-26T20:00:00Z",
+          "end_utc": "2025-12-17T02:00:00Z",
+          "duration_hours": 487.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-12-26T14:00:00Z",
+          "end": "2026-01-15T01:00:00Z",
+          "start_utc": "2025-12-26T14:00:00Z",
+          "end_utc": "2026-01-15T01:00:00Z",
+          "duration_hours": 468.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-01-26T01:00:00Z",
+          "end": "2026-02-12T14:00:00Z",
+          "start_utc": "2026-01-26T01:00:00Z",
+          "end_utc": "2026-02-12T14:00:00Z",
+          "duration_hours": 422.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-02-25T21:00:00Z",
+          "end": "2026-03-13T00:00:00Z",
+          "start_utc": "2026-02-25T21:00:00Z",
+          "end_utc": "2026-03-13T00:00:00Z",
+          "duration_hours": 364.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-03-28T16:00:00Z",
+          "end": "2026-04-10T12:00:00Z",
+          "start_utc": "2026-03-28T16:00:00Z",
+          "end_utc": "2026-04-10T12:00:00Z",
+          "duration_hours": 309.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-04-28T02:00:00Z",
+          "end": "2026-05-09T09:00:00Z",
+          "start_utc": "2026-04-28T02:00:00Z",
+          "end_utc": "2026-05-09T09:00:00Z",
+          "duration_hours": 272.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-05-27T21:00:00Z",
+          "end": "2026-06-07T19:00:00Z",
+          "start_utc": "2026-05-27T21:00:00Z",
+          "end_utc": "2026-06-07T19:00:00Z",
+          "duration_hours": 263.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-06-26T00:00:00Z",
+          "end": "2026-07-07T21:00:00Z",
+          "start_utc": "2026-06-26T00:00:00Z",
+          "end_utc": "2026-07-07T21:00:00Z",
+          "duration_hours": 286.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-07-24T15:00:00Z",
+          "end": "2026-08-07T08:00:00Z",
+          "start_utc": "2026-07-24T15:00:00Z",
+          "end_utc": "2026-08-07T08:00:00Z",
+          "duration_hours": 330.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-08-22T00:00:00Z",
+          "end": "2026-09-07T01:00:00Z",
+          "start_utc": "2026-08-22T00:00:00Z",
+          "end_utc": "2026-09-07T01:00:00Z",
+          "duration_hours": 386.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-09-19T09:00:00Z",
+          "end": "2026-10-07T15:00:00Z",
+          "start_utc": "2026-09-19T09:00:00Z",
+          "end_utc": "2026-10-07T15:00:00Z",
+          "duration_hours": 439.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-10-17T23:00:00Z",
+          "end": "2026-11-06T20:00:00Z",
+          "start_utc": "2026-10-17T23:00:00Z",
+          "end_utc": "2026-11-06T20:00:00Z",
+          "duration_hours": 478.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-11-16T02:00:00Z",
+          "end": "2026-12-06T07:00:00Z",
+          "start_utc": "2026-11-16T02:00:00Z",
+          "end_utc": "2026-12-06T07:00:00Z",
+          "duration_hours": 486.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-12-16T01:00:00Z",
+          "end": "2027-01-04T03:00:00Z",
+          "start_utc": "2026-12-16T01:00:00Z",
+          "end_utc": "2027-01-04T03:00:00Z",
+          "duration_hours": 459.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-01-15T15:00:00Z",
+          "end": "2027-02-01T14:00:00Z",
+          "start_utc": "2027-01-15T15:00:00Z",
+          "end_utc": "2027-02-01T14:00:00Z",
+          "duration_hours": 408.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-02-15T12:00:00Z",
+          "end": "2027-03-02T01:00:00Z",
+          "start_utc": "2027-02-15T12:00:00Z",
+          "end_utc": "2027-03-02T01:00:00Z",
+          "duration_hours": 350.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-03-18T07:00:00Z",
+          "end": "2027-03-30T15:00:00Z",
+          "start_utc": "2027-03-18T07:00:00Z",
+          "end_utc": "2027-03-30T15:00:00Z",
+          "duration_hours": 297.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-04-17T14:00:00Z",
+          "end": "2027-04-28T16:00:00Z",
+          "start_utc": "2027-04-17T14:00:00Z",
+          "end_utc": "2027-04-28T16:00:00Z",
+          "duration_hours": 267.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-05-17T05:00:00Z",
+          "end": "2027-05-28T07:00:00Z",
+          "start_utc": "2027-05-17T05:00:00Z",
+          "end_utc": "2027-05-28T07:00:00Z",
+          "duration_hours": 267.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-06-15T04:00:00Z",
+          "end": "2027-06-27T12:00:00Z",
+          "start_utc": "2027-06-15T04:00:00Z",
+          "end_utc": "2027-06-27T12:00:00Z",
+          "duration_hours": 297.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-07-13T17:00:00Z",
+          "end": "2027-07-28T01:00:00Z",
+          "start_utc": "2027-07-13T17:00:00Z",
+          "end_utc": "2027-07-28T01:00:00Z",
+          "duration_hours": 345.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-08-11T01:00:00Z",
+          "end": "2027-08-27T17:00:00Z",
+          "start_utc": "2027-08-11T01:00:00Z",
+          "end_utc": "2027-08-27T17:00:00Z",
+          "duration_hours": 401.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-09-08T11:00:00Z",
+          "end": "2027-09-27T04:00:00Z",
+          "start_utc": "2027-09-08T11:00:00Z",
+          "end_utc": "2027-09-27T04:00:00Z",
+          "duration_hours": 450.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-10-07T04:00:00Z",
+          "end": "2027-10-27T04:00:00Z",
+          "start_utc": "2027-10-07T04:00:00Z",
+          "end_utc": "2027-10-27T04:00:00Z",
+          "duration_hours": 481.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-11-05T11:00:00Z",
+          "end": "2027-11-25T11:00:00Z",
+          "start_utc": "2027-11-05T11:00:00Z",
+          "end_utc": "2027-11-25T11:00:00Z",
+          "duration_hours": 481.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-12-05T14:00:00Z",
+          "end": "2027-12-24T04:00:00Z",
+          "start_utc": "2027-12-05T14:00:00Z",
+          "end_utc": "2027-12-24T04:00:00Z",
+          "duration_hours": 447.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-01-05T06:00:00Z",
+          "end": "2028-01-21T15:00:00Z",
+          "start_utc": "2028-01-05T06:00:00Z",
+          "end_utc": "2028-01-21T15:00:00Z",
+          "duration_hours": 394.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-02-05T04:00:00Z",
+          "end": "2028-02-19T02:00:00Z",
+          "start_utc": "2028-02-05T04:00:00Z",
+          "end_utc": "2028-02-19T02:00:00Z",
+          "duration_hours": 335.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-03-06T20:00:00Z",
+          "end": "2028-03-18T19:00:00Z",
+          "start_utc": "2028-03-06T20:00:00Z",
+          "end_utc": "2028-03-18T19:00:00Z",
+          "duration_hours": 288.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-04-06T00:00:00Z",
+          "end": "2028-04-17T00:00:00Z",
+          "start_utc": "2028-04-06T00:00:00Z",
+          "end_utc": "2028-04-17T00:00:00Z",
+          "duration_hours": 265.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-05-05T11:00:00Z",
+          "end": "2028-05-16T20:00:00Z",
+          "start_utc": "2028-05-05T11:00:00Z",
+          "end_utc": "2028-05-16T20:00:00Z",
+          "duration_hours": 274.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-06-03T07:00:00Z",
+          "end": "2028-06-16T04:00:00Z",
+          "start_utc": "2028-06-03T07:00:00Z",
+          "end_utc": "2028-06-16T04:00:00Z",
+          "duration_hours": 310.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-07-01T19:00:00Z",
+          "end": "2028-07-16T18:00:00Z",
+          "start_utc": "2028-07-01T19:00:00Z",
+          "end_utc": "2028-07-16T18:00:00Z",
+          "duration_hours": 360.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-07-30T03:00:00Z",
+          "end": "2028-08-16T09:00:00Z",
+          "start_utc": "2028-07-30T03:00:00Z",
+          "end_utc": "2028-08-16T09:00:00Z",
+          "duration_hours": 415.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-08-27T14:00:00Z",
+          "end": "2028-09-15T17:00:00Z",
+          "start_utc": "2028-08-27T14:00:00Z",
+          "end_utc": "2028-09-15T17:00:00Z",
+          "duration_hours": 460.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-09-25T10:00:00Z",
+          "end": "2028-10-15T12:00:00Z",
+          "start_utc": "2028-09-25T10:00:00Z",
+          "end_utc": "2028-10-15T12:00:00Z",
+          "duration_hours": 483.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-10-24T22:00:00Z",
+          "end": "2028-11-13T15:00:00Z",
+          "start_utc": "2028-10-24T22:00:00Z",
+          "end_utc": "2028-11-13T15:00:00Z",
+          "duration_hours": 474.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-11-24T04:00:00Z",
+          "end": "2028-12-12T06:00:00Z",
+          "start_utc": "2028-11-24T04:00:00Z",
+          "end_utc": "2028-12-12T06:00:00Z",
+          "duration_hours": 435.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-12-24T22:00:00Z",
+          "end": "2028-12-31T23:00:00Z",
+          "start_utc": "2028-12-24T22:00:00Z",
+          "end_utc": "2028-12-31T23:00:00Z",
+          "duration_hours": 170.0,
           "precision": "hourly"
         }
       ]
@@ -653,66 +1101,530 @@
       ]
     },
     "joint": {
-      "total_hours": 238.0,
-      "percentage": 0.5,
-      "windows_count": 7,
-      "longest_window_hours": 53.0,
-      "longest_joint_gap_hours": 8469.0,
+      "total_hours": 14625.0,
+      "percentage": 33.4,
+      "windows_count": 65,
+      "longest_window_hours": 431.0,
+      "longest_joint_gap_hours": 902.0,
       "windows": [
         {
-          "start": "2024-01-27T05:00:00Z",
-          "end": "2024-01-28T10:00:00Z",
-          "start_utc": "2024-01-27T05:00:00Z",
-          "end_utc": "2024-01-28T10:00:00Z",
-          "duration_hours": 30.0,
+          "start": "2024-01-01T00:00:00Z",
+          "end": "2024-01-06T20:00:00Z",
+          "start_utc": "2024-01-01T00:00:00Z",
+          "end_utc": "2024-01-06T20:00:00Z",
+          "duration_hours": 141.0,
           "precision": "hourly"
         },
         {
-          "start": "2024-12-16T17:00:00Z",
-          "end": "2024-12-18T15:00:00Z",
-          "start_utc": "2024-12-16T17:00:00Z",
-          "end_utc": "2024-12-18T15:00:00Z",
-          "duration_hours": 47.0,
+          "start": "2024-01-17T18:00:00Z",
+          "end": "2024-02-03T00:00:00Z",
+          "start_utc": "2024-01-17T18:00:00Z",
+          "end_utc": "2024-02-03T00:00:00Z",
+          "duration_hours": 391.0,
           "precision": "hourly"
         },
         {
-          "start": "2025-12-06T04:00:00Z",
-          "end": "2025-12-07T18:00:00Z",
-          "start_utc": "2025-12-06T04:00:00Z",
-          "end_utc": "2025-12-07T18:00:00Z",
-          "duration_hours": 39.0,
+          "start": "2024-02-16T22:00:00Z",
+          "end": "2024-03-01T02:00:00Z",
+          "start_utc": "2024-02-16T22:00:00Z",
+          "end_utc": "2024-03-01T02:00:00Z",
+          "duration_hours": 317.0,
           "precision": "hourly"
         },
         {
-          "start": "2026-11-25T16:00:00Z",
-          "end": "2026-11-26T20:00:00Z",
-          "start_utc": "2026-11-25T16:00:00Z",
-          "end_utc": "2026-11-26T20:00:00Z",
+          "start": "2024-03-18T13:00:00Z",
+          "end": "2024-03-28T05:00:00Z",
+          "start_utc": "2024-03-18T13:00:00Z",
+          "end_utc": "2024-03-28T05:00:00Z",
+          "duration_hours": 233.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2024-04-18T08:00:00Z",
+          "end": "2024-04-24T11:00:00Z",
+          "start_utc": "2024-04-18T08:00:00Z",
+          "end_utc": "2024-04-24T11:00:00Z",
+          "duration_hours": 148.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2024-05-18T21:00:00Z",
+          "end": "2024-05-21T17:00:00Z",
+          "start_utc": "2024-05-18T21:00:00Z",
+          "end_utc": "2024-05-21T17:00:00Z",
+          "duration_hours": 69.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2024-06-27T11:00:00Z",
+          "end": "2024-06-29T00:00:00Z",
+          "start_utc": "2024-06-27T11:00:00Z",
+          "end_utc": "2024-06-29T00:00:00Z",
+          "duration_hours": 38.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2024-07-24T14:00:00Z",
+          "end": "2024-07-28T17:00:00Z",
+          "start_utc": "2024-07-24T14:00:00Z",
+          "end_utc": "2024-07-28T17:00:00Z",
+          "duration_hours": 100.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2024-08-20T21:00:00Z",
+          "end": "2024-08-28T00:00:00Z",
+          "start_utc": "2024-08-20T21:00:00Z",
+          "end_utc": "2024-08-28T00:00:00Z",
+          "duration_hours": 172.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2024-09-17T07:00:00Z",
+          "end": "2024-09-27T16:00:00Z",
+          "start_utc": "2024-09-17T07:00:00Z",
+          "end_utc": "2024-09-27T16:00:00Z",
+          "duration_hours": 250.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2024-10-14T16:00:00Z",
+          "end": "2024-10-28T10:00:00Z",
+          "start_utc": "2024-10-14T16:00:00Z",
+          "end_utc": "2024-10-28T10:00:00Z",
+          "duration_hours": 331.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2024-11-10T23:00:00Z",
+          "end": "2024-11-27T22:00:00Z",
+          "start_utc": "2024-11-10T23:00:00Z",
+          "end_utc": "2024-11-27T22:00:00Z",
+          "duration_hours": 408.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2024-12-08T01:00:00Z",
+          "end": "2024-12-25T01:00:00Z",
+          "start_utc": "2024-12-08T01:00:00Z",
+          "end_utc": "2024-12-25T01:00:00Z",
+          "duration_hours": 409.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-01-06T04:00:00Z",
+          "end": "2025-01-21T03:00:00Z",
+          "start_utc": "2025-01-06T04:00:00Z",
+          "end_utc": "2025-01-21T03:00:00Z",
+          "duration_hours": 360.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-02-05T11:00:00Z",
+          "end": "2025-02-17T07:00:00Z",
+          "start_utc": "2025-02-05T11:00:00Z",
+          "end_utc": "2025-02-17T07:00:00Z",
+          "duration_hours": 285.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-03-08T06:00:00Z",
+          "end": "2025-03-16T13:00:00Z",
+          "start_utc": "2025-03-08T06:00:00Z",
+          "end_utc": "2025-03-16T13:00:00Z",
+          "duration_hours": 200.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-04-08T01:00:00Z",
+          "end": "2025-04-12T18:00:00Z",
+          "start_utc": "2025-04-08T01:00:00Z",
+          "end_utc": "2025-04-12T18:00:00Z",
+          "duration_hours": 114.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-05-08T13:00:00Z",
+          "end": "2025-05-09T22:00:00Z",
+          "start_utc": "2025-05-08T13:00:00Z",
+          "end_utc": "2025-05-09T22:00:00Z",
+          "duration_hours": 34.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-06-16T13:00:00Z",
+          "end": "2025-06-18T09:00:00Z",
+          "start_utc": "2025-06-16T13:00:00Z",
+          "end_utc": "2025-06-18T09:00:00Z",
+          "duration_hours": 45.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-07-13T16:00:00Z",
+          "end": "2025-07-18T07:00:00Z",
+          "start_utc": "2025-07-13T16:00:00Z",
+          "end_utc": "2025-07-18T07:00:00Z",
+          "duration_hours": 112.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-08-09T22:00:00Z",
+          "end": "2025-08-17T16:00:00Z",
+          "start_utc": "2025-08-09T22:00:00Z",
+          "end_utc": "2025-08-17T16:00:00Z",
+          "duration_hours": 187.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-09-06T06:00:00Z",
+          "end": "2025-09-17T09:00:00Z",
+          "start_utc": "2025-09-06T06:00:00Z",
+          "end_utc": "2025-09-17T09:00:00Z",
+          "duration_hours": 268.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-10-03T15:00:00Z",
+          "end": "2025-10-18T01:00:00Z",
+          "start_utc": "2025-10-03T15:00:00Z",
+          "end_utc": "2025-10-18T01:00:00Z",
+          "duration_hours": 347.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-10-30T21:00:00Z",
+          "end": "2025-11-16T03:00:00Z",
+          "start_utc": "2025-10-30T21:00:00Z",
+          "end_utc": "2025-11-16T03:00:00Z",
+          "duration_hours": 391.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-11-26T23:00:00Z",
+          "end": "2025-12-13T03:00:00Z",
+          "start_utc": "2025-11-26T23:00:00Z",
+          "end_utc": "2025-12-13T03:00:00Z",
+          "duration_hours": 389.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-12-26T14:00:00Z",
+          "end": "2026-01-09T06:00:00Z",
+          "start_utc": "2025-12-26T14:00:00Z",
+          "end_utc": "2026-01-09T06:00:00Z",
+          "duration_hours": 329.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-01-26T01:00:00Z",
+          "end": "2026-02-05T12:00:00Z",
+          "start_utc": "2026-01-26T01:00:00Z",
+          "end_utc": "2026-02-05T12:00:00Z",
+          "duration_hours": 252.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-02-25T21:00:00Z",
+          "end": "2026-03-04T21:00:00Z",
+          "start_utc": "2026-02-25T21:00:00Z",
+          "end_utc": "2026-03-04T21:00:00Z",
+          "duration_hours": 169.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-03-28T16:00:00Z",
+          "end": "2026-04-01T04:00:00Z",
+          "start_utc": "2026-03-28T16:00:00Z",
+          "end_utc": "2026-04-01T04:00:00Z",
+          "duration_hours": 85.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-04-28T02:00:00Z",
+          "end": "2026-04-28T08:00:00Z",
+          "start_utc": "2026-04-28T02:00:00Z",
+          "end_utc": "2026-04-28T08:00:00Z",
+          "duration_hours": 7.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-05-09T04:00:00Z",
+          "end": "2026-05-09T09:00:00Z",
+          "start_utc": "2026-05-09T04:00:00Z",
+          "end_utc": "2026-05-09T09:00:00Z",
+          "duration_hours": 6.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-06-05T06:00:00Z",
+          "end": "2026-06-07T19:00:00Z",
+          "start_utc": "2026-06-05T06:00:00Z",
+          "end_utc": "2026-06-07T19:00:00Z",
+          "duration_hours": 62.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-07-02T09:00:00Z",
+          "end": "2026-07-07T21:00:00Z",
+          "start_utc": "2026-07-02T09:00:00Z",
+          "end_utc": "2026-07-07T21:00:00Z",
+          "duration_hours": 133.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-07-29T14:00:00Z",
+          "end": "2026-08-07T08:00:00Z",
+          "start_utc": "2026-07-29T14:00:00Z",
+          "end_utc": "2026-08-07T08:00:00Z",
+          "duration_hours": 211.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-08-25T21:00:00Z",
+          "end": "2026-09-07T01:00:00Z",
+          "start_utc": "2026-08-25T21:00:00Z",
+          "end_utc": "2026-09-07T01:00:00Z",
+          "duration_hours": 293.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-09-22T04:00:00Z",
+          "end": "2026-10-07T15:00:00Z",
+          "start_utc": "2026-09-22T04:00:00Z",
+          "end_utc": "2026-10-07T15:00:00Z",
+          "duration_hours": 372.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-10-19T08:00:00Z",
+          "end": "2026-11-04T19:00:00Z",
+          "start_utc": "2026-10-19T08:00:00Z",
+          "end_utc": "2026-11-04T19:00:00Z",
+          "duration_hours": 396.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-11-16T02:00:00Z",
+          "end": "2026-12-01T19:00:00Z",
+          "start_utc": "2026-11-16T02:00:00Z",
+          "end_utc": "2026-12-01T19:00:00Z",
+          "duration_hours": 378.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-12-16T01:00:00Z",
+          "end": "2026-12-28T22:00:00Z",
+          "start_utc": "2026-12-16T01:00:00Z",
+          "end_utc": "2026-12-28T22:00:00Z",
+          "duration_hours": 310.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-01-15T15:00:00Z",
+          "end": "2027-01-25T05:00:00Z",
+          "start_utc": "2027-01-15T15:00:00Z",
+          "end_utc": "2027-01-25T05:00:00Z",
+          "duration_hours": 231.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-02-15T12:00:00Z",
+          "end": "2027-02-21T17:00:00Z",
+          "start_utc": "2027-02-15T12:00:00Z",
+          "end_utc": "2027-02-21T17:00:00Z",
+          "duration_hours": 150.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-03-18T07:00:00Z",
+          "end": "2027-03-21T03:00:00Z",
+          "start_utc": "2027-03-18T07:00:00Z",
+          "end_utc": "2027-03-21T03:00:00Z",
+          "duration_hours": 69.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-04-27T12:00:00Z",
+          "end": "2027-04-28T16:00:00Z",
+          "start_utc": "2027-04-27T12:00:00Z",
+          "end_utc": "2027-04-28T16:00:00Z",
           "duration_hours": 29.0,
           "precision": "hourly"
         },
         {
-          "start": "2027-10-16T13:00:00Z",
-          "end": "2027-10-17T15:00:00Z",
-          "start_utc": "2027-10-16T13:00:00Z",
-          "end_utc": "2027-10-17T15:00:00Z",
-          "duration_hours": 27.0,
+          "start": "2027-05-24T15:00:00Z",
+          "end": "2027-05-28T07:00:00Z",
+          "start_utc": "2027-05-24T15:00:00Z",
+          "end_utc": "2027-05-28T07:00:00Z",
+          "duration_hours": 89.0,
           "precision": "hourly"
         },
         {
-          "start": "2027-11-15T07:00:00Z",
-          "end": "2027-11-15T19:00:00Z",
-          "start_utc": "2027-11-15T07:00:00Z",
-          "end_utc": "2027-11-15T19:00:00Z",
-          "duration_hours": 13.0,
+          "start": "2027-06-20T19:00:00Z",
+          "end": "2027-06-27T12:00:00Z",
+          "start_utc": "2027-06-20T19:00:00Z",
+          "end_utc": "2027-06-27T12:00:00Z",
+          "duration_hours": 162.0,
           "precision": "hourly"
         },
         {
-          "start": "2028-10-04T08:00:00Z",
-          "end": "2028-10-06T12:00:00Z",
-          "start_utc": "2028-10-04T08:00:00Z",
-          "end_utc": "2028-10-06T12:00:00Z",
-          "duration_hours": 53.0,
+          "start": "2027-07-18T01:00:00Z",
+          "end": "2027-07-28T01:00:00Z",
+          "start_utc": "2027-07-18T01:00:00Z",
+          "end_utc": "2027-07-28T01:00:00Z",
+          "duration_hours": 241.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-08-14T07:00:00Z",
+          "end": "2027-08-27T17:00:00Z",
+          "start_utc": "2027-08-14T07:00:00Z",
+          "end_utc": "2027-08-27T17:00:00Z",
+          "duration_hours": 323.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-09-10T12:00:00Z",
+          "end": "2027-09-27T04:00:00Z",
+          "start_utc": "2027-09-10T12:00:00Z",
+          "end_utc": "2027-09-27T04:00:00Z",
+          "duration_hours": 401.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-10-07T15:00:00Z",
+          "end": "2027-10-25T01:00:00Z",
+          "start_utc": "2027-10-07T15:00:00Z",
+          "end_utc": "2027-10-25T01:00:00Z",
+          "duration_hours": 419.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-11-05T11:00:00Z",
+          "end": "2027-11-21T01:00:00Z",
+          "start_utc": "2027-11-05T11:00:00Z",
+          "end_utc": "2027-11-21T01:00:00Z",
+          "duration_hours": 375.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-12-05T14:00:00Z",
+          "end": "2027-12-18T03:00:00Z",
+          "start_utc": "2027-12-05T14:00:00Z",
+          "end_utc": "2027-12-18T03:00:00Z",
+          "duration_hours": 302.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-01-05T06:00:00Z",
+          "end": "2028-01-14T10:00:00Z",
+          "start_utc": "2028-01-05T06:00:00Z",
+          "end_utc": "2028-01-14T10:00:00Z",
+          "duration_hours": 221.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-02-05T04:00:00Z",
+          "end": "2028-02-10T21:00:00Z",
+          "start_utc": "2028-02-05T04:00:00Z",
+          "end_utc": "2028-02-10T21:00:00Z",
+          "duration_hours": 138.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-03-06T20:00:00Z",
+          "end": "2028-03-09T09:00:00Z",
+          "start_utc": "2028-03-06T20:00:00Z",
+          "end_utc": "2028-03-09T09:00:00Z",
+          "duration_hours": 62.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-03-18T18:00:00Z",
+          "end": "2028-03-18T19:00:00Z",
+          "start_utc": "2028-03-18T18:00:00Z",
+          "end_utc": "2028-03-18T19:00:00Z",
+          "duration_hours": 2.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-04-14T21:00:00Z",
+          "end": "2028-04-17T00:00:00Z",
+          "start_utc": "2028-04-14T21:00:00Z",
+          "end_utc": "2028-04-17T00:00:00Z",
+          "duration_hours": 52.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-05-12T01:00:00Z",
+          "end": "2028-05-16T20:00:00Z",
+          "start_utc": "2028-05-12T01:00:00Z",
+          "end_utc": "2028-05-16T20:00:00Z",
+          "duration_hours": 116.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-06-08T08:00:00Z",
+          "end": "2028-06-16T04:00:00Z",
+          "start_utc": "2028-06-08T08:00:00Z",
+          "end_utc": "2028-06-16T04:00:00Z",
+          "duration_hours": 189.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-07-05T15:00:00Z",
+          "end": "2028-07-16T18:00:00Z",
+          "start_utc": "2028-07-05T15:00:00Z",
+          "end_utc": "2028-07-16T18:00:00Z",
+          "duration_hours": 268.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-08-01T21:00:00Z",
+          "end": "2028-08-16T09:00:00Z",
+          "start_utc": "2028-08-01T21:00:00Z",
+          "end_utc": "2028-08-16T09:00:00Z",
+          "duration_hours": 349.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-08-29T01:00:00Z",
+          "end": "2028-09-15T17:00:00Z",
+          "start_utc": "2028-08-29T01:00:00Z",
+          "end_utc": "2028-09-15T17:00:00Z",
+          "duration_hours": 425.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-09-25T10:00:00Z",
+          "end": "2028-10-13T08:00:00Z",
+          "start_utc": "2028-09-25T10:00:00Z",
+          "end_utc": "2028-10-13T08:00:00Z",
+          "duration_hours": 431.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-10-24T22:00:00Z",
+          "end": "2028-11-09T10:00:00Z",
+          "start_utc": "2028-10-24T22:00:00Z",
+          "end_utc": "2028-11-09T10:00:00Z",
+          "duration_hours": 373.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-11-24T04:00:00Z",
+          "end": "2028-12-06T11:00:00Z",
+          "start_utc": "2028-11-24T04:00:00Z",
+          "end_utc": "2028-12-06T11:00:00Z",
+          "duration_hours": 296.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-12-24T22:00:00Z",
+          "end": "2028-12-31T23:00:00Z",
+          "start_utc": "2028-12-24T22:00:00Z",
+          "end_utc": "2028-12-31T23:00:00Z",
+          "duration_hours": 170.0,
           "precision": "hourly"
         }
       ]
@@ -721,10 +1633,10 @@
       "area_m2": 1.0,
       "efficiency": 0.28,
       "orientation": "horizontal",
-      "total_energy_kwh": 0.49,
-      "specific_energy_kwh_m2": 0.49,
-      "peak_power_watts": 5.4,
-      "mean_power_watts": 0.01,
+      "total_energy_kwh": 324.03,
+      "specific_energy_kwh_m2": 324.03,
+      "peak_power_watts": 32.78,
+      "mean_power_watts": 7.39,
       "caveat": "Geometric potential under clear-sky solar irradiance, not a mission power subsystem prediction."
     },
     "lunations": [
@@ -733,682 +1645,682 @@
         "start_utc": "2024-01-01T00:00:00Z",
         "end_utc": "2024-01-30T12:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 30.0,
-        "sun_percentage": 4.2,
+        "sun_hours": 486.0,
+        "sun_percentage": 68.5,
         "earth_hours": 492.0,
-        "joint_hours": 30.0,
-        "longest_dark_gap_hours": 629.0
+        "joint_hours": 448.0,
+        "longest_dark_gap_hours": 223.0
       },
       {
         "lunation_index": 2,
         "start_utc": "2024-01-30T13:00:00Z",
         "end_utc": "2024-02-29T01:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 465.0,
+        "sun_percentage": 65.6,
         "earth_hours": 490.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 376.0,
+        "longest_dark_gap_hours": 244.0
       },
       {
         "lunation_index": 3,
         "start_utc": "2024-02-29T02:00:00Z",
         "end_utc": "2024-03-29T14:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 419.0,
+        "sun_percentage": 59.1,
         "earth_hours": 450.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 258.0,
+        "longest_dark_gap_hours": 290.0
       },
       {
         "lunation_index": 4,
         "start_utc": "2024-03-29T15:00:00Z",
         "end_utc": "2024-04-28T03:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 362.0,
+        "sun_percentage": 51.1,
         "earth_hours": 421.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 148.0,
+        "longest_dark_gap_hours": 347.0
       },
       {
         "lunation_index": 5,
         "start_utc": "2024-04-28T04:00:00Z",
         "end_utc": "2024-05-27T16:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 311.0,
+        "sun_percentage": 43.9,
         "earth_hours": 420.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 69.0,
+        "longest_dark_gap_hours": 398.0
       },
       {
         "lunation_index": 6,
         "start_utc": "2024-05-27T17:00:00Z",
         "end_utc": "2024-06-26T05:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 276.0,
+        "sun_percentage": 38.9,
         "earth_hours": 421.0,
         "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "longest_dark_gap_hours": 433.0
       },
       {
         "lunation_index": 7,
         "start_utc": "2024-06-26T06:00:00Z",
         "end_utc": "2024-07-25T18:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 267.0,
+        "sun_percentage": 37.7,
         "earth_hours": 452.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 67.0,
+        "longest_dark_gap_hours": 442.0
       },
       {
         "lunation_index": 8,
         "start_utc": "2024-07-25T19:00:00Z",
         "end_utc": "2024-08-24T07:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 287.0,
+        "sun_percentage": 40.5,
         "earth_hours": 477.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 154.0,
+        "longest_dark_gap_hours": 422.0
       },
       {
         "lunation_index": 9,
         "start_utc": "2024-08-24T08:00:00Z",
         "end_utc": "2024-09-22T20:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 329.0,
+        "sun_percentage": 46.4,
         "earth_hours": 470.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 223.0,
+        "longest_dark_gap_hours": 380.0
       },
       {
         "lunation_index": 10,
         "start_utc": "2024-09-22T21:00:00Z",
         "end_utc": "2024-10-22T09:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 384.0,
+        "sun_percentage": 54.2,
         "earth_hours": 466.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 302.0,
+        "longest_dark_gap_hours": 325.0
       },
       {
         "lunation_index": 11,
         "start_utc": "2024-10-22T10:00:00Z",
         "end_utc": "2024-11-20T22:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 438.0,
+        "sun_percentage": 61.8,
         "earth_hours": 465.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 385.0,
+        "longest_dark_gap_hours": 271.0
       },
       {
         "lunation_index": 12,
         "start_utc": "2024-11-20T23:00:00Z",
         "end_utc": "2024-12-20T11:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 47.0,
-        "sun_percentage": 6.6,
+        "sun_hours": 478.0,
+        "sun_percentage": 67.4,
         "earth_hours": 467.0,
-        "joint_hours": 47.0,
-        "longest_dark_gap_hours": 618.0
+        "joint_hours": 467.0,
+        "longest_dark_gap_hours": 231.0
       },
       {
         "lunation_index": 13,
         "start_utc": "2024-12-20T12:00:00Z",
         "end_utc": "2025-01-19T00:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 485.0,
+        "sun_percentage": 68.4,
         "earth_hours": 469.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 419.0,
+        "longest_dark_gap_hours": 224.0
       },
       {
         "lunation_index": 14,
         "start_utc": "2025-01-19T01:00:00Z",
         "end_utc": "2025-02-17T13:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 457.0,
+        "sun_percentage": 64.5,
         "earth_hours": 461.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 336.0,
+        "longest_dark_gap_hours": 252.0
       },
       {
         "lunation_index": 15,
         "start_utc": "2025-02-17T14:00:00Z",
         "end_utc": "2025-03-19T02:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 405.0,
+        "sun_percentage": 57.1,
         "earth_hours": 407.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 200.0,
+        "longest_dark_gap_hours": 304.0
       },
       {
         "lunation_index": 16,
         "start_utc": "2025-03-19T03:00:00Z",
         "end_utc": "2025-04-17T15:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 347.0,
+        "sun_percentage": 48.9,
         "earth_hours": 402.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 114.0,
+        "longest_dark_gap_hours": 362.0
       },
       {
         "lunation_index": 17,
         "start_utc": "2025-04-17T16:00:00Z",
         "end_utc": "2025-05-17T04:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 298.0,
+        "sun_percentage": 42.0,
         "earth_hours": 398.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 34.0,
+        "longest_dark_gap_hours": 411.0
       },
       {
         "lunation_index": 18,
         "start_utc": "2025-05-17T05:00:00Z",
         "end_utc": "2025-06-15T17:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 269.0,
+        "sun_percentage": 37.9,
         "earth_hours": 398.0,
         "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "longest_dark_gap_hours": 440.0
       },
       {
         "lunation_index": 19,
         "start_utc": "2025-06-15T18:00:00Z",
         "end_utc": "2025-07-15T06:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 268.0,
+        "sun_percentage": 37.8,
         "earth_hours": 437.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 84.0,
+        "longest_dark_gap_hours": 441.0
       },
       {
         "lunation_index": 20,
         "start_utc": "2025-07-15T07:00:00Z",
         "end_utc": "2025-08-13T19:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 297.0,
+        "sun_percentage": 41.9,
         "earth_hours": 454.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 167.0,
+        "longest_dark_gap_hours": 412.0
       },
       {
         "lunation_index": 21,
         "start_utc": "2025-08-13T20:00:00Z",
         "end_utc": "2025-09-12T08:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 343.0,
+        "sun_percentage": 48.4,
         "earth_hours": 452.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 240.0,
+        "longest_dark_gap_hours": 366.0
       },
       {
         "lunation_index": 22,
         "start_utc": "2025-09-12T09:00:00Z",
         "end_utc": "2025-10-11T21:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 399.0,
+        "sun_percentage": 56.3,
         "earth_hours": 450.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 320.0,
+        "longest_dark_gap_hours": 310.0
       },
       {
         "lunation_index": 23,
         "start_utc": "2025-10-11T22:00:00Z",
         "end_utc": "2025-11-10T10:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 451.0,
+        "sun_percentage": 63.6,
         "earth_hours": 449.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 402.0,
+        "longest_dark_gap_hours": 258.0
       },
       {
         "lunation_index": 24,
         "start_utc": "2025-11-10T11:00:00Z",
         "end_utc": "2025-12-09T23:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 39.0,
-        "sun_percentage": 5.5,
+        "sun_hours": 484.0,
+        "sun_percentage": 68.3,
         "earth_hours": 450.0,
-        "joint_hours": 39.0,
-        "longest_dark_gap_hours": 617.0
+        "joint_hours": 450.0,
+        "longest_dark_gap_hours": 225.0
       },
       {
         "lunation_index": 25,
         "start_utc": "2025-12-10T00:00:00Z",
         "end_utc": "2026-01-08T12:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 482.0,
+        "sun_percentage": 68.0,
         "earth_hours": 449.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 387.0,
+        "longest_dark_gap_hours": 227.0
       },
       {
         "lunation_index": 26,
         "start_utc": "2026-01-08T13:00:00Z",
         "end_utc": "2026-02-07T01:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 446.0,
+        "sun_percentage": 62.9,
         "earth_hours": 411.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 270.0,
+        "longest_dark_gap_hours": 263.0
       },
       {
         "lunation_index": 27,
         "start_utc": "2026-02-07T02:00:00Z",
         "end_utc": "2026-03-08T14:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 391.0,
+        "sun_percentage": 55.1,
         "earth_hours": 395.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 169.0,
+        "longest_dark_gap_hours": 318.0
       },
       {
         "lunation_index": 28,
         "start_utc": "2026-03-08T15:00:00Z",
         "end_utc": "2026-04-07T03:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 334.0,
+        "sun_percentage": 47.1,
         "earth_hours": 394.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 85.0,
+        "longest_dark_gap_hours": 375.0
       },
       {
         "lunation_index": 29,
         "start_utc": "2026-04-07T04:00:00Z",
         "end_utc": "2026-05-06T16:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 288.0,
+        "sun_percentage": 40.6,
         "earth_hours": 392.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 7.0,
+        "longest_dark_gap_hours": 421.0
       },
       {
         "lunation_index": 30,
         "start_utc": "2026-05-06T17:00:00Z",
         "end_utc": "2026-06-05T05:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 266.0,
+        "sun_percentage": 37.5,
         "earth_hours": 390.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 6.0,
+        "longest_dark_gap_hours": 443.0
       },
       {
         "lunation_index": 31,
         "start_utc": "2026-06-05T06:00:00Z",
         "end_utc": "2026-07-04T18:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 273.0,
+        "sun_percentage": 38.5,
         "earth_hours": 447.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 120.0,
+        "longest_dark_gap_hours": 436.0
       },
       {
         "lunation_index": 32,
         "start_utc": "2026-07-04T19:00:00Z",
         "end_utc": "2026-08-03T07:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 308.0,
+        "sun_percentage": 43.4,
         "earth_hours": 447.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 189.0,
+        "longest_dark_gap_hours": 401.0
       },
       {
         "lunation_index": 33,
         "start_utc": "2026-08-03T08:00:00Z",
         "end_utc": "2026-09-01T20:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 358.0,
+        "sun_percentage": 50.5,
         "earth_hours": 448.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 265.0,
+        "longest_dark_gap_hours": 351.0
       },
       {
         "lunation_index": 34,
         "start_utc": "2026-09-01T21:00:00Z",
         "end_utc": "2026-10-01T09:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 414.0,
+        "sun_percentage": 58.4,
         "earth_hours": 451.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 347.0,
+        "longest_dark_gap_hours": 295.0
       },
       {
         "lunation_index": 35,
         "start_utc": "2026-10-01T10:00:00Z",
         "end_utc": "2026-10-30T22:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 462.0,
+        "sun_percentage": 65.2,
         "earth_hours": 454.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 429.0,
+        "longest_dark_gap_hours": 247.0
       },
       {
         "lunation_index": 36,
         "start_utc": "2026-10-30T23:00:00Z",
         "end_utc": "2026-11-29T11:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 29.0,
-        "sun_percentage": 4.1,
+        "sun_hours": 488.0,
+        "sun_percentage": 68.8,
         "earth_hours": 455.0,
-        "joint_hours": 29.0,
-        "longest_dark_gap_hours": 617.0
+        "joint_hours": 439.0,
+        "longest_dark_gap_hours": 221.0
       },
       {
         "lunation_index": 37,
         "start_utc": "2026-11-29T12:00:00Z",
         "end_utc": "2026-12-29T00:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 476.0,
+        "sun_percentage": 67.1,
         "earth_hours": 451.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 366.0,
+        "longest_dark_gap_hours": 233.0
       },
       {
         "lunation_index": 38,
         "start_utc": "2026-12-29T01:00:00Z",
         "end_utc": "2027-01-27T13:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 434.0,
+        "sun_percentage": 61.2,
         "earth_hours": 397.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 231.0,
+        "longest_dark_gap_hours": 275.0
       },
       {
         "lunation_index": 39,
         "start_utc": "2027-01-27T14:00:00Z",
         "end_utc": "2027-02-26T02:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 376.0,
+        "sun_percentage": 53.0,
         "earth_hours": 403.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 150.0,
+        "longest_dark_gap_hours": 333.0
       },
       {
         "lunation_index": 40,
         "start_utc": "2027-02-26T03:00:00Z",
         "end_utc": "2027-03-27T15:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 320.0,
+        "sun_percentage": 45.1,
         "earth_hours": 407.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 69.0,
+        "longest_dark_gap_hours": 389.0
       },
       {
         "lunation_index": 41,
         "start_utc": "2027-03-27T16:00:00Z",
         "end_utc": "2027-04-26T04:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 279.0,
+        "sun_percentage": 39.4,
         "earth_hours": 407.0,
         "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "longest_dark_gap_hours": 430.0
       },
       {
         "lunation_index": 42,
         "start_utc": "2027-04-26T05:00:00Z",
         "end_utc": "2027-05-25T17:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 265.0,
+        "sun_percentage": 37.4,
         "earth_hours": 433.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 56.0,
+        "longest_dark_gap_hours": 444.0
       },
       {
         "lunation_index": 43,
         "start_utc": "2027-05-25T18:00:00Z",
         "end_utc": "2027-06-24T06:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 281.0,
+        "sun_percentage": 39.6,
         "earth_hours": 461.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 146.0,
+        "longest_dark_gap_hours": 428.0
       },
       {
         "lunation_index": 44,
         "start_utc": "2027-06-24T07:00:00Z",
         "end_utc": "2027-07-23T19:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 321.0,
+        "sun_percentage": 45.3,
         "earth_hours": 460.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 217.0,
+        "longest_dark_gap_hours": 388.0
       },
       {
         "lunation_index": 45,
         "start_utc": "2027-07-23T20:00:00Z",
         "end_utc": "2027-08-22T08:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 374.0,
+        "sun_percentage": 52.8,
         "earth_hours": 463.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 296.0,
+        "longest_dark_gap_hours": 335.0
       },
       {
         "lunation_index": 46,
         "start_utc": "2027-08-22T09:00:00Z",
         "end_utc": "2027-09-20T21:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 428.0,
+        "sun_percentage": 60.4,
         "earth_hours": 469.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 379.0,
+        "longest_dark_gap_hours": 281.0
       },
       {
         "lunation_index": 47,
         "start_utc": "2027-09-20T22:00:00Z",
         "end_utc": "2027-10-20T10:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 27.0,
-        "sun_percentage": 3.8,
+        "sun_hours": 470.0,
+        "sun_percentage": 66.3,
         "earth_hours": 475.0,
-        "joint_hours": 27.0,
-        "longest_dark_gap_hours": 615.0
+        "joint_hours": 459.0,
+        "longest_dark_gap_hours": 239.0
       },
       {
         "lunation_index": 48,
         "start_utc": "2027-10-20T11:00:00Z",
         "end_utc": "2027-11-18T23:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 13.0,
-        "sun_percentage": 1.8,
+        "sun_hours": 487.0,
+        "sun_percentage": 68.7,
         "earth_hours": 477.0,
-        "joint_hours": 13.0,
-        "longest_dark_gap_hours": 620.0
+        "joint_hours": 436.0,
+        "longest_dark_gap_hours": 222.0
       },
       {
         "lunation_index": 49,
         "start_utc": "2027-11-19T00:00:00Z",
         "end_utc": "2027-12-18T12:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 467.0,
+        "sun_percentage": 65.9,
         "earth_hours": 464.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 352.0,
+        "longest_dark_gap_hours": 242.0
       },
       {
         "lunation_index": 50,
         "start_utc": "2027-12-18T13:00:00Z",
         "end_utc": "2028-01-17T01:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 420.0,
+        "sun_percentage": 59.2,
         "earth_hours": 415.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 221.0,
+        "longest_dark_gap_hours": 289.0
       },
       {
         "lunation_index": 51,
         "start_utc": "2028-01-17T02:00:00Z",
         "end_utc": "2028-02-15T14:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 361.0,
+        "sun_percentage": 50.9,
         "earth_hours": 420.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 138.0,
+        "longest_dark_gap_hours": 348.0
       },
       {
         "lunation_index": 52,
         "start_utc": "2028-02-15T15:00:00Z",
         "end_utc": "2028-03-16T03:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 308.0,
+        "sun_percentage": 43.4,
         "earth_hours": 427.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 62.0,
+        "longest_dark_gap_hours": 401.0
       },
       {
         "lunation_index": 53,
         "start_utc": "2028-03-16T04:00:00Z",
         "end_utc": "2028-04-14T16:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 273.0,
+        "sun_percentage": 38.5,
         "earth_hours": 431.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 2.0,
+        "longest_dark_gap_hours": 436.0
       },
       {
         "lunation_index": 54,
         "start_utc": "2028-04-14T17:00:00Z",
         "end_utc": "2028-05-14T05:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 267.0,
+        "sun_percentage": 37.7,
         "earth_hours": 483.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 105.0,
+        "longest_dark_gap_hours": 442.0
       },
       {
         "lunation_index": 55,
         "start_utc": "2028-05-14T06:00:00Z",
         "end_utc": "2028-06-12T18:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 291.0,
+        "sun_percentage": 41.0,
         "earth_hours": 481.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 170.0,
+        "longest_dark_gap_hours": 418.0
       },
       {
         "lunation_index": 56,
         "start_utc": "2028-06-12T19:00:00Z",
         "end_utc": "2028-07-12T07:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 335.0,
+        "sun_percentage": 47.2,
         "earth_hours": 478.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 243.0,
+        "longest_dark_gap_hours": 374.0
       },
       {
         "lunation_index": 57,
         "start_utc": "2028-07-12T08:00:00Z",
         "end_utc": "2028-08-10T20:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 389.0,
+        "sun_percentage": 54.9,
         "earth_hours": 480.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 323.0,
+        "longest_dark_gap_hours": 320.0
       },
       {
         "lunation_index": 58,
         "start_utc": "2028-08-10T21:00:00Z",
         "end_utc": "2028-09-09T09:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 441.0,
+        "sun_percentage": 62.2,
         "earth_hours": 486.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 406.0,
+        "longest_dark_gap_hours": 268.0
       },
       {
         "lunation_index": 59,
         "start_utc": "2028-09-09T10:00:00Z",
         "end_utc": "2028-10-08T22:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 53.0,
-        "sun_percentage": 7.5,
+        "sun_hours": 477.0,
+        "sun_percentage": 67.3,
         "earth_hours": 493.0,
-        "joint_hours": 53.0,
-        "longest_dark_gap_hours": 598.0
+        "joint_hours": 477.0,
+        "longest_dark_gap_hours": 232.0
       },
       {
         "lunation_index": 60,
         "start_utc": "2028-10-08T23:00:00Z",
         "end_utc": "2028-11-07T11:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 484.0,
+        "sun_percentage": 68.3,
         "earth_hours": 496.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 432.0,
+        "longest_dark_gap_hours": 225.0
       },
       {
         "lunation_index": 61,
         "start_utc": "2028-11-07T12:00:00Z",
         "end_utc": "2028-12-07T00:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 457.0,
+        "sun_percentage": 64.5,
         "earth_hours": 478.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 343.0,
+        "longest_dark_gap_hours": 252.0
       },
       {
         "lunation_index": 62,
         "start_utc": "2028-12-07T01:00:00Z",
         "end_utc": "2028-12-31T23:00:00Z",
         "total_hours": 599.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 296.0,
+        "sun_percentage": 49.4,
         "earth_hours": 387.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 599.0
+        "joint_hours": 170.0,
+        "longest_dark_gap_hours": 303.0
       }
     ],
     "best_lunation": {
@@ -1416,22 +2328,22 @@
       "start_utc": "2028-09-09T10:00:00Z",
       "end_utc": "2028-10-08T22:00:00Z",
       "total_hours": 709.0,
-      "sun_hours": 53.0,
-      "sun_percentage": 7.5,
+      "sun_hours": 477.0,
+      "sun_percentage": 67.3,
       "earth_hours": 493.0,
-      "joint_hours": 53.0,
-      "longest_dark_gap_hours": 598.0
+      "joint_hours": 477.0,
+      "longest_dark_gap_hours": 232.0
     },
     "worst_lunation": {
-      "lunation_index": 2,
-      "start_utc": "2024-01-30T13:00:00Z",
-      "end_utc": "2024-02-29T01:00:00Z",
+      "lunation_index": 42,
+      "start_utc": "2027-04-26T05:00:00Z",
+      "end_utc": "2027-05-25T17:00:00Z",
       "total_hours": 709.0,
-      "sun_hours": 0.0,
-      "sun_percentage": 0.0,
-      "earth_hours": 490.0,
-      "joint_hours": 0.0,
-      "longest_dark_gap_hours": 709.0
+      "sun_hours": 265.0,
+      "sun_percentage": 37.4,
+      "earth_hours": 433.0,
+      "joint_hours": 56.0,
+      "longest_dark_gap_hours": 444.0
     }
   },
   "terrain": {
@@ -1440,12 +2352,685 @@
     "dem_id": "LDEM_85S_20M",
     "total_period_hours": 43848.0,
     "sun": {
-      "total_hours": 0,
-      "percentage": 0.0,
-      "windows_count": 0,
-      "longest_window_hours": 0.0,
-      "longest_dark_gap_hours": 43848.0,
-      "windows": []
+      "total_hours": 3898.0,
+      "percentage": 8.9,
+      "windows_count": 84,
+      "longest_window_hours": 79.0,
+      "longest_dark_gap_hours": 696.0,
+      "windows": [
+        {
+          "start": "2024-01-01T00:00:00Z",
+          "end": "2024-01-02T11:00:00Z",
+          "start_utc": "2024-01-01T00:00:00Z",
+          "end_utc": "2024-01-02T11:00:00Z",
+          "duration_hours": 36.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2024-01-22T16:00:00Z",
+          "end": "2024-01-25T01:00:00Z",
+          "start_utc": "2024-01-22T16:00:00Z",
+          "end_utc": "2024-01-25T01:00:00Z",
+          "duration_hours": 58.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2024-01-28T20:00:00Z",
+          "end": "2024-02-01T00:00:00Z",
+          "start_utc": "2024-01-28T20:00:00Z",
+          "end_utc": "2024-02-01T00:00:00Z",
+          "duration_hours": 77.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2024-02-21T10:00:00Z",
+          "end": "2024-02-23T01:00:00Z",
+          "start_utc": "2024-02-21T10:00:00Z",
+          "end_utc": "2024-02-23T01:00:00Z",
+          "duration_hours": 40.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2024-02-27T14:00:00Z",
+          "end": "2024-03-01T08:00:00Z",
+          "start_utc": "2024-02-27T14:00:00Z",
+          "end_utc": "2024-03-01T08:00:00Z",
+          "duration_hours": 67.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2024-03-28T09:00:00Z",
+          "end": "2024-03-30T12:00:00Z",
+          "start_utc": "2024-03-28T09:00:00Z",
+          "end_utc": "2024-03-30T12:00:00Z",
+          "duration_hours": 52.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2024-04-27T02:00:00Z",
+          "end": "2024-04-28T13:00:00Z",
+          "start_utc": "2024-04-27T02:00:00Z",
+          "end_utc": "2024-04-28T13:00:00Z",
+          "duration_hours": 36.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2024-05-26T17:00:00Z",
+          "end": "2024-05-27T13:00:00Z",
+          "start_utc": "2024-05-26T17:00:00Z",
+          "end_utc": "2024-05-27T13:00:00Z",
+          "duration_hours": 21.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2024-06-25T06:00:00Z",
+          "end": "2024-06-25T17:00:00Z",
+          "start_utc": "2024-06-25T06:00:00Z",
+          "end_utc": "2024-06-25T17:00:00Z",
+          "duration_hours": 12.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2024-07-24T16:00:00Z",
+          "end": "2024-07-25T07:00:00Z",
+          "start_utc": "2024-07-24T16:00:00Z",
+          "end_utc": "2024-07-25T07:00:00Z",
+          "duration_hours": 16.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2024-08-23T01:00:00Z",
+          "end": "2024-08-24T06:00:00Z",
+          "start_utc": "2024-08-23T01:00:00Z",
+          "end_utc": "2024-08-24T06:00:00Z",
+          "duration_hours": 30.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2024-09-21T09:00:00Z",
+          "end": "2024-09-23T05:00:00Z",
+          "start_utc": "2024-09-21T09:00:00Z",
+          "end_utc": "2024-09-23T05:00:00Z",
+          "duration_hours": 45.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2024-10-20T16:00:00Z",
+          "end": "2024-10-23T04:00:00Z",
+          "start_utc": "2024-10-20T16:00:00Z",
+          "end_utc": "2024-10-23T04:00:00Z",
+          "duration_hours": 61.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2024-11-12T23:00:00Z",
+          "end": "2024-11-14T15:00:00Z",
+          "start_utc": "2024-11-12T23:00:00Z",
+          "end_utc": "2024-11-14T15:00:00Z",
+          "duration_hours": 41.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2024-11-19T01:00:00Z",
+          "end": "2024-11-22T01:00:00Z",
+          "start_utc": "2024-11-19T01:00:00Z",
+          "end_utc": "2024-11-22T01:00:00Z",
+          "duration_hours": 73.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2024-12-12T10:00:00Z",
+          "end": "2024-12-14T19:00:00Z",
+          "start_utc": "2024-12-12T10:00:00Z",
+          "end_utc": "2024-12-14T19:00:00Z",
+          "duration_hours": 58.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2024-12-18T13:00:00Z",
+          "end": "2024-12-21T19:00:00Z",
+          "start_utc": "2024-12-18T13:00:00Z",
+          "end_utc": "2024-12-21T19:00:00Z",
+          "duration_hours": 79.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-01-11T01:00:00Z",
+          "end": "2025-01-13T05:00:00Z",
+          "start_utc": "2025-01-11T01:00:00Z",
+          "end_utc": "2025-01-13T05:00:00Z",
+          "duration_hours": 53.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-01-17T06:00:00Z",
+          "end": "2025-01-20T07:00:00Z",
+          "start_utc": "2025-01-17T06:00:00Z",
+          "end_utc": "2025-01-20T07:00:00Z",
+          "duration_hours": 74.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-02-09T20:00:00Z",
+          "end": "2025-02-11T03:00:00Z",
+          "start_utc": "2025-02-09T20:00:00Z",
+          "end_utc": "2025-02-11T03:00:00Z",
+          "duration_hours": 32.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-02-16T00:00:00Z",
+          "end": "2025-02-18T14:00:00Z",
+          "start_utc": "2025-02-16T00:00:00Z",
+          "end_utc": "2025-02-18T14:00:00Z",
+          "duration_hours": 63.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-03-17T19:00:00Z",
+          "end": "2025-03-19T18:00:00Z",
+          "start_utc": "2025-03-17T19:00:00Z",
+          "end_utc": "2025-03-19T18:00:00Z",
+          "duration_hours": 48.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-04-16T12:00:00Z",
+          "end": "2025-04-17T19:00:00Z",
+          "start_utc": "2025-04-16T12:00:00Z",
+          "end_utc": "2025-04-17T19:00:00Z",
+          "duration_hours": 32.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-05-16T03:00:00Z",
+          "end": "2025-05-16T19:00:00Z",
+          "start_utc": "2025-05-16T03:00:00Z",
+          "end_utc": "2025-05-16T19:00:00Z",
+          "duration_hours": 17.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-06-14T16:00:00Z",
+          "end": "2025-06-15T01:00:00Z",
+          "start_utc": "2025-06-14T16:00:00Z",
+          "end_utc": "2025-06-15T01:00:00Z",
+          "duration_hours": 10.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-07-14T01:00:00Z",
+          "end": "2025-07-14T19:00:00Z",
+          "start_utc": "2025-07-14T01:00:00Z",
+          "end_utc": "2025-07-14T19:00:00Z",
+          "duration_hours": 19.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-08-12T09:00:00Z",
+          "end": "2025-08-13T18:00:00Z",
+          "start_utc": "2025-08-12T09:00:00Z",
+          "end_utc": "2025-08-13T18:00:00Z",
+          "duration_hours": 34.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-09-10T17:00:00Z",
+          "end": "2025-09-12T17:00:00Z",
+          "start_utc": "2025-09-10T17:00:00Z",
+          "end_utc": "2025-09-12T17:00:00Z",
+          "duration_hours": 49.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-10-10T00:00:00Z",
+          "end": "2025-10-12T15:00:00Z",
+          "start_utc": "2025-10-10T00:00:00Z",
+          "end_utc": "2025-10-12T15:00:00Z",
+          "duration_hours": 64.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-11-02T06:00:00Z",
+          "end": "2025-11-04T02:00:00Z",
+          "start_utc": "2025-11-02T06:00:00Z",
+          "end_utc": "2025-11-04T02:00:00Z",
+          "duration_hours": 45.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-11-08T09:00:00Z",
+          "end": "2025-11-11T11:00:00Z",
+          "start_utc": "2025-11-08T09:00:00Z",
+          "end_utc": "2025-11-11T11:00:00Z",
+          "duration_hours": 75.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-12-01T18:00:00Z",
+          "end": "2025-12-04T03:00:00Z",
+          "start_utc": "2025-12-01T18:00:00Z",
+          "end_utc": "2025-12-04T03:00:00Z",
+          "duration_hours": 58.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-12-07T22:00:00Z",
+          "end": "2025-12-11T03:00:00Z",
+          "start_utc": "2025-12-07T22:00:00Z",
+          "end_utc": "2025-12-11T03:00:00Z",
+          "duration_hours": 78.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-12-31T10:00:00Z",
+          "end": "2026-01-02T09:00:00Z",
+          "start_utc": "2025-12-31T10:00:00Z",
+          "end_utc": "2026-01-02T09:00:00Z",
+          "duration_hours": 48.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-01-06T15:00:00Z",
+          "end": "2026-01-09T13:00:00Z",
+          "start_utc": "2026-01-06T15:00:00Z",
+          "end_utc": "2026-01-09T13:00:00Z",
+          "duration_hours": 71.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-01-30T09:00:00Z",
+          "end": "2026-01-30T17:00:00Z",
+          "start_utc": "2026-01-30T09:00:00Z",
+          "end_utc": "2026-01-30T17:00:00Z",
+          "duration_hours": 9.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-02-05T10:00:00Z",
+          "end": "2026-02-07T20:00:00Z",
+          "start_utc": "2026-02-05T10:00:00Z",
+          "end_utc": "2026-02-07T20:00:00Z",
+          "duration_hours": 59.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-03-07T05:00:00Z",
+          "end": "2026-03-08T23:00:00Z",
+          "start_utc": "2026-03-07T05:00:00Z",
+          "end_utc": "2026-03-08T23:00:00Z",
+          "duration_hours": 43.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-04-05T23:00:00Z",
+          "end": "2026-04-07T00:00:00Z",
+          "start_utc": "2026-04-05T23:00:00Z",
+          "end_utc": "2026-04-07T00:00:00Z",
+          "duration_hours": 26.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-05-05T13:00:00Z",
+          "end": "2026-05-06T01:00:00Z",
+          "start_utc": "2026-05-05T13:00:00Z",
+          "end_utc": "2026-05-06T01:00:00Z",
+          "duration_hours": 13.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-06-04T01:00:00Z",
+          "end": "2026-06-04T11:00:00Z",
+          "start_utc": "2026-06-04T01:00:00Z",
+          "end_utc": "2026-06-04T11:00:00Z",
+          "duration_hours": 11.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-07-03T10:00:00Z",
+          "end": "2026-07-04T07:00:00Z",
+          "start_utc": "2026-07-03T10:00:00Z",
+          "end_utc": "2026-07-04T07:00:00Z",
+          "duration_hours": 22.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-08-01T18:00:00Z",
+          "end": "2026-08-03T06:00:00Z",
+          "start_utc": "2026-08-01T18:00:00Z",
+          "end_utc": "2026-08-03T06:00:00Z",
+          "duration_hours": 37.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-08-31T00:00:00Z",
+          "end": "2026-09-02T05:00:00Z",
+          "start_utc": "2026-08-31T00:00:00Z",
+          "end_utc": "2026-09-02T05:00:00Z",
+          "duration_hours": 54.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-09-23T09:00:00Z",
+          "end": "2026-09-23T21:00:00Z",
+          "start_utc": "2026-09-23T09:00:00Z",
+          "end_utc": "2026-09-23T21:00:00Z",
+          "duration_hours": 13.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-09-29T07:00:00Z",
+          "end": "2026-10-02T01:00:00Z",
+          "start_utc": "2026-09-29T07:00:00Z",
+          "end_utc": "2026-10-02T01:00:00Z",
+          "duration_hours": 67.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-10-22T14:00:00Z",
+          "end": "2026-10-24T15:00:00Z",
+          "start_utc": "2026-10-22T14:00:00Z",
+          "end_utc": "2026-10-24T15:00:00Z",
+          "duration_hours": 50.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-10-28T17:00:00Z",
+          "end": "2026-10-31T20:00:00Z",
+          "start_utc": "2026-10-28T17:00:00Z",
+          "end_utc": "2026-10-31T20:00:00Z",
+          "duration_hours": 76.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-11-21T02:00:00Z",
+          "end": "2026-11-23T11:00:00Z",
+          "start_utc": "2026-11-21T02:00:00Z",
+          "end_utc": "2026-11-23T11:00:00Z",
+          "duration_hours": 58.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-11-27T06:00:00Z",
+          "end": "2026-11-30T10:00:00Z",
+          "start_utc": "2026-11-27T06:00:00Z",
+          "end_utc": "2026-11-30T10:00:00Z",
+          "duration_hours": 77.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-12-20T19:00:00Z",
+          "end": "2026-12-22T14:00:00Z",
+          "start_utc": "2026-12-20T19:00:00Z",
+          "end_utc": "2026-12-22T14:00:00Z",
+          "duration_hours": 44.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-12-27T00:00:00Z",
+          "end": "2026-12-29T19:00:00Z",
+          "start_utc": "2026-12-27T00:00:00Z",
+          "end_utc": "2026-12-29T19:00:00Z",
+          "duration_hours": 68.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-01-25T19:00:00Z",
+          "end": "2027-01-28T02:00:00Z",
+          "start_utc": "2027-01-25T19:00:00Z",
+          "end_utc": "2027-01-28T02:00:00Z",
+          "duration_hours": 56.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-02-24T15:00:00Z",
+          "end": "2027-02-26T05:00:00Z",
+          "start_utc": "2027-02-24T15:00:00Z",
+          "end_utc": "2027-02-26T05:00:00Z",
+          "duration_hours": 39.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-03-26T08:00:00Z",
+          "end": "2027-03-27T06:00:00Z",
+          "start_utc": "2027-03-26T08:00:00Z",
+          "end_utc": "2027-03-27T06:00:00Z",
+          "duration_hours": 23.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-04-24T23:00:00Z",
+          "end": "2027-04-25T09:00:00Z",
+          "start_utc": "2027-04-24T23:00:00Z",
+          "end_utc": "2027-04-25T09:00:00Z",
+          "duration_hours": 11.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-05-24T10:00:00Z",
+          "end": "2027-05-24T22:00:00Z",
+          "start_utc": "2027-05-24T10:00:00Z",
+          "end_utc": "2027-05-24T22:00:00Z",
+          "duration_hours": 13.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-06-22T19:00:00Z",
+          "end": "2027-06-23T20:00:00Z",
+          "start_utc": "2027-06-22T19:00:00Z",
+          "end_utc": "2027-06-23T20:00:00Z",
+          "duration_hours": 26.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-07-22T02:00:00Z",
+          "end": "2027-07-23T19:00:00Z",
+          "start_utc": "2027-07-22T02:00:00Z",
+          "end_utc": "2027-07-23T19:00:00Z",
+          "duration_hours": 42.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-08-20T08:00:00Z",
+          "end": "2027-08-22T16:00:00Z",
+          "start_utc": "2027-08-20T08:00:00Z",
+          "end_utc": "2027-08-22T16:00:00Z",
+          "duration_hours": 57.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-09-12T13:00:00Z",
+          "end": "2027-09-14T01:00:00Z",
+          "start_utc": "2027-09-12T13:00:00Z",
+          "end_utc": "2027-09-14T01:00:00Z",
+          "duration_hours": 37.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-09-18T15:00:00Z",
+          "end": "2027-09-21T11:00:00Z",
+          "start_utc": "2027-09-18T15:00:00Z",
+          "end_utc": "2027-09-21T11:00:00Z",
+          "duration_hours": 69.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-10-11T22:00:00Z",
+          "end": "2027-10-14T04:00:00Z",
+          "start_utc": "2027-10-11T22:00:00Z",
+          "end_utc": "2027-10-14T04:00:00Z",
+          "duration_hours": 55.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-10-18T01:00:00Z",
+          "end": "2027-10-21T05:00:00Z",
+          "start_utc": "2027-10-18T01:00:00Z",
+          "end_utc": "2027-10-21T05:00:00Z",
+          "duration_hours": 77.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-11-10T11:00:00Z",
+          "end": "2027-11-12T19:00:00Z",
+          "start_utc": "2027-11-10T11:00:00Z",
+          "end_utc": "2027-11-12T19:00:00Z",
+          "duration_hours": 57.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-11-16T15:00:00Z",
+          "end": "2027-11-19T18:00:00Z",
+          "start_utc": "2027-11-16T15:00:00Z",
+          "end_utc": "2027-11-19T18:00:00Z",
+          "duration_hours": 76.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-12-10T04:00:00Z",
+          "end": "2027-12-11T20:00:00Z",
+          "start_utc": "2027-12-10T04:00:00Z",
+          "end_utc": "2027-12-11T20:00:00Z",
+          "duration_hours": 41.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-12-16T09:00:00Z",
+          "end": "2027-12-19T02:00:00Z",
+          "start_utc": "2027-12-16T09:00:00Z",
+          "end_utc": "2027-12-19T02:00:00Z",
+          "duration_hours": 66.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-01-15T05:00:00Z",
+          "end": "2028-01-17T08:00:00Z",
+          "start_utc": "2028-01-15T05:00:00Z",
+          "end_utc": "2028-01-17T08:00:00Z",
+          "duration_hours": 52.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-02-14T00:00:00Z",
+          "end": "2028-02-15T10:00:00Z",
+          "start_utc": "2028-02-14T00:00:00Z",
+          "end_utc": "2028-02-15T10:00:00Z",
+          "duration_hours": 35.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-03-14T17:00:00Z",
+          "end": "2028-03-15T12:00:00Z",
+          "start_utc": "2028-03-14T17:00:00Z",
+          "end_utc": "2028-03-15T12:00:00Z",
+          "duration_hours": 20.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-04-13T08:00:00Z",
+          "end": "2028-04-13T18:00:00Z",
+          "start_utc": "2028-04-13T08:00:00Z",
+          "end_utc": "2028-04-13T18:00:00Z",
+          "duration_hours": 11.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-05-12T19:00:00Z",
+          "end": "2028-05-13T11:00:00Z",
+          "start_utc": "2028-05-12T19:00:00Z",
+          "end_utc": "2028-05-13T11:00:00Z",
+          "duration_hours": 17.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-06-11T03:00:00Z",
+          "end": "2028-06-12T09:00:00Z",
+          "start_utc": "2028-06-11T03:00:00Z",
+          "end_utc": "2028-06-12T09:00:00Z",
+          "duration_hours": 31.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-07-10T10:00:00Z",
+          "end": "2028-07-12T08:00:00Z",
+          "start_utc": "2028-07-10T10:00:00Z",
+          "end_utc": "2028-07-12T08:00:00Z",
+          "duration_hours": 47.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-08-08T16:00:00Z",
+          "end": "2028-08-11T04:00:00Z",
+          "start_utc": "2028-08-08T16:00:00Z",
+          "end_utc": "2028-08-11T04:00:00Z",
+          "duration_hours": 61.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-08-31T21:00:00Z",
+          "end": "2028-09-02T14:00:00Z",
+          "start_utc": "2028-08-31T21:00:00Z",
+          "end_utc": "2028-09-02T14:00:00Z",
+          "duration_hours": 42.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-09-06T23:00:00Z",
+          "end": "2028-09-09T22:00:00Z",
+          "start_utc": "2028-09-06T23:00:00Z",
+          "end_utc": "2028-09-09T22:00:00Z",
+          "duration_hours": 72.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-09-30T06:00:00Z",
+          "end": "2028-10-02T16:00:00Z",
+          "start_utc": "2028-09-30T06:00:00Z",
+          "end_utc": "2028-10-02T16:00:00Z",
+          "duration_hours": 59.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-10-06T09:00:00Z",
+          "end": "2028-10-09T15:00:00Z",
+          "start_utc": "2028-10-06T09:00:00Z",
+          "end_utc": "2028-10-09T15:00:00Z",
+          "duration_hours": 79.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-10-29T20:00:00Z",
+          "end": "2028-11-01T02:00:00Z",
+          "start_utc": "2028-10-29T20:00:00Z",
+          "end_utc": "2028-11-01T02:00:00Z",
+          "duration_hours": 55.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-11-05T00:00:00Z",
+          "end": "2028-11-08T01:00:00Z",
+          "start_utc": "2028-11-05T00:00:00Z",
+          "end_utc": "2028-11-08T01:00:00Z",
+          "duration_hours": 74.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-11-28T13:00:00Z",
+          "end": "2028-11-30T00:00:00Z",
+          "start_utc": "2028-11-28T13:00:00Z",
+          "end_utc": "2028-11-30T00:00:00Z",
+          "duration_hours": 36.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-12-04T18:00:00Z",
+          "end": "2028-12-07T08:00:00Z",
+          "start_utc": "2028-12-04T18:00:00Z",
+          "end_utc": "2028-12-07T08:00:00Z",
+          "duration_hours": 63.0,
+          "precision": "hourly"
+        }
+      ]
     },
     "earth": {
       "total_hours": 16143.0,
@@ -2003,21 +3588,414 @@
       ]
     },
     "joint": {
-      "total_hours": 0,
-      "percentage": 0.0,
-      "windows_count": 0,
-      "longest_window_hours": 0.0,
-      "longest_joint_gap_hours": 43848.0,
-      "windows": []
+      "total_hours": 2217.0,
+      "percentage": 5.1,
+      "windows_count": 49,
+      "longest_window_hours": 79.0,
+      "longest_joint_gap_hours": 5075.0,
+      "windows": [
+        {
+          "start": "2024-01-01T00:00:00Z",
+          "end": "2024-01-02T11:00:00Z",
+          "start_utc": "2024-01-01T00:00:00Z",
+          "end_utc": "2024-01-02T11:00:00Z",
+          "duration_hours": 36.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2024-01-22T16:00:00Z",
+          "end": "2024-01-25T01:00:00Z",
+          "start_utc": "2024-01-22T16:00:00Z",
+          "end_utc": "2024-01-25T01:00:00Z",
+          "duration_hours": 58.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2024-01-28T20:00:00Z",
+          "end": "2024-01-29T21:00:00Z",
+          "start_utc": "2024-01-28T20:00:00Z",
+          "end_utc": "2024-01-29T21:00:00Z",
+          "duration_hours": 26.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2024-02-21T10:00:00Z",
+          "end": "2024-02-23T01:00:00Z",
+          "start_utc": "2024-02-21T10:00:00Z",
+          "end_utc": "2024-02-23T01:00:00Z",
+          "duration_hours": 40.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2024-08-23T23:00:00Z",
+          "end": "2024-08-24T06:00:00Z",
+          "start_utc": "2024-08-23T23:00:00Z",
+          "end_utc": "2024-08-24T06:00:00Z",
+          "duration_hours": 8.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2024-09-21T09:00:00Z",
+          "end": "2024-09-23T05:00:00Z",
+          "start_utc": "2024-09-21T09:00:00Z",
+          "end_utc": "2024-09-23T05:00:00Z",
+          "duration_hours": 45.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2024-10-20T16:00:00Z",
+          "end": "2024-10-23T04:00:00Z",
+          "start_utc": "2024-10-20T16:00:00Z",
+          "end_utc": "2024-10-23T04:00:00Z",
+          "duration_hours": 61.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2024-11-14T06:00:00Z",
+          "end": "2024-11-14T15:00:00Z",
+          "start_utc": "2024-11-14T06:00:00Z",
+          "end_utc": "2024-11-14T15:00:00Z",
+          "duration_hours": 10.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2024-11-19T01:00:00Z",
+          "end": "2024-11-22T01:00:00Z",
+          "start_utc": "2024-11-19T01:00:00Z",
+          "end_utc": "2024-11-22T01:00:00Z",
+          "duration_hours": 73.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2024-12-12T10:00:00Z",
+          "end": "2024-12-14T19:00:00Z",
+          "start_utc": "2024-12-12T10:00:00Z",
+          "end_utc": "2024-12-14T19:00:00Z",
+          "duration_hours": 58.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2024-12-18T13:00:00Z",
+          "end": "2024-12-21T03:00:00Z",
+          "start_utc": "2024-12-18T13:00:00Z",
+          "end_utc": "2024-12-21T03:00:00Z",
+          "duration_hours": 63.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-01-11T01:00:00Z",
+          "end": "2025-01-13T05:00:00Z",
+          "start_utc": "2025-01-11T01:00:00Z",
+          "end_utc": "2025-01-13T05:00:00Z",
+          "duration_hours": 53.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-01-17T06:00:00Z",
+          "end": "2025-01-17T07:00:00Z",
+          "start_utc": "2025-01-17T06:00:00Z",
+          "end_utc": "2025-01-17T07:00:00Z",
+          "duration_hours": 2.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-02-09T20:00:00Z",
+          "end": "2025-02-11T03:00:00Z",
+          "start_utc": "2025-02-09T20:00:00Z",
+          "end_utc": "2025-02-11T03:00:00Z",
+          "duration_hours": 32.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-08-13T08:00:00Z",
+          "end": "2025-08-13T18:00:00Z",
+          "start_utc": "2025-08-13T08:00:00Z",
+          "end_utc": "2025-08-13T18:00:00Z",
+          "duration_hours": 11.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-09-10T17:00:00Z",
+          "end": "2025-09-12T17:00:00Z",
+          "start_utc": "2025-09-10T17:00:00Z",
+          "end_utc": "2025-09-12T17:00:00Z",
+          "duration_hours": 49.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-10-10T00:00:00Z",
+          "end": "2025-10-12T15:00:00Z",
+          "start_utc": "2025-10-10T00:00:00Z",
+          "end_utc": "2025-10-12T15:00:00Z",
+          "duration_hours": 64.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-11-03T10:00:00Z",
+          "end": "2025-11-04T02:00:00Z",
+          "start_utc": "2025-11-03T10:00:00Z",
+          "end_utc": "2025-11-04T02:00:00Z",
+          "duration_hours": 17.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-11-08T09:00:00Z",
+          "end": "2025-11-11T11:00:00Z",
+          "start_utc": "2025-11-08T09:00:00Z",
+          "end_utc": "2025-11-11T11:00:00Z",
+          "duration_hours": 75.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-12-01T18:00:00Z",
+          "end": "2025-12-04T03:00:00Z",
+          "start_utc": "2025-12-01T18:00:00Z",
+          "end_utc": "2025-12-04T03:00:00Z",
+          "duration_hours": 58.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-12-07T22:00:00Z",
+          "end": "2025-12-09T17:00:00Z",
+          "start_utc": "2025-12-07T22:00:00Z",
+          "end_utc": "2025-12-09T17:00:00Z",
+          "duration_hours": 44.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2025-12-31T10:00:00Z",
+          "end": "2026-01-02T09:00:00Z",
+          "start_utc": "2025-12-31T10:00:00Z",
+          "end_utc": "2026-01-02T09:00:00Z",
+          "duration_hours": 48.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-01-30T09:00:00Z",
+          "end": "2026-01-30T17:00:00Z",
+          "start_utc": "2026-01-30T09:00:00Z",
+          "end_utc": "2026-01-30T17:00:00Z",
+          "duration_hours": 9.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-08-02T08:00:00Z",
+          "end": "2026-08-03T06:00:00Z",
+          "start_utc": "2026-08-02T08:00:00Z",
+          "end_utc": "2026-08-03T06:00:00Z",
+          "duration_hours": 23.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-08-31T00:00:00Z",
+          "end": "2026-09-02T05:00:00Z",
+          "start_utc": "2026-08-31T00:00:00Z",
+          "end_utc": "2026-09-02T05:00:00Z",
+          "duration_hours": 54.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-09-29T07:00:00Z",
+          "end": "2026-10-02T01:00:00Z",
+          "start_utc": "2026-09-29T07:00:00Z",
+          "end_utc": "2026-10-02T01:00:00Z",
+          "duration_hours": 67.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-10-23T05:00:00Z",
+          "end": "2026-10-24T15:00:00Z",
+          "start_utc": "2026-10-23T05:00:00Z",
+          "end_utc": "2026-10-24T15:00:00Z",
+          "duration_hours": 35.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-10-28T17:00:00Z",
+          "end": "2026-10-31T20:00:00Z",
+          "start_utc": "2026-10-28T17:00:00Z",
+          "end_utc": "2026-10-31T20:00:00Z",
+          "duration_hours": 76.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-11-21T02:00:00Z",
+          "end": "2026-11-23T11:00:00Z",
+          "start_utc": "2026-11-21T02:00:00Z",
+          "end_utc": "2026-11-23T11:00:00Z",
+          "duration_hours": 58.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-11-27T06:00:00Z",
+          "end": "2026-11-28T14:00:00Z",
+          "start_utc": "2026-11-27T06:00:00Z",
+          "end_utc": "2026-11-28T14:00:00Z",
+          "duration_hours": 33.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2026-12-20T19:00:00Z",
+          "end": "2026-12-22T14:00:00Z",
+          "start_utc": "2026-12-20T19:00:00Z",
+          "end_utc": "2026-12-22T14:00:00Z",
+          "duration_hours": 44.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-07-22T02:00:00Z",
+          "end": "2027-07-23T19:00:00Z",
+          "start_utc": "2027-07-22T02:00:00Z",
+          "end_utc": "2027-07-23T19:00:00Z",
+          "duration_hours": 42.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-08-20T08:00:00Z",
+          "end": "2027-08-22T16:00:00Z",
+          "start_utc": "2027-08-20T08:00:00Z",
+          "end_utc": "2027-08-22T16:00:00Z",
+          "duration_hours": 57.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-09-18T15:00:00Z",
+          "end": "2027-09-21T11:00:00Z",
+          "start_utc": "2027-09-18T15:00:00Z",
+          "end_utc": "2027-09-21T11:00:00Z",
+          "duration_hours": 69.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-10-11T22:00:00Z",
+          "end": "2027-10-14T04:00:00Z",
+          "start_utc": "2027-10-11T22:00:00Z",
+          "end_utc": "2027-10-14T04:00:00Z",
+          "duration_hours": 55.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-10-18T01:00:00Z",
+          "end": "2027-10-21T05:00:00Z",
+          "start_utc": "2027-10-18T01:00:00Z",
+          "end_utc": "2027-10-21T05:00:00Z",
+          "duration_hours": 77.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-11-10T11:00:00Z",
+          "end": "2027-11-12T19:00:00Z",
+          "start_utc": "2027-11-10T11:00:00Z",
+          "end_utc": "2027-11-12T19:00:00Z",
+          "duration_hours": 57.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-11-16T15:00:00Z",
+          "end": "2027-11-17T16:00:00Z",
+          "start_utc": "2027-11-16T15:00:00Z",
+          "end_utc": "2027-11-17T16:00:00Z",
+          "duration_hours": 26.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2027-12-10T04:00:00Z",
+          "end": "2027-12-11T20:00:00Z",
+          "start_utc": "2027-12-10T04:00:00Z",
+          "end_utc": "2027-12-11T20:00:00Z",
+          "duration_hours": 41.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-06-11T23:00:00Z",
+          "end": "2028-06-12T09:00:00Z",
+          "start_utc": "2028-06-11T23:00:00Z",
+          "end_utc": "2028-06-12T09:00:00Z",
+          "duration_hours": 11.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-07-10T10:00:00Z",
+          "end": "2028-07-12T08:00:00Z",
+          "start_utc": "2028-07-10T10:00:00Z",
+          "end_utc": "2028-07-12T08:00:00Z",
+          "duration_hours": 47.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-08-08T16:00:00Z",
+          "end": "2028-08-11T04:00:00Z",
+          "start_utc": "2028-08-08T16:00:00Z",
+          "end_utc": "2028-08-11T04:00:00Z",
+          "duration_hours": 61.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-09-01T15:00:00Z",
+          "end": "2028-09-02T14:00:00Z",
+          "start_utc": "2028-09-01T15:00:00Z",
+          "end_utc": "2028-09-02T14:00:00Z",
+          "duration_hours": 24.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-09-06T23:00:00Z",
+          "end": "2028-09-09T22:00:00Z",
+          "start_utc": "2028-09-06T23:00:00Z",
+          "end_utc": "2028-09-09T22:00:00Z",
+          "duration_hours": 72.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-09-30T06:00:00Z",
+          "end": "2028-10-02T16:00:00Z",
+          "start_utc": "2028-09-30T06:00:00Z",
+          "end_utc": "2028-10-02T16:00:00Z",
+          "duration_hours": 59.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-10-06T09:00:00Z",
+          "end": "2028-10-09T15:00:00Z",
+          "start_utc": "2028-10-06T09:00:00Z",
+          "end_utc": "2028-10-09T15:00:00Z",
+          "duration_hours": 79.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-10-29T20:00:00Z",
+          "end": "2028-11-01T02:00:00Z",
+          "start_utc": "2028-10-29T20:00:00Z",
+          "end_utc": "2028-11-01T02:00:00Z",
+          "duration_hours": 55.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-11-05T00:00:00Z",
+          "end": "2028-11-05T18:00:00Z",
+          "start_utc": "2028-11-05T00:00:00Z",
+          "end_utc": "2028-11-05T18:00:00Z",
+          "duration_hours": 19.0,
+          "precision": "hourly"
+        },
+        {
+          "start": "2028-11-28T13:00:00Z",
+          "end": "2028-11-30T00:00:00Z",
+          "start_utc": "2028-11-28T13:00:00Z",
+          "end_utc": "2028-11-30T00:00:00Z",
+          "duration_hours": 36.0,
+          "precision": "hourly"
+        }
+      ]
     },
     "power": {
       "area_m2": 1.0,
       "efficiency": 0.28,
       "orientation": "horizontal",
-      "total_energy_kwh": 0.0,
-      "specific_energy_kwh_m2": 0.0,
-      "peak_power_watts": 0.0,
-      "mean_power_watts": 0.0,
+      "total_energy_kwh": 74.38,
+      "specific_energy_kwh_m2": 74.38,
+      "peak_power_watts": 32.21,
+      "mean_power_watts": 1.7,
       "caveat": "Geometric potential under clear-sky solar irradiance, not a mission power subsystem prediction."
     },
     "lunations": [
@@ -2026,714 +4004,714 @@
         "start_utc": "2024-01-01T00:00:00Z",
         "end_utc": "2024-01-30T12:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 135.0,
+        "sun_percentage": 19.0,
         "earth_hours": 302.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 120.0,
+        "longest_dark_gap_hours": 484.0
       },
       {
         "lunation_index": 2,
         "start_utc": "2024-01-30T13:00:00Z",
         "end_utc": "2024-02-29T01:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 112.0,
+        "sun_percentage": 15.8,
         "earth_hours": 261.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 40.0,
+        "longest_dark_gap_hours": 489.0
       },
       {
         "lunation_index": 3,
         "start_utc": "2024-02-29T02:00:00Z",
         "end_utc": "2024-03-29T14:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 61.0,
+        "sun_percentage": 8.6,
         "earth_hours": 260.0,
         "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "longest_dark_gap_hours": 648.0
       },
       {
         "lunation_index": 4,
         "start_utc": "2024-03-29T15:00:00Z",
         "end_utc": "2024-04-28T03:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 48.0,
+        "sun_percentage": 6.8,
         "earth_hours": 255.0,
         "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "longest_dark_gap_hours": 661.0
       },
       {
         "lunation_index": 5,
         "start_utc": "2024-04-28T04:00:00Z",
         "end_utc": "2024-05-27T16:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 31.0,
+        "sun_percentage": 4.4,
         "earth_hours": 248.0,
         "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "longest_dark_gap_hours": 675.0
       },
       {
         "lunation_index": 6,
         "start_utc": "2024-05-27T17:00:00Z",
         "end_utc": "2024-06-26T05:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 12.0,
+        "sun_percentage": 1.7,
         "earth_hours": 244.0,
         "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "longest_dark_gap_hours": 685.0
       },
       {
         "lunation_index": 7,
         "start_utc": "2024-06-26T06:00:00Z",
         "end_utc": "2024-07-25T18:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 16.0,
+        "sun_percentage": 2.3,
         "earth_hours": 244.0,
         "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "longest_dark_gap_hours": 682.0
       },
       {
         "lunation_index": 8,
         "start_utc": "2024-07-25T19:00:00Z",
         "end_utc": "2024-08-24T07:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 30.0,
+        "sun_percentage": 4.2,
         "earth_hours": 257.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 8.0,
+        "longest_dark_gap_hours": 678.0
       },
       {
         "lunation_index": 9,
         "start_utc": "2024-08-24T08:00:00Z",
         "end_utc": "2024-09-22T20:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 36.0,
+        "sun_percentage": 5.1,
         "earth_hours": 304.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 36.0,
+        "longest_dark_gap_hours": 673.0
       },
       {
         "lunation_index": 10,
         "start_utc": "2024-09-22T21:00:00Z",
         "end_utc": "2024-10-22T09:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 51.0,
+        "sun_percentage": 7.2,
         "earth_hours": 298.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 51.0,
+        "longest_dark_gap_hours": 658.0
       },
       {
         "lunation_index": 11,
         "start_utc": "2024-10-22T10:00:00Z",
         "end_utc": "2024-11-20T22:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 106.0,
+        "sun_percentage": 15.0,
         "earth_hours": 293.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 75.0,
+        "longest_dark_gap_hours": 498.0
       },
       {
         "lunation_index": 12,
         "start_utc": "2024-11-20T23:00:00Z",
         "end_utc": "2024-12-20T11:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 132.0,
+        "sun_percentage": 18.6,
         "earth_hours": 290.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 132.0,
+        "longest_dark_gap_hours": 488.0
       },
       {
         "lunation_index": 13,
         "start_utc": "2024-12-20T12:00:00Z",
         "end_utc": "2025-01-19T00:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 128.0,
+        "sun_percentage": 18.1,
         "earth_hours": 251.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 71.0,
+        "longest_dark_gap_hours": 485.0
       },
       {
         "lunation_index": 14,
         "start_utc": "2025-01-19T01:00:00Z",
         "end_utc": "2025-02-17T13:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 101.0,
+        "sun_percentage": 14.2,
         "earth_hours": 239.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 32.0,
+        "longest_dark_gap_hours": 492.0
       },
       {
         "lunation_index": 15,
         "start_utc": "2025-02-17T14:00:00Z",
         "end_utc": "2025-03-19T02:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 57.0,
+        "sun_percentage": 8.0,
         "earth_hours": 240.0,
         "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "longest_dark_gap_hours": 652.0
       },
       {
         "lunation_index": 16,
         "start_utc": "2025-03-19T03:00:00Z",
         "end_utc": "2025-04-17T15:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 44.0,
+        "sun_percentage": 6.2,
         "earth_hours": 236.0,
         "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "longest_dark_gap_hours": 665.0
       },
       {
         "lunation_index": 17,
         "start_utc": "2025-04-17T16:00:00Z",
         "end_utc": "2025-05-17T04:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 21.0,
+        "sun_percentage": 3.0,
         "earth_hours": 230.0,
         "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "longest_dark_gap_hours": 679.0
       },
       {
         "lunation_index": 18,
         "start_utc": "2025-05-17T05:00:00Z",
         "end_utc": "2025-06-15T17:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 10.0,
+        "sun_percentage": 1.4,
         "earth_hours": 225.0,
         "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "longest_dark_gap_hours": 683.0
       },
       {
         "lunation_index": 19,
         "start_utc": "2025-06-15T18:00:00Z",
         "end_utc": "2025-07-15T06:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 19.0,
+        "sun_percentage": 2.7,
         "earth_hours": 224.0,
         "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "longest_dark_gap_hours": 679.0
       },
       {
         "lunation_index": 20,
         "start_utc": "2025-07-15T07:00:00Z",
         "end_utc": "2025-08-13T19:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 34.0,
+        "sun_percentage": 4.8,
         "earth_hours": 241.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 11.0,
+        "longest_dark_gap_hours": 674.0
       },
       {
         "lunation_index": 21,
         "start_utc": "2025-08-13T20:00:00Z",
         "end_utc": "2025-09-12T08:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 40.0,
+        "sun_percentage": 5.6,
         "earth_hours": 288.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 40.0,
+        "longest_dark_gap_hours": 669.0
       },
       {
         "lunation_index": 22,
         "start_utc": "2025-09-12T09:00:00Z",
         "end_utc": "2025-10-11T21:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 55.0,
+        "sun_percentage": 7.8,
         "earth_hours": 285.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 55.0,
+        "longest_dark_gap_hours": 654.0
       },
       {
         "lunation_index": 23,
         "start_utc": "2025-10-11T22:00:00Z",
         "end_utc": "2025-11-10T10:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 113.0,
+        "sun_percentage": 15.9,
         "earth_hours": 280.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 85.0,
+        "longest_dark_gap_hours": 494.0
       },
       {
         "lunation_index": 24,
         "start_utc": "2025-11-10T11:00:00Z",
         "end_utc": "2025-12-09T23:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 133.0,
+        "sun_percentage": 18.8,
         "earth_hours": 272.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 127.0,
+        "longest_dark_gap_hours": 486.0
       },
       {
         "lunation_index": 25,
         "start_utc": "2025-12-10T00:00:00Z",
         "end_utc": "2026-01-08T12:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 122.0,
+        "sun_percentage": 17.2,
         "earth_hours": 221.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 48.0,
+        "longest_dark_gap_hours": 486.0
       },
       {
         "lunation_index": 26,
         "start_utc": "2026-01-08T13:00:00Z",
         "end_utc": "2026-02-07T01:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 74.0,
+        "sun_percentage": 10.4,
         "earth_hours": 226.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 9.0,
+        "longest_dark_gap_hours": 499.0
       },
       {
         "lunation_index": 27,
         "start_utc": "2026-02-07T02:00:00Z",
         "end_utc": "2026-03-08T14:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 53.0,
+        "sun_percentage": 7.5,
         "earth_hours": 231.0,
         "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "longest_dark_gap_hours": 656.0
       },
       {
         "lunation_index": 28,
         "start_utc": "2026-03-08T15:00:00Z",
         "end_utc": "2026-04-07T03:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 35.0,
+        "sun_percentage": 4.9,
         "earth_hours": 228.0,
         "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "longest_dark_gap_hours": 671.0
       },
       {
         "lunation_index": 29,
         "start_utc": "2026-04-07T04:00:00Z",
         "end_utc": "2026-05-06T16:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 13.0,
+        "sun_percentage": 1.8,
         "earth_hours": 223.0,
         "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "longest_dark_gap_hours": 681.0
       },
       {
         "lunation_index": 30,
         "start_utc": "2026-05-06T17:00:00Z",
         "end_utc": "2026-06-05T05:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 11.0,
+        "sun_percentage": 1.6,
         "earth_hours": 219.0,
         "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "longest_dark_gap_hours": 680.0
       },
       {
         "lunation_index": 31,
         "start_utc": "2026-06-05T06:00:00Z",
         "end_utc": "2026-07-04T18:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 22.0,
+        "sun_percentage": 3.1,
         "earth_hours": 220.0,
         "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "longest_dark_gap_hours": 676.0
       },
       {
         "lunation_index": 32,
         "start_utc": "2026-07-04T19:00:00Z",
         "end_utc": "2026-08-03T07:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 37.0,
+        "sun_percentage": 5.2,
         "earth_hours": 248.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 23.0,
+        "longest_dark_gap_hours": 671.0
       },
       {
         "lunation_index": 33,
         "start_utc": "2026-08-03T08:00:00Z",
         "end_utc": "2026-09-01T20:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 45.0,
+        "sun_percentage": 6.3,
         "earth_hours": 284.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 45.0,
+        "longest_dark_gap_hours": 664.0
       },
       {
         "lunation_index": 34,
         "start_utc": "2026-09-01T21:00:00Z",
         "end_utc": "2026-10-01T09:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 73.0,
+        "sun_percentage": 10.3,
         "earth_hours": 284.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 60.0,
+        "longest_dark_gap_hours": 507.0
       },
       {
         "lunation_index": 35,
         "start_utc": "2026-10-01T10:00:00Z",
         "end_utc": "2026-10-30T22:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 120.0,
+        "sun_percentage": 16.9,
         "earth_hours": 282.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 105.0,
+        "longest_dark_gap_hours": 492.0
       },
       {
         "lunation_index": 36,
         "start_utc": "2026-10-30T23:00:00Z",
         "end_utc": "2026-11-29T11:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 134.0,
+        "sun_percentage": 18.9,
         "earth_hours": 259.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 113.0,
+        "longest_dark_gap_hours": 485.0
       },
       {
         "lunation_index": 37,
         "start_utc": "2026-11-29T12:00:00Z",
         "end_utc": "2026-12-29T00:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 116.0,
+        "sun_percentage": 16.4,
         "earth_hours": 225.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 44.0,
+        "longest_dark_gap_hours": 488.0
       },
       {
         "lunation_index": 38,
         "start_utc": "2026-12-29T01:00:00Z",
         "end_utc": "2027-01-27T13:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 62.0,
+        "sun_percentage": 8.7,
         "earth_hours": 231.0,
         "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "longest_dark_gap_hours": 647.0
       },
       {
         "lunation_index": 39,
         "start_utc": "2027-01-27T14:00:00Z",
         "end_utc": "2027-02-26T02:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 49.0,
+        "sun_percentage": 6.9,
         "earth_hours": 236.0,
         "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "longest_dark_gap_hours": 660.0
       },
       {
         "lunation_index": 40,
         "start_utc": "2027-02-26T03:00:00Z",
         "end_utc": "2027-03-27T15:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 26.0,
+        "sun_percentage": 3.7,
         "earth_hours": 236.0,
         "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "longest_dark_gap_hours": 674.0
       },
       {
         "lunation_index": 41,
         "start_utc": "2027-03-27T16:00:00Z",
         "end_utc": "2027-04-26T04:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 11.0,
+        "sun_percentage": 1.6,
         "earth_hours": 233.0,
         "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "longest_dark_gap_hours": 679.0
       },
       {
         "lunation_index": 42,
         "start_utc": "2027-04-26T05:00:00Z",
         "end_utc": "2027-05-25T17:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 13.0,
+        "sun_percentage": 1.8,
         "earth_hours": 229.0,
         "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "longest_dark_gap_hours": 677.0
       },
       {
         "lunation_index": 43,
         "start_utc": "2027-05-25T18:00:00Z",
         "end_utc": "2027-06-24T06:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 26.0,
+        "sun_percentage": 3.7,
         "earth_hours": 230.0,
         "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "longest_dark_gap_hours": 673.0
       },
       {
         "lunation_index": 44,
         "start_utc": "2027-06-24T07:00:00Z",
         "end_utc": "2027-07-23T19:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 42.0,
+        "sun_percentage": 5.9,
         "earth_hours": 280.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 42.0,
+        "longest_dark_gap_hours": 667.0
       },
       {
         "lunation_index": 45,
         "start_utc": "2027-07-23T20:00:00Z",
         "end_utc": "2027-08-22T08:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 49.0,
+        "sun_percentage": 6.9,
         "earth_hours": 298.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 49.0,
+        "longest_dark_gap_hours": 660.0
       },
       {
         "lunation_index": 46,
         "start_utc": "2027-08-22T09:00:00Z",
         "end_utc": "2027-09-20T21:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 100.0,
+        "sun_percentage": 14.1,
         "earth_hours": 301.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 63.0,
+        "longest_dark_gap_hours": 500.0
       },
       {
         "lunation_index": 47,
         "start_utc": "2027-09-20T22:00:00Z",
         "end_utc": "2027-10-20T10:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 127.0,
+        "sun_percentage": 17.9,
         "earth_hours": 302.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 127.0,
+        "longest_dark_gap_hours": 490.0
       },
       {
         "lunation_index": 48,
         "start_utc": "2027-10-20T11:00:00Z",
         "end_utc": "2027-11-18T23:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 133.0,
+        "sun_percentage": 18.8,
         "earth_hours": 269.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 102.0,
+        "longest_dark_gap_hours": 485.0
       },
       {
         "lunation_index": 49,
         "start_utc": "2027-11-19T00:00:00Z",
         "end_utc": "2027-12-18T12:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 112.0,
+        "sun_percentage": 15.8,
         "earth_hours": 243.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 41.0,
+        "longest_dark_gap_hours": 489.0
       },
       {
         "lunation_index": 50,
         "start_utc": "2027-12-18T13:00:00Z",
         "end_utc": "2028-01-17T01:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 59.0,
+        "sun_percentage": 8.3,
         "earth_hours": 249.0,
         "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "longest_dark_gap_hours": 650.0
       },
       {
         "lunation_index": 51,
         "start_utc": "2028-01-17T02:00:00Z",
         "end_utc": "2028-02-15T14:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 42.0,
+        "sun_percentage": 5.9,
         "earth_hours": 255.0,
         "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "longest_dark_gap_hours": 663.0
       },
       {
         "lunation_index": 52,
         "start_utc": "2028-02-15T15:00:00Z",
         "end_utc": "2028-03-16T03:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 20.0,
+        "sun_percentage": 2.8,
         "earth_hours": 257.0,
         "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "longest_dark_gap_hours": 674.0
       },
       {
         "lunation_index": 53,
         "start_utc": "2028-03-16T04:00:00Z",
         "end_utc": "2028-04-14T16:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 11.0,
+        "sun_percentage": 1.6,
         "earth_hours": 255.0,
         "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "longest_dark_gap_hours": 676.0
       },
       {
         "lunation_index": 54,
         "start_utc": "2028-04-14T17:00:00Z",
         "end_utc": "2028-05-14T05:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 17.0,
+        "sun_percentage": 2.4,
         "earth_hours": 254.0,
         "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "longest_dark_gap_hours": 674.0
       },
       {
         "lunation_index": 55,
         "start_utc": "2028-05-14T06:00:00Z",
         "end_utc": "2028-06-12T18:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 31.0,
+        "sun_percentage": 4.4,
         "earth_hours": 275.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 11.0,
+        "longest_dark_gap_hours": 669.0
       },
       {
         "lunation_index": 56,
         "start_utc": "2028-06-12T19:00:00Z",
         "end_utc": "2028-07-12T07:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 46.0,
+        "sun_percentage": 6.5,
         "earth_hours": 313.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 46.0,
+        "longest_dark_gap_hours": 663.0
       },
       {
         "lunation_index": 57,
         "start_utc": "2028-07-12T08:00:00Z",
         "end_utc": "2028-08-10T20:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 54.0,
+        "sun_percentage": 7.6,
         "earth_hours": 317.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 54.0,
+        "longest_dark_gap_hours": 655.0
       },
       {
         "lunation_index": 58,
         "start_utc": "2028-08-10T21:00:00Z",
         "end_utc": "2028-09-09T09:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 109.0,
+        "sun_percentage": 15.4,
         "earth_hours": 322.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 91.0,
+        "longest_dark_gap_hours": 496.0
       },
       {
         "lunation_index": 59,
         "start_utc": "2028-09-09T10:00:00Z",
         "end_utc": "2028-10-08T22:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 134.0,
+        "sun_percentage": 18.9,
         "earth_hours": 325.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 134.0,
+        "longest_dark_gap_hours": 487.0
       },
       {
         "lunation_index": 60,
         "start_utc": "2028-10-08T23:00:00Z",
         "end_utc": "2028-11-07T11:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 132.0,
+        "sun_percentage": 18.6,
         "earth_hours": 284.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 91.0,
+        "longest_dark_gap_hours": 484.0
       },
       {
         "lunation_index": 61,
         "start_utc": "2028-11-07T12:00:00Z",
         "end_utc": "2028-12-07T00:00:00Z",
         "total_hours": 709.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 105.0,
+        "sun_percentage": 14.8,
         "earth_hours": 266.0,
-        "joint_hours": 0.0,
-        "longest_dark_gap_hours": 709.0
+        "joint_hours": 36.0,
+        "longest_dark_gap_hours": 491.0
       },
       {
         "lunation_index": 62,
         "start_utc": "2028-12-07T01:00:00Z",
         "end_utc": "2028-12-31T23:00:00Z",
         "total_hours": 599.0,
-        "sun_hours": 0.0,
-        "sun_percentage": 0.0,
+        "sun_hours": 8.0,
+        "sun_percentage": 1.3,
         "earth_hours": 266.0,
         "joint_hours": 0.0,
-        "longest_dark_gap_hours": 599.0
+        "longest_dark_gap_hours": 591.0
       }
     ],
     "best_lunation": {
-      "lunation_index": 1,
-      "start_utc": "2024-01-01T00:00:00Z",
-      "end_utc": "2024-01-30T12:00:00Z",
+      "lunation_index": 59,
+      "start_utc": "2028-09-09T10:00:00Z",
+      "end_utc": "2028-10-08T22:00:00Z",
       "total_hours": 709.0,
-      "sun_hours": 0.0,
-      "sun_percentage": 0.0,
-      "earth_hours": 302.0,
-      "joint_hours": 0.0,
-      "longest_dark_gap_hours": 709.0
+      "sun_hours": 134.0,
+      "sun_percentage": 18.9,
+      "earth_hours": 325.0,
+      "joint_hours": 134.0,
+      "longest_dark_gap_hours": 487.0
     },
     "worst_lunation": {
-      "lunation_index": 1,
-      "start_utc": "2024-01-01T00:00:00Z",
-      "end_utc": "2024-01-30T12:00:00Z",
+      "lunation_index": 6,
+      "start_utc": "2024-05-27T17:00:00Z",
+      "end_utc": "2024-06-26T05:00:00Z",
       "total_hours": 709.0,
-      "sun_hours": 0.0,
-      "sun_percentage": 0.0,
-      "earth_hours": 302.0,
+      "sun_hours": 12.0,
+      "sun_percentage": 1.7,
+      "earth_hours": 244.0,
       "joint_hours": 0.0,
-      "longest_dark_gap_hours": 709.0
+      "longest_dark_gap_hours": 685.0
     }
   },
   "delta": {
-    "sun_hours": -238.0,
-    "sun_percentage": -0.5,
-    "longest_dark_gap_hours": 35379.0,
+    "sun_hours": -19394.0,
+    "sun_percentage": -44.2,
+    "longest_dark_gap_hours": 252.0,
     "earth_hours": -11430.0,
     "earth_percentage": -26.1,
-    "joint_hours": -238.0,
-    "energy_kwh": -0.49
+    "joint_hours": -12408.0,
+    "energy_kwh": -249.65
   }
 }
