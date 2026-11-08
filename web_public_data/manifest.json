@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "generated_at": "2026-11-08T15:17:26.783171+00:00",
-  "git_commit": "5792de505a9e2918a8a5dcf0746eea1c8a930837",
+  "generated_at": "2026-11-08T19:00:12.265671+00:00",
+  "git_commit": "7815b60e5cad168d2195240f1205cf652ec3fc60",
   "coverage": {
     "start_utc": "2024-01-01T00:00:00Z",
     "stop_utc": "2028-12-31T23:00:00Z",
@@ -251,17 +251,17 @@
     "cs-nobile-rim-1": {
       "name": "Nobile Rim 1 (Artemis III Candidate Region)",
       "kind": "candidate",
-      "lat": -85.3,
-      "lon": 31.5,
+      "lat": -85.35,
+      "lon": 36.5,
       "coord_status": "ok",
       "samples": 43848,
       "dem_id": "LDEM_80S_20M",
       "terrain_coverage": "full",
-      "flat_sun_hours": 4457.0,
-      "terrain_sun_hours": 10187.0,
-      "delta_sun_hours": 5730.0,
-      "flat_earth_hours": 30049.0,
-      "terrain_earth_hours": 38312.0
+      "flat_sun_hours": 4348.0,
+      "terrain_sun_hours": 1311.0,
+      "delta_sun_hours": -3037.0,
+      "flat_earth_hours": 29374.0,
+      "terrain_earth_hours": 12916.0
     },
     "cs-nobile-rim-2": {
       "name": "Nobile Rim 2 (Artemis III Candidate Region)",
@@ -281,8 +281,8 @@
     "cs-faustini-rim-a": {
       "name": "Faustini Rim A (Artemis III 2022 Candidate Region)",
       "kind": "candidate",
-      "lat": -87.3,
-      "lon": 77.0,
+      "lat": -87.88,
+      "lon": 90.0,
       "coord_status": "ok",
       "samples": 43848,
       "dem_id": "LDEM_85S_20M",
@@ -290,8 +290,8 @@
       "flat_sun_hours": 0,
       "terrain_sun_hours": 0,
       "delta_sun_hours": 0,
-      "flat_earth_hours": 22423.0,
-      "terrain_earth_hours": 0
+      "flat_earth_hours": 21142.0,
+      "terrain_earth_hours": 23200.0
     }
   },
   "skipped_sites": [

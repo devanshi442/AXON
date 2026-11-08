@@ -28,7 +28,7 @@ Mission catalog: [`data/missions.yaml`](file:///e:/Downloads/AXON/data/missions.
 | **2E** | `im2_press_kit.pdf` | NASA | https://nasa.gov/wp-content/uploads/2025/02/np-2025-02-005-jsc-clps-intuitive-machines-press-kit-508-2-25-25.pdf | `docs/sources/im2_press_kit.pdf` | 4,991,261 | SHA-256: `5b57f68e880635c0edb19d907e159725eb17fd1c45e2cca25fbe0cbc5dabbdef` | Verified | Pages 3-4 describe IM-2 Mons Mouton landing site and PRIME-1 drill |
 | **2E** | `blue_ghost_1_press_kit.pdf` | NASA | https://www.nasa.gov/wp-content/uploads/2025/01/np-2025-01-001-jsc-clps-firefly-press-kit-screen-508-1-10-25-final.pdf | `docs/sources/blue_ghost_1_press_kit.pdf` | 11,086,708 | SHA-256: `e667756f2cee5b45007015f5be9e3a3a4a62a77ea75425272bdded9c43bc9454` | Verified | Pages 3-4 describe Blue Ghost 1 Mare Crisium / Mons Latreille site and 10 instruments |
 | **2E** | `peregrine_griffin_press_kit.pdf` | NASA | https://www.nasa.gov/wp-content/uploads/2023/12/np-2023-12-017-jsc-clps-astrobotic-press-kit-update-508.pdf | `docs/sources/peregrine_griffin_press_kit.pdf` | 3,944,413 | SHA-256: `c79ced140b1cf1102dbb295e10d9966f78b8b0ea82c10fc300984c451b92ba24` | Verified | Pages 2, 4, 18 describe Peregrine Sinus Viscositatis and Griffin Nobile / Mons Mouton context |
-| **2F** | `constants.py` | IAU 2015, NASA SORCE/TIM, NAIF PCK-00011, JPL Horizons DE441 | N/A | `science/lunarsight_core/constants.py` | 7,250 | SHA-256: `fc1ceb64157256fb59e97682c7be63466d49fafcfe5a71c18e27f9f21be4c73b` | Verified |  |
+| **2F** | `constants.py` | IAU 2015, NASA SORCE/TIM, NAIF PCK-00011, JPL Horizons DE441 | N/A | `science/lunarsight_core/constants.py` | 7,366 | SHA-256: `0d87a7eade1a5347b21857a054fc9674226f1ae6d4b81ecd4e2b0a9af1006c29` | Verified |  |
 | **3H** | `LDEM_64.JP2` | MIT / NASA GSFC (PDS open data) | https://imbrium.mit.edu/DATA/LOLA_GDR/CYLINDRICAL/JP2/LDEM_64.JP2 | `terrain/global/LDEM_64.JP2` | 211,190,204 | SHA-256: `5bcdc1add91447d4386f0ccab17da2f6dd0ae8e116fbd60f56aa31d74248c096` | Verified | Elevation for non-polar missions (Blue Ghost 1 in Mare Crisium, IM-3 at Reiner Gamma) |
 | **3I** | `LPSR_85S_060M_201608.JP2` | MIT / NASA GSFC (PDS open data) | https://imbrium.mit.edu/EXTRAS/ILLUMINATION/JP2/LPSR_85S_060M_201608.JP2 | `terrain/illumination/LPSR_85S_060M_201608.JP2` | 5,574,318 | SHA-256: `3a39a4c151eb67278bf46383b77bbd4751db0de78bfc5b0ba87a79f37c220e31` | Verified | Ground truth verification of Permanently Shadowed Regions |
 | **3G** | `LPSR_80S_20MPP_ADJ_1km2.CSV` | NASA GSFC Planetary Geodynamics Data Archive (PGDA Product 90) | https://pgda.gsfc.nasa.gov/data/LOLA_20mpp/LPSR_80S_20MPP_ADJ_1km2.CSV | `terrain/pgda/LPSR_80S_20MPP_ADJ_1km2.CSV` | 29,642,968 | SHA-256: `5d914b17887b385ad53c004751dad0235d8739959f3cf9063573575832c942d5` | Verified | Permanently shadowed regions boundary and area catalog |
@@ -74,13 +74,13 @@ All candidate sites have been verified against NASA's refined Artemis III Candid
    - Sourced Coordinates: **-85.42°S, 31.59°E**.
    - URL: https://www.nasa.gov/news-release/nasa-provides-update-on-artemis-iii-moon-landing-regions/ and https://planetarynames.wr.usgs.gov/Feature/16147
 6. **Nobile Rim 1 (`cs-nobile-rim-1`)**:
-   - Corrected Coordinates: **-85.30°S, 31.5°E**.
+   - Sourced Coordinates: **-85.30°S, 31.5°E**.
    - URL: https://www.nasa.gov/news-release/nasa-provides-update-on-artemis-iii-moon-landing-regions/
 7. **Nobile Rim 2 (`cs-nobile-rim-2`)**:
-   - Coordinates: **-84.2°S, 60.7°E** (Site DM2).
+   - Sourced Coordinates: **-84.2°S, 60.7°E** (Site DM2).
    - URL: https://www.nasa.gov/news-release/nasa-provides-update-on-artemis-iii-moon-landing-regions/
 8. **Faustini Rim A (`cs-faustini-rim-a`)**:
-   - Coordinates: **-87.3°S, 77.0°E**.
+   - Sourced Coordinates: **-87.3°S, 77.0°E**.
    - URL: https://www.nasa.gov/news-release/nasa-identifies-candidate-regions-for-artemis-iii-lunar-landing/
 
 ---
