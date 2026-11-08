@@ -82,3 +82,4 @@ Three geometrical criteria are supported:
 Hourly ephemeris scans detect bracketed transitions $[t_k, t_{k+1}]$. For every transition:
 $$g(t) = \text{el}(t) + r_{\text{body}}(t) - h_{\text{mask}}(\text{az}(t)) - \tau$$
 A bisection root-finder evaluates SPICE ephemerides recursively to resolve the exact minute of sunrise, sunset, AOS (acquisition of signal), and LOS (loss of signal) to within $\le 60\text{ seconds}$ error tolerance.
+

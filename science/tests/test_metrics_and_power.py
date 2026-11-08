@@ -232,3 +232,4 @@ def test_spice_refine_transition():
         assert et0 <= refined_et <= et1
         # Check tolerance
         assert abs(refined_et - et0) > 0 and abs(refined_et - et1) > 0
+

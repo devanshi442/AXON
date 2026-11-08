@@ -32,3 +32,4 @@
 ## 4. Coordinate Uncertainty & Data Verification Protocol
 - **Null Coordinates Skipped:** Planned missions with undefined landing coordinates (`moon-base-1-endurance`) are explicitly skipped by the site registry and build pipeline. They are never assigned placeholder or fabricated coordinates.
 - **Two-Reviewer Verification Protocol:** Every mission and site in `data/missions.yaml` carries an explicit `verified` boolean flag. Entries remain marked `verified: false` until an independent second reviewer verifies the landing coordinates and date against primary flight documentation or post-landing orbital imaging (e.g. LROC NAC).
+

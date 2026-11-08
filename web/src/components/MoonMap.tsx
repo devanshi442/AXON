@@ -56,21 +56,19 @@ export default function MoonMap({ sites }: MoonMapProps) {
           <div className="flex items-center bg-space-900 p-0.5 rounded-lg border border-space-700 text-3xs font-medium">
             <button
               onClick={() => setProjection('polar_stereographic')}
-              className={`px-2 py-1 rounded transition-colors ${
-                projection === 'polar_stereographic'
+              className={`px-2 py-1 rounded transition-colors ${projection === 'polar_stereographic'
                   ? 'bg-amber-500/20 text-amber-300 font-bold border border-amber-500/40'
                   : 'text-space-400 hover:text-space-200'
-              }`}
+                }`}
             >
               🏔️ South Pole
             </button>
             <button
               onClick={() => setProjection('equirectangular')}
-              className={`px-2 py-1 rounded transition-colors ${
-                projection === 'equirectangular'
+              className={`px-2 py-1 rounded transition-colors ${projection === 'equirectangular'
                   ? 'bg-earth-500/20 text-earth-300 font-bold border border-earth-500/40'
                   : 'text-space-400 hover:text-space-200'
-              }`}
+                }`}
             >
               🌐 Global
             </button>

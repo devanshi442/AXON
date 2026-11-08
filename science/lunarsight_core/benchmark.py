@@ -164,3 +164,4 @@ if __name__ == "__main__":
     print(f"Benchmark completed: {res['total_rows_tested']} rows across {res['total_fixtures']} fixtures.")
     print(f"Overall Max El Diff: {res['overall_max_el_diff_deg']}°, Max Az Diff: {res['overall_max_az_diff_deg']}°")
     print(f"All Passed: {res['all_passed']}")
+

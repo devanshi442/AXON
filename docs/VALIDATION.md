@@ -55,3 +55,4 @@ The benchmark evaluation script (`science/lunarsight_core/benchmark.py`) dynamic
 - **Solution:** Enforced a global mutual exclusion lock (`_SPICE_LOCK = threading.Lock()`) around every SPICE entry point in `api/main.py`.
 - **Test:** `test_api_concurrency_stress` in `test_api_v2.py` launched 12 concurrent threads making rapid interleaved SPICE requests for different sites and dates.
 - **Result:** 100% of concurrent requests completed with HTTP 200 and zero corrupted vectors.
+

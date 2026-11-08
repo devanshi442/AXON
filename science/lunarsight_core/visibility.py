@@ -163,3 +163,4 @@ def compute_earth_visibility(
         "coverage_status": coverage_status,
         "dem_id": dem_id,
     }
+

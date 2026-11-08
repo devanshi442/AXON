@@ -91,3 +91,4 @@ test('extractIntervals and computeOpportunityMetrics work accurately', () => {
   assert.equal(summary.longestWindowHours, 2)
   assert.equal(summary.longestDarkGapHours, 1)
 })
+
