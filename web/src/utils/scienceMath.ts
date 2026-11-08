@@ -216,3 +216,17 @@ export function computeOpportunityMetrics(
     windows,
   }
 }
+
+/**
+ * Format an ISO UTC timestamp as 'YYYY-MM-DD HH:mm UTC'
+ */
+export function formatUtcDisplay(isoString: string): string {
+  if (!isoString) return ''
+  const s = isoString.replace('T', ' ').replace('Z', '')
+  const parts = s.split(':')
+  if (parts.length >= 2) {
+    return `${parts[0]}:${parts[1]} UTC`
+  }
+  return `${s} UTC`
+}
+

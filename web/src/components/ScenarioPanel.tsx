@@ -11,6 +11,7 @@ import {
   computeSolarFraction,
   computeEarthVisibility,
   computeSolarPowerWatts,
+  formatUtcDisplay,
 } from '../utils/scienceMath'
 
 interface ScenarioPanelProps {
@@ -185,9 +186,14 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
 
         {/* UTC Time input */}
         <div>
-          <label className="block text-3xs uppercase tracking-wider text-space-400 font-medium mb-1">
-            Date &amp; Time (UTC)
-          </label>
+          <div className="flex items-center justify-between mb-1">
+            <label className="text-3xs uppercase tracking-wider text-space-400 font-medium">
+              Date &amp; Time (UTC)
+            </label>
+            <span className="text-3xs font-mono text-cyan-300 font-medium">
+              {formatUtcDisplay(utc)}
+            </span>
+          </div>
           <div className="flex items-center gap-1.5">
             <input
               type="datetime-local"

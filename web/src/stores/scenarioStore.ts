@@ -89,11 +89,21 @@ export function getMaskForMastHeight(profile?: HorizonProfile | null, mastHeight
   return profile.masks.h_10_0m || profile.masks.h_5_0m || null
 }
 
+export function getDefaultUtcDate(): string {
+  const now = new Date()
+  const year = now.getUTCFullYear()
+  if (year >= 2024 && year <= 2028) {
+    const pad = (n: number) => String(n).padStart(2, '0')
+    return `${year}-${pad(now.getUTCMonth() + 1)}-${pad(now.getUTCDate())}T${pad(now.getUTCHours())}:00:00Z`
+  }
+  return '2026-11-08T20:00:00Z'
+}
+
 export const useScenarioStore = create<ScenarioStore>((set, get) => ({
   scenarioAId: 'im-2',
   scenarioBId: 'cs-shackleton-rim',
-  utcA: '2026-03-01T12:00:00Z',
-  utcB: '2026-03-01T12:00:00Z',
+  utcA: getDefaultUtcDate(),
+  utcB: getDefaultUtcDate(),
   thresholdDeg: 0.0,
 
   horizonMode: 'terrain',

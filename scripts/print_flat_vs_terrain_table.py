@@ -42,27 +42,35 @@ SITES_CONFIG = [
     # Landers
     ("im-1", -80.13, 1.44, "IM-1 (Malapert A)", True),
     ("im-2", -84.7906, 29.1957, "IM-2 (Shackleton Connecting Ridge)", True),
-    # 3 crater-floor PSR points
-    ("psr-shackleton-floor", -89.90, 0.00, "Shackleton Crater Floor (PSR)", False),
+    # Crater-floor PSR points
+    ("psr-shackleton-floor-east", -89.85, 90.00, "Shackleton Floor East (PSR)", False),
+    ("psr-shackleton-deep-floor", -89.92, 120.00, "Shackleton Deep Floor (PSR)", False),
     ("psr-faustini-floor", -87.30, 77.00, "Faustini Crater Floor (PSR)", False),
     ("psr-haworth-floor", -87.40, -5.00, "Haworth Crater Floor (PSR)", False),
 ]
 
 
+_MASK_CACHE = {}
+
 def load_or_compute_mask(sid: str, lat: float, lon: float, is_catalog: bool) -> dict:
+    if sid in _MASK_CACHE:
+        return _MASK_CACHE[sid]
     if is_catalog:
         fpath = HORIZON_DIR / f"{sid}.json"
         if fpath.is_file():
             d = json.loads(fpath.read_text(encoding="utf-8"))
             mask_deg = d.get("masks", {}).get("h_1_5m") or d.get("masks", {}).get("h_0m")
-            return {
+            res = {
                 "mask_deg": mask_deg,
                 "az_step": 1.0,
                 "dem_id": d.get("dem_id", "NONE"),
                 "site_height_m": d.get("site_height_m", 0.0),
             }
+            _MASK_CACHE[sid] = res
+            return res
     # For PSR points or uncomputed, compute with 1.5m mast
     mask_res = horizon.compute_horizon(lat, lon, observer_height_m=1.5, max_range_km=50.0)
+    _MASK_CACHE[sid] = mask_res
     return mask_res
 
 
@@ -114,18 +122,17 @@ def evaluate_window(
         terr_sun_vis = list(v_sun_terr["visible"])
         longest_dark_gap_h = metrics._longest_run_hours(terr_sun_vis, 3600, False)
 
-        # Flags
+        # Flags: measured facts only
         flags = []
         if terr_sun_pct == 0.0:
             flags.append("FLAG 0% (Permanent Shadow)")
         elif terr_sun_pct == 100.0:
             flags.append("FLAG 100% (Continuous Sunlight)")
 
-        if "ridge" in sid or "rim" in sid or "massif" in sid:
-            if terr_sun_pct < flat_sun_pct:
-                flags.append("Peak < Flat (Far ridges block low sun)")
-            elif terr_sun_pct > flat_sun_pct:
-                flags.append("Peak > Flat (Horizon dip gain)")
+        if terr_sun_pct > flat_sun_pct:
+            flags.append("Terrain > Flat")
+        elif terr_sun_pct < flat_sun_pct:
+            flags.append("Terrain < Flat")
 
         flag_str = "; ".join(flags) if flags else "-"
         print(f"| {sid:27s} | {lat:6.2f} | {lon:7.2f} | {dem_id:14s} | {flat_sun_pct:9.2f}% | {terr_sun_pct:9.2f}% | {flat_earth_pct:9.2f}% | {terr_earth_pct:9.2f}% | {longest_dark_gap_h:7.1f}h | {flag_str:30s} |")
@@ -140,8 +147,8 @@ def main():
     # 1. Full Year (2026-01-01 to 2027-01-01)
     evaluate_window("2026-01-01T00:00:00Z", "2027-01-01T00:00:00Z", "FULL 1-YEAR (2026)")
 
-    # 2. 30-Day UI Window (starting at default date 2026-03-01T00:00:00Z)
-    evaluate_window("2026-03-01T00:00:00Z", "2026-03-31T00:00:00Z", "30-DAY UI WINDOW (March 2026)")
+    # 2. 30-Day UI Window (starting at default date 2026-11-08T20:00:00Z)
+    evaluate_window("2026-11-08T20:00:00Z", "2026-12-08T20:00:00Z", "30-DAY UI WINDOW (2026-11-08 to 2026-12-08 UTC)")
 
     G.unload_kernels()
 

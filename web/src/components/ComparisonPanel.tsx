@@ -9,6 +9,7 @@ import {
   lookupHorizonElevation,
   computeSolarFraction,
   computeSolarPowerWatts,
+  formatUtcDisplay,
 } from '../utils/scienceMath'
 
 interface ComparisonPanelProps {
@@ -203,8 +204,8 @@ export default function ComparisonPanel({ sites }: ComparisonPanelProps) {
             {/* Target UTC Date */}
             <tr>
               <td className="py-2.5 px-3 text-space-300 font-sans font-medium">Evaluation Date (UTC)</td>
-              <td className="py-2.5 px-3 text-space-200">{utcA}</td>
-              <td className="py-2.5 px-3 text-space-200">{utcB}</td>
+              <td className="py-2.5 px-3 text-space-200 font-mono">{formatUtcDisplay(utcA)}</td>
+              <td className="py-2.5 px-3 text-space-200 font-mono">{formatUtcDisplay(utcB)}</td>
               <td className="py-2.5 px-3 text-right text-space-400 font-sans">
                 {utcA === utcB ? 'Synchronous' : 'Asynchronous dates'}
               </td>
