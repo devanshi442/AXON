@@ -507,7 +507,7 @@
       "source_url": "https://www.nasa.gov/news-release/nasa-provides-update-on-artemis-iii-moon-landing-regions/",
       "source_alt": "https://planetarynames.wr.usgs.gov/Feature/3599",
       "source_date": "2024-10-28",
-      "notes": "50-km elevated massif centered at 85.99\u00b0S, 357.07\u00b0E (~120 km north of south pole). Continuous direct line-of-sight to Earth for high-bandwidth communication. Confirmed in Oct 2024 update.\n",
+      "notes": "Stated coordinates (-85.99°S, -2.93°E, 4841 m) are the region centre (0% Earth visibility). A DEM-derived crest ~1.4 km away (-85.9627°S, -2.3725°E, 4993 m) reaches 100% Earth visibility. Artemis III Candidate Region.\n",
       "verified": true
     },
     {

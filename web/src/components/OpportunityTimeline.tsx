@@ -243,6 +243,9 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
                     ⚡ {oppData.solar_energy_kwh} kWh / m²
                   </span>
                 </div>
+                <div className="text-3xs text-space-400 font-mono mt-1">
+                  Daylight: 30-day window from {formatUtcDisplay(utc)}, mast 1.5 m
+                </div>
               </div>
 
               <div className="mt-2 pt-2 border-t border-space-800 flex flex-col gap-1">

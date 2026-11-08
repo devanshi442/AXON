@@ -166,6 +166,13 @@ def load_site_registry(data_yaml_or_json: Optional[Path | str] = None) -> List[S
         if cand.get("source_alt"):
             sources.append(cand["source_alt"])
 
+        c_notes = cand.get("notes")
+        if cid == "cs-malapert-massif":
+            c_notes = (
+                (c_notes.strip() + " " if c_notes else "")
+                + "Stated coordinates are the region centre (0% Earth visibility); a DEM-derived crest ~1.4 km away reaches 100%."
+            )
+
         rec = SiteRecord(
             id=cid,
             name=cname,
@@ -181,7 +188,7 @@ def load_site_registry(data_yaml_or_json: Optional[Path | str] = None) -> List[S
             metadata={
                 "region_size_km": cand.get("region_size_km"),
                 "source_date": cand.get("source_date"),
-                "notes": cand.get("notes"),
+                "notes": c_notes,
             },
         )
         registry.append(rec)

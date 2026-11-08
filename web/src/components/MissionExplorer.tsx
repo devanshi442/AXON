@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import type { SelectableSite } from '../types/mission'
 import { useScenarioStore } from '../stores/scenarioStore'
+import { formatUtcDisplay } from '../utils/scienceMath'
 
 interface MissionExplorerProps {
   sites: SelectableSite[]
 }
 
 export default function MissionExplorer({ sites }: MissionExplorerProps) {
-  const { scenarioAId, scenarioBId, setScenarioA, setScenarioB } = useScenarioStore()
+  const { scenarioAId, scenarioBId, setScenarioA, setScenarioB, utcA } = useScenarioStore()
   const [search, setSearch] = useState('')
   type FilterType = 'all' | 'south_pole' | 'candidate' | 'mission' | 'landed' | 'planned'
   const [statusFilter, setStatusFilter] = useState<FilterType>('all')
@@ -165,6 +166,9 @@ export default function MissionExplorer({ sites }: MissionExplorerProps) {
                       Region centre; results can differ strongly from the crest or evaluated site.
                     </div>
                   )}
+                  <div className="text-3xs text-space-400 font-mono mt-0.5">
+                    Daylight: 30-day window from {formatUtcDisplay(utcA)}, mast 1.5 m
+                  </div>
                 </div>
 
                 {/* Notes if available */}

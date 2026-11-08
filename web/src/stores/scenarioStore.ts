@@ -6,6 +6,7 @@ import {
   computeEarthVisibility,
   computeSolarPowerWatts,
   computeOpportunityMetrics,
+  formatUtcDisplay,
   type EarthCriterion,
   type SolarOrientation,
 } from '../utils/scienceMath'
@@ -89,14 +90,21 @@ export function getMaskForMastHeight(profile?: HorizonProfile | null, mastHeight
   return profile.masks.h_10_0m || profile.masks.h_5_0m || null
 }
 
-export function getDefaultUtcDate(): string {
-  const now = new Date()
+export function getDefaultUtcDate(nowDate?: Date): string {
+  const now = nowDate ?? new Date()
   const year = now.getUTCFullYear()
-  if (year >= 2024 && year <= 2028) {
-    const pad = (n: number) => String(n).padStart(2, '0')
-    return `${year}-${pad(now.getUTCMonth() + 1)}-${pad(now.getUTCDate())}T${pad(now.getUTCHours())}:00:00Z`
+  const pad = (n: number) => String(n).padStart(2, '0')
+  if (year < 2024) {
+    return '2024-01-01T00:00:00Z'
   }
-  return '2026-11-08T20:00:00Z'
+  if (year > 2028) {
+    return '2028-12-31T23:00:00Z'
+  }
+  return `${year}-${pad(now.getUTCMonth() + 1)}-${pad(now.getUTCDate())}T${pad(now.getUTCHours())}:${pad(now.getUTCMinutes())}:00Z`
+}
+
+export function getDefaultUtcDisplay(nowDate?: Date): string {
+  return formatUtcDisplay(getDefaultUtcDate(nowDate))
 }
 
 export const useScenarioStore = create<ScenarioStore>((set, get) => ({
