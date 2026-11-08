@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-08T18:44:25.752332+00:00",
+  "generated_at": "2026-11-08T19:24:19.483340+00:00",
   "schema_version": 1,
   "compiled_on": "2026-10-21",
   "missions": [
@@ -568,6 +568,38 @@
       "source_alt": "https://planetarynames.wr.usgs.gov/Feature/1987",
       "source_date": "2022-08-19",
       "notes": "Elevated crater rim ridge overlooking Faustini crater at ~87.88\u00b0S, 90.0\u00b0E (near 90\u00b0E meridian). Corrected from previous crater floor center (-87.3\u00b0S, 77.0\u00b0E per USGS Feature 1987). Identified in NASA Aug 2022 candidate study; volatile cold traps adjacent.\n",
+      "verified": true
+    },
+    {
+      "id": "cs-shackleton-ridge-site",
+      "record_type": "candidate_site",
+      "name": "Peak Near Shackleton (Evaluated Site)",
+      "lat_center": -89.017,
+      "lon_center": 126.273,
+      "coord_type": "planetocentric_east_positive",
+      "coordinate_kind": "specific_site",
+      "region_size_km": 2,
+      "uncertainty_km": 1.0,
+      "source_url": "https://www.nasa.gov/news-release/nasa-identifies-candidate-regions-for-artemis-iii-lunar-landing/",
+      "source_alt": "https://www.lpi.usra.edu/lunar/constellation/landing_sites/connecting_ridge/",
+      "source_date": "2022-08-19",
+      "notes": "Evaluated summit landing site on the high-standing ridge adjacent to Shackleton crater rim at -89.017\u00b0S, 126.273\u00b0E (LPI / Spudis et al. 2008). Specific evaluated landing site.\n",
+      "verified": true
+    },
+    {
+      "id": "cs-connecting-ridge-site",
+      "record_type": "candidate_site",
+      "name": "Connecting Ridge (Evaluated Site)",
+      "lat_center": -89.534,
+      "lon_center": -150.052,
+      "coord_type": "planetocentric_east_positive",
+      "coordinate_kind": "specific_site",
+      "region_size_km": 2,
+      "uncertainty_km": 1.0,
+      "source_url": "https://www.nasa.gov/news-release/nasa-identifies-candidate-regions-for-artemis-iii-lunar-landing/",
+      "source_alt": "https://www.lpi.usra.edu/lunar/constellation/landing_sites/connecting_ridge/",
+      "source_date": "2022-08-19",
+      "notes": "High ridgeline connecting Shackleton and de Gerlache craters. Specific candidate site evaluated at -89.534\u00b0S, 209.948\u00b0E (-150.052\u00b0E).\n",
       "verified": true
     }
   ]

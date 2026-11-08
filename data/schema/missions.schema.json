@@ -104,6 +104,7 @@
         "lat_center": {"type": "number", "minimum": -90, "maximum": 90},
         "lon_center": {"type": "number", "minimum": -180, "maximum": 180},
         "coord_type": {"type": "string"},
+        "coordinate_kind": {"type": "string"},
         "region_size_km": {"type": "number"},
         "uncertainty_km": {"type": ["number", "null"]},
         "source_url": {"type": "string"},
