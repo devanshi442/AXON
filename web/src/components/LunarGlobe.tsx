@@ -5,10 +5,15 @@ import type { SelectableSite } from '../types/mission'
 
 interface LunarGlobeProps {
   sites: SelectableSite[]
-  selectedSiteId: string | null
-  onSelectSite: (site: SelectableSite) => void
+  selectedSiteId?: string | null
+  onSelectSite?: (site: SelectableSite) => void
   scenarioAId?: string
   scenarioBId?: string
+  autoRotate?: boolean
+  autoRotateSpeed?: number
+  heightClass?: string
+  showControls?: boolean
+  compact?: boolean
 }
 
 const GLOBE_RADIUS = 1.5
@@ -52,6 +57,11 @@ export default function LunarGlobe({
   onSelectSite,
   scenarioAId,
   scenarioBId,
+  autoRotate = false,
+  autoRotateSpeed = 0.5,
+  heightClass = 'min-h-[380px] sm:min-h-[460px] lg:min-h-[520px]',
+  showControls = true,
+  compact = false,
 }: LunarGlobeProps) {
   const mountRef = useRef<HTMLDivElement>(null)
   const controlsRef = useRef<OrbitControls | null>(null)
@@ -130,7 +140,7 @@ export default function LunarGlobe({
 
     const container = mountRef.current
     const width = container.clientWidth || 640
-    const height = container.clientHeight || 560
+    const height = container.clientHeight || 520
 
     // 1. Scene
     const scene = new THREE.Scene()
@@ -160,6 +170,15 @@ export default function LunarGlobe({
     controls.maxDistance = 8.0
     controls.rotateSpeed = prefersReducedMotion ? 0.4 : 0.8
     controls.zoomSpeed = prefersReducedMotion ? 0.4 : 0.8
+
+    // Auto-rotation (landing page mode)
+    if (autoRotate && !prefersReducedMotion) {
+      controls.autoRotate = true
+      controls.autoRotateSpeed = autoRotateSpeed
+    } else {
+      controls.autoRotate = false
+    }
+
     controlsRef.current = controls
 
     // 5. Lighting
@@ -209,7 +228,7 @@ export default function LunarGlobe({
         while (cur && !cur.userData.site) {
           cur = cur.parent
         }
-        if (cur && cur.userData.site) {
+        if (cur && cur.userData.site && onSelectSiteRef.current) {
           onSelectSiteRef.current(cur.userData.site)
         }
       }
@@ -221,6 +240,9 @@ export default function LunarGlobe({
     let animId = 0
     const animate = () => {
       animId = requestAnimationFrame(animate)
+      if (controls.autoRotate) {
+        controls.update()
+      }
       renderer.render(scene, camera)
     }
     animate()
@@ -252,7 +274,7 @@ export default function LunarGlobe({
         container.removeChild(renderer.domElement)
       }
     }
-  }, [webGLSupported, setCameraView])
+  }, [webGLSupported, setCameraView, autoRotate, autoRotateSpeed, prefersReducedMotion])
 
   // Update Markers whenever sites, selection, or scenario assignments change
   useEffect(() => {
@@ -271,16 +293,17 @@ export default function LunarGlobe({
       }
     }
 
-    // Colors matching requirements:
+    // Colors matching Phase B unified design tokens:
     // Scenario A: amber #E0A04A
     // Scenario B: steel blue #6FA8C9
     // All others: white #FFFFFF
+    // Frame & headings highlight tan: #B9A58C
     const colorA = 0xe0a04a
     const colorB = 0x6fa8c9
     const colorWhite = 0xffffff
     const colorHighlight = 0xb9a58c
 
-    // Shared geometries
+    // Shared geometries (radius <= 4px scale, no glow)
     const filledDotGeom = new THREE.CircleGeometry(0.032, 24)
     const hollowRingGeom = new THREE.RingGeometry(0.018, 0.038, 24)
     const selectionRingGeom = new THREE.RingGeometry(0.046, 0.062, 24)
@@ -353,32 +376,33 @@ export default function LunarGlobe({
   // Fallback view when WebGL is unavailable
   if (!webGLSupported) {
     return (
-      <div className="p-6 bg-space-950 border border-space-700 rounded text-space-200">
-        <h3 className="text-sm font-bold text-amber-300 mb-2">
+      <div className="p-4 bg-[#0D1014] border border-[#2A2D31] rounded text-[#E4E4E2]">
+        <h3 className="text-xs font-bold text-[#E0A04A] mb-1">
           WebGL Hardware Acceleration Unavailable
         </h3>
-        <p className="text-xs text-space-400 mb-4">
-          Your browser or display environment cannot initialize WebGL. Displaying
-          standard landing site registry:
+        <p className="text-3xs text-[#8A8A88] mb-3">
+          Your browser environment cannot initialize WebGL. Displaying standard landing site registry:
         </p>
-        <div className="max-h-96 overflow-y-auto space-y-2">
+        <div className="max-h-80 overflow-y-auto space-y-1.5">
           {sites.map((site) => (
             <div
               key={site.id}
-              className="p-2.5 bg-space-900 border border-space-800 rounded flex items-center justify-between text-xs"
+              className="p-2 bg-[#050608] border border-[#2A2D31] rounded flex items-center justify-between text-xs"
             >
               <div>
-                <span className="font-semibold text-space-100">{site.name}</span>
-                <span className="block text-3xs font-mono text-space-400">
+                <span className="font-semibold text-[#E4E4E2]">{site.name}</span>
+                <span className="block text-3xs font-mono text-[#8A8A88]">
                   {site.lat}° Lat, {site.lon}° Lon · {site.coord_kind}
                 </span>
               </div>
-              <button
-                onClick={() => onSelectSite(site)}
-                className="px-2 py-1 bg-space-800 hover:bg-space-700 text-space-200 text-3xs rounded"
-              >
-                Select
-              </button>
+              {onSelectSite && (
+                <button
+                  onClick={() => onSelectSite(site)}
+                  className="px-2 py-1 bg-[#171B22] hover:bg-[#2A2D31] text-[#E4E4E2] text-3xs rounded"
+                >
+                  Select
+                </button>
+              )}
             </div>
           ))}
         </div>
@@ -389,117 +413,123 @@ export default function LunarGlobe({
   return (
     <div className="flex flex-col gap-2 w-full">
       {/* Globe View Controls Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-2 p-2 bg-space-900/90 border border-space-700 rounded text-xs">
-        <div className="flex items-center gap-1.5">
-          <span className="text-3xs uppercase font-mono text-space-400 font-semibold mr-1">
-            Presets:
-          </span>
-          <button
-            onClick={() => setCameraView('south_pole')}
-            className={`px-2.5 py-1 rounded text-3xs font-mono font-medium transition-colors ${
-              currentView === 'south_pole'
-                ? 'bg-amber-500/20 text-amber-300 border border-amber-500/50'
-                : 'bg-space-950 text-space-300 hover:text-space-100 border border-space-700'
-            }`}
-          >
-            🏔️ South Pole
-          </button>
-          <button
-            onClick={() => setCameraView('near_side')}
-            className={`px-2.5 py-1 rounded text-3xs font-mono font-medium transition-colors ${
-              currentView === 'near_side'
-                ? 'bg-earth-500/20 text-earth-300 border border-earth-500/50'
-                : 'bg-space-950 text-space-300 hover:text-space-100 border border-space-700'
-            }`}
-          >
-            🌍 Near Side
-          </button>
-          <button
-            onClick={() => setCameraView('far_side')}
-            className={`px-2.5 py-1 rounded text-3xs font-mono font-medium transition-colors ${
-              currentView === 'far_side'
-                ? 'bg-space-700 text-space-100 border border-space-600'
-                : 'bg-space-950 text-space-300 hover:text-space-100 border border-space-700'
-            }`}
-          >
-            🌑 Far Side
-          </button>
-        </div>
+      {showControls && (
+        <div className="flex flex-wrap items-center justify-between gap-2 p-2 bg-[#0D1014] border border-[#2A2D31] rounded text-xs">
+          <div className="flex items-center gap-1.5">
+            <span className="text-3xs uppercase font-mono text-[#8A8A88] font-semibold mr-1">
+              Presets:
+            </span>
+            <button
+              onClick={() => setCameraView('south_pole')}
+              className={`px-2.5 py-1 rounded text-3xs font-mono font-medium transition-colors ${
+                currentView === 'south_pole'
+                  ? 'bg-[#E0A04A]/20 text-[#E0A04A] border border-[#E0A04A]/50'
+                  : 'bg-[#050608] text-[#8A8A88] hover:text-[#E4E4E2] border border-[#2A2D31]'
+              }`}
+            >
+              🏔️ South Pole
+            </button>
+            <button
+              onClick={() => setCameraView('near_side')}
+              className={`px-2.5 py-1 rounded text-3xs font-mono font-medium transition-colors ${
+                currentView === 'near_side'
+                  ? 'bg-[#6FA8C9]/20 text-[#6FA8C9] border border-[#6FA8C9]/50'
+                  : 'bg-[#050608] text-[#8A8A88] hover:text-[#E4E4E2] border border-[#2A2D31]'
+              }`}
+            >
+              🌍 Near Side
+            </button>
+            <button
+              onClick={() => setCameraView('far_side')}
+              className={`px-2.5 py-1 rounded text-3xs font-mono font-medium transition-colors ${
+                currentView === 'far_side'
+                  ? 'bg-[#171B22] text-[#E4E4E2] border border-[#2A2D31]'
+                  : 'bg-[#050608] text-[#8A8A88] hover:text-[#E4E4E2] border border-[#2A2D31]'
+              }`}
+            >
+              🌑 Far Side
+            </button>
+          </div>
 
-        {/* Quick Orientation Verification Targets */}
-        <div className="flex items-center gap-1.5 text-3xs font-mono">
-          <span className="text-space-400">Verify Landmarks:</span>
-          <button
-            onClick={() => {
-              focusSite(0.67, 23.47)
-              const found = sites.find((s) => s.id === 'test-apollo-11')
-              if (found) onSelectSite(found)
-            }}
-            className="px-2 py-0.5 rounded bg-space-950 hover:bg-space-800 text-space-300 border border-space-700"
-            title="Apollo 11 in Mare Tranquillitatis (0.67°N, 23.47°E)"
-          >
-            Apollo 11
-          </button>
-          <button
-            onClick={() => {
-              focusSite(-43.3, -11.4)
-              const found = sites.find((s) => s.id === 'test-tycho')
-              if (found) onSelectSite(found)
-            }}
-            className="px-2 py-0.5 rounded bg-space-950 hover:bg-space-800 text-space-300 border border-space-700"
-            title="Tycho Crater in Southern Highlands (43.3°S, 11.4°W)"
-          >
-            Tycho
-          </button>
-          <button
-            onClick={() => {
-              focusSite(-89.9, 0.0)
-              const found = sites.find((s) => s.id === 'test-shackleton' || s.id.includes('shackleton'))
-              if (found) onSelectSite(found)
-            }}
-            className="px-2 py-0.5 rounded bg-space-950 hover:bg-space-800 text-space-300 border border-space-700"
-            title="Shackleton Crater at South Pole (89.9°S, 0°E)"
-          >
-            Shackleton
-          </button>
+          {/* Quick Landmark Targets (Phase A verification) */}
+          {!compact && (
+            <div className="flex items-center gap-1.5 text-3xs font-mono">
+              <span className="text-[#8A8A88]">Landmarks:</span>
+              <button
+                onClick={() => {
+                  focusSite(0.67, 23.47)
+                  const found = sites.find((s) => s.id === 'test-apollo-11')
+                  if (found && onSelectSite) onSelectSite(found)
+                }}
+                className="px-2 py-0.5 rounded bg-[#050608] hover:bg-[#171B22] text-[#8A8A88] hover:text-[#E4E4E2] border border-[#2A2D31]"
+                title="Apollo 11 in Mare Tranquillitatis (0.67°N, 23.47°E)"
+              >
+                Apollo 11
+              </button>
+              <button
+                onClick={() => {
+                  focusSite(-43.3, -11.4)
+                  const found = sites.find((s) => s.id === 'test-tycho')
+                  if (found && onSelectSite) onSelectSite(found)
+                }}
+                className="px-2 py-0.5 rounded bg-[#050608] hover:bg-[#171B22] text-[#8A8A88] hover:text-[#E4E4E2] border border-[#2A2D31]"
+                title="Tycho Crater in Southern Highlands (43.3°S, 11.4°W)"
+              >
+                Tycho
+              </button>
+              <button
+                onClick={() => {
+                  focusSite(-89.9, 0.0)
+                  const found = sites.find((s) => s.id === 'test-shackleton' || s.id.includes('shackleton'))
+                  if (found && onSelectSite) onSelectSite(found)
+                }}
+                className="px-2 py-0.5 rounded bg-[#050608] hover:bg-[#171B22] text-[#8A8A88] hover:text-[#E4E4E2] border border-[#2A2D31]"
+                title="Shackleton Crater at South Pole (89.9°S, 0°E)"
+              >
+                Shackleton
+              </button>
+            </div>
+          )}
         </div>
-      </div>
+      )}
 
       {/* 3D WebGL Canvas Container */}
       <div
         ref={mountRef}
         id="globe-canvas-container"
-        className="w-full aspect-square sm:aspect-[4/3] min-h-[380px] sm:min-h-[480px] lg:min-h-[560px] bg-[#050608] border border-space-700 rounded overflow-hidden relative cursor-grab active:cursor-grabbing select-none"
+        className={`w-full ${heightClass} bg-[#050608] border border-[#2A2D31] rounded overflow-hidden relative cursor-grab active:cursor-grabbing select-none`}
         tabIndex={0}
         aria-label="3D Interactive Lunar Globe (drag to rotate, scroll to zoom)"
       />
 
-      {/* Legend & Instructions */}
-      <div className="flex flex-wrap items-center justify-between gap-2 px-3 py-1.5 bg-space-900/80 border border-space-700/80 rounded text-3xs font-mono text-space-400">
-        <div className="flex items-center gap-3">
-          <span className="flex items-center gap-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#E0A04A]" />
-            <span className="text-[#E0A04A]">Scenario A</span>
-          </span>
-          <span className="flex items-center gap-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#6FA8C9]" />
-            <span className="text-[#6FA8C9]">Scenario B</span>
-          </span>
-          <span className="flex items-center gap-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-white" />
-            <span>Other Site</span>
-          </span>
-          <span className="flex items-center gap-1">
-            <span className="w-2.5 h-2.5 rounded-full border border-white" />
-            <span>Hollow: Region Centre</span>
-          </span>
-          <span className="flex items-center gap-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-white" />
-            <span>Filled: Specific Site</span>
-          </span>
+      {/* Legend & Credit */}
+      {!compact && (
+        <div className="flex flex-wrap items-center justify-between gap-2 px-3 py-1.5 bg-[#0D1014] border border-[#2A2D31] rounded text-3xs font-mono text-[#8A8A88]">
+          <div className="flex items-center gap-3">
+            <span className="flex items-center gap-1">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#E0A04A]" />
+              <span className="text-[#E0A04A]">Scenario A</span>
+            </span>
+            <span className="flex items-center gap-1">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#6FA8C9]" />
+              <span className="text-[#6FA8C9]">Scenario B</span>
+            </span>
+            <span className="flex items-center gap-1">
+              <span className="w-2.5 h-2.5 rounded-full bg-white" />
+              <span>Other Site</span>
+            </span>
+            <span className="flex items-center gap-1">
+              <span className="w-2.5 h-2.5 rounded-full border border-white" />
+              <span>Hollow: Region</span>
+            </span>
+            <span className="flex items-center gap-1">
+              <span className="w-2.5 h-2.5 rounded-full bg-white" />
+              <span>Filled: Site</span>
+            </span>
+          </div>
+          <div>Drag to rotate · Scroll to zoom · Click pin to inspect</div>
         </div>
-        <div>Drag to rotate · Scroll to zoom · Click pin to inspect</div>
-      </div>
+      )}
     </div>
   )
 }

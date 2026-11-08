@@ -1,48 +1,39 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   AXON LunarSight — Global styles
-   Design tokens live in tailwind.config.js (authoritative source).
-   This file handles: base resets, CSS custom properties, Leaflet overrides,
-   Plotly overrides, and any utility classes that Tailwind can't express.
+   AXON LunarSight — Unified Global Styles (Phase B)
+   Design tokens:
+     Background: #050608
+     Panels:     #0D1014
+     Borders:    #2A2D31
+     Text:       #E4E4E2 (primary) / #8A8A88 (secondary/muted)
+     Tan:        #B9A58C (frame and headings)
+     A Amber:    #E0A04A
+     B Steel:    #6FA8C9
+     Lit Green:  #6DBF8B
+     Dark Grey:  #6B6F75
+     Warning:    #E5604A
+     Radius <= 4 px, no glow
    ═══════════════════════════════════════════════════════════════════════════ */
 
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
-/* ── CSS custom properties (mirrored from Tailwind tokens for plain CSS use) */
-:root {
-  /* Light mode (fallback — default is dark, toggle via .dark on <html>) */
-  --bg-app:     #f4f5fa;
-  --bg-panel:   #ffffff;
-  --bg-card:    #f0f1f8;
-  --text-primary:   #0b0e1e;
-  --text-secondary: #252c4a;
-  --text-muted:     #6574a8;
-  --border:     #c5cce0;
+:root, .dark {
+  --bg-app:         #050608;
+  --bg-panel:       #0D1014;
+  --bg-card:        #0D1014;
+  --text-primary:   #E4E4E2;
+  --text-secondary: #8A8A88;
+  --text-muted:     #6B6F75;
+  --border:         #2A2D31;
 
-  /* Colour-blind-safe semantic colours */
-  --color-sun:   #f59e0b;   /* amber  — Sun (NOT green) */
-  --color-earth: #06b6d4;   /* cyan   — Earth (NOT red) */
-  --color-verified:   #3b82f6;
-  --color-unverified: #6b7280;
-
-  /* Status colours */
-  --status-success:  #3b82f6;
-  --status-partial:  #f59e0b;
-  --status-failed:   #8b5cf6;
-  --status-planned:  #6b7280;
-  --status-launched: #60a5fa;
-  --status-unknown:  #374151;
-}
-
-.dark {
-  --bg-app:     #0b0e1e;
-  --bg-panel:   #121629;
-  --bg-card:    #1a1f38;
-  --text-primary:   #e8eaf5;
-  --text-secondary: #c5cce0;
-  --text-muted:     #6574a8;
-  --border:     #252c4a;
+  /* Semantic unified tokens */
+  --color-tan:      #B9A58C;
+  --color-sun:      #E0A04A;   /* Scenario A amber */
+  --color-earth:    #6FA8C9;   /* Scenario B steel blue */
+  --color-lit:      #6DBF8B;   /* lit green */
+  --color-grey:     #6B6F75;   /* dark grey */
+  --color-warning:  #E5604A;   /* warning */
 }
 
 /* ── Base ──────────────────────────────────────────────────────────────────── */
@@ -56,19 +47,20 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   scroll-behavior: smooth;
+  background-color: #050608;
+  color: #E4E4E2;
 }
 
 body {
   margin: 0;
-  background-color: var(--bg-app);
-  color: var(--text-primary);
+  background-color: #050608;
+  color: #E4E4E2;
   min-height: 100vh;
-  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 /* ── Focus visible (accessibility) ─────────────────────────────────────────── */
 :focus-visible {
-  outline: 2px solid var(--color-earth);
+  outline: 2px solid #B9A58C;
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -79,110 +71,90 @@ body {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: #050608;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 9999px;
+  background: #2A2D31;
+  border-radius: 4px;
 }
 
-/* ── Leaflet overrides ──────────────────────────────────────────────────────── */
+/* ── Leaflet overrides (Radius <= 4px, No glow) ────────────────────────────── */
 .leaflet-container {
-  background: #05060f;   /* space-950 — match dark app background */
+  background: #050608;
   font-family: inherit;
 }
-.dark .leaflet-control-attribution {
-  background: rgba(11, 14, 30, 0.8);
-  color: #6574a8;
+.leaflet-control-attribution {
+  background: rgba(13, 16, 20, 0.9) !important;
+  color: #8A8A88 !important;
+  border: 1px solid #2A2D31;
+  border-radius: 4px;
 }
-.dark .leaflet-control-zoom a {
-  background: #1a1f38;
-  color: #e8eaf5;
-  border-color: #252c4a;
+.leaflet-control-zoom a {
+  background: #0D1014 !important;
+  color: #E4E4E2 !important;
+  border-color: #2A2D31 !important;
+  border-radius: 4px !important;
 }
-.dark .leaflet-control-zoom a:hover {
-  background: #252c4a;
+.leaflet-control-zoom a:hover {
+  background: #171B22 !important;
 }
-.dark .leaflet-popup-content-wrapper {
-  background: #121629;
-  color: #e8eaf5;
-  border: 1px solid #252c4a;
-  border-radius: 0.875rem;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+.leaflet-popup-content-wrapper {
+  background: #0D1014 !important;
+  color: #E4E4E2 !important;
+  border: 1px solid #2A2D31 !important;
+  border-radius: 4px !important;
+  box-shadow: none !important;
 }
-.dark .leaflet-popup-tip {
-  background: #121629;
+.leaflet-popup-tip {
+  background: #0D1014 !important;
 }
 
-/* ── Mission marker styles ──────────────────────────────────────────────────── */
-/* Actual landing site marker */
+/* ── Mission marker styles (Radius <= 4px / circular dots, No glow) ────────── */
 .marker-actual {
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  border: 2px solid #e8eaf5;
-  background: var(--color-sun);
-  box-shadow: 0 0 8px 2px rgba(245, 158, 11, 0.5);
+  border: 2px solid #E4E4E2;
+  background: #E0A04A;
+  box-shadow: none;
 }
-/* Planned landing site marker */
 .marker-planned {
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  border: 2px dashed #6574a8;
+  border: 2px dashed #8A8A88;
   background: transparent;
+  box-shadow: none;
 }
-/* Planned region center marker */
 .marker-region {
-  width: 16px;
-  height: 16px;
-  border-radius: 3px;
-  border: 2px dashed #6574a8;
-  background: rgba(6, 182, 212, 0.15);
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+  border: 2px dashed #8A8A88;
+  background: rgba(111, 168, 201, 0.15);
   transform: rotate(45deg);
+  box-shadow: none;
 }
-/* Selected state */
 .marker-selected {
-  box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.4) !important;
+  outline: 2px solid #B9A58C !important;
+  outline-offset: 2px;
+  box-shadow: none !important;
 }
 
 /* ── Utility classes ────────────────────────────────────────────────────────── */
-.text-sun   { color: var(--color-sun); }
-.text-earth { color: var(--color-earth); }
-.bg-sun     { background-color: var(--color-sun); }
-.bg-earth   { background-color: var(--color-earth); }
+.text-sun   { color: #E0A04A; }
+.text-earth { color: #6FA8C9; }
+.bg-sun     { background-color: #E0A04A; }
+.bg-earth   { background-color: #6FA8C9; }
 
-/* Gradient background for app sections */
 .bg-space-gradient {
-  background: linear-gradient(135deg, #0b0e1e 0%, #121629 50%, #0b0e1e 100%);
+  background: #0D1014;
 }
 
-/* Glass card effect */
 .glass-card {
-  background: rgba(18, 22, 41, 0.6);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(37, 44, 74, 0.8);
-}
-.light .glass-card {
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(197, 204, 224, 0.8);
-}
-
-/* Shimmer animation for loading states */
-@keyframes shimmer {
-  0%   { background-position: -200% 0; }
-  100% { background-position:  200% 0; }
-}
-.skeleton {
-  background: linear-gradient(90deg,
-    var(--bg-card) 25%,
-    var(--border)  50%,
-    var(--bg-card) 75%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.5s ease-in-out infinite;
-  border-radius: 0.375rem;
+  background: #0D1014;
+  border: 1px solid #2A2D31;
+  border-radius: 4px;
 }
 
 /* ── Accessibility ──────────────────────────────────────────────────────────── */
