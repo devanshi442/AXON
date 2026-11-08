@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-08T15:13:38.798464+00:00",
+  "generated_at": "2026-11-08T17:46:06.080351+00:00",
   "schema_version": 1,
   "compiled_on": "2026-10-21",
   "missions": [
@@ -51,7 +51,7 @@
           "supports": "Propellant leak, atmospheric burnup"
         }
       ],
-      "verified": false
+      "verified": true
     },
     {
       "id": "im-1",
@@ -111,7 +111,7 @@
           "supports": "Independent confirmation of 80.13 S, 1.44 E"
         }
       ],
-      "verified": false
+      "verified": true
     },
     {
       "id": "blue-ghost-m1",
@@ -169,7 +169,7 @@
           "supports": "Touchdown near 19 N, 62 E"
         }
       ],
-      "verified": false
+      "verified": true
     },
     {
       "id": "im-2",
@@ -232,7 +232,7 @@
           "supports": "Touchdown on side in crater, no recharge"
         }
       ],
-      "verified": false
+      "verified": true
     },
     {
       "id": "griffin-1",
@@ -459,11 +459,11 @@
       "coord_type": "planetocentric_east_positive",
       "region_size_km": 15,
       "uncertainty_km": 7.5,
-      "source_url": "https://www.nasa.gov/news-release/nasa-provides-update-on-artemis-iii-moon-landing-regions/",
+      "source_url": "https://www.nasa.gov/news-release/nasa-identifies-candidate-regions-for-artemis-iii-lunar-landing/",
       "source_alt": "https://www.lpi.usra.edu/lunar/constellation/landing_sites/connecting_ridge/",
-      "source_date": "2024-10-28",
+      "source_date": "2022-08-19",
       "notes": "Centroid at ~89.68\u00b0S, 129.0\u00b0E on the high-standing ridge adjacent to Shackleton crater rim. Evaluated summit landing site identified at -89.017\u00b0S, 126.273\u00b0E (LPI / Spudis et al. 2008). Prolonged illumination (>80% annual daylight) and direct line-of-sight to Earth.\n",
-      "verified": false
+      "verified": true
     },
     {
       "id": "cs-connecting-ridge",
@@ -474,11 +474,11 @@
       "coord_type": "planetocentric_east_positive",
       "region_size_km": 15,
       "uncertainty_km": 7.5,
-      "source_url": "https://www.nasa.gov/news-release/nasa-provides-update-on-artemis-iii-moon-landing-regions/",
+      "source_url": "https://www.nasa.gov/news-release/nasa-identifies-candidate-regions-for-artemis-iii-lunar-landing/",
       "source_alt": "https://www.lpi.usra.edu/lunar/constellation/landing_sites/connecting_ridge/",
-      "source_date": "2024-10-28",
+      "source_date": "2022-08-19",
       "notes": "High ridgeline connecting Shackleton (89.9\u00b0S) and de Gerlache (88.5\u00b0S) craters. Centroid at ~89.45\u00b0S, 136.0\u00b0W (224.0\u00b0E); specific candidate site evaluated at -89.534\u00b0S, 209.948\u00b0E.\n",
-      "verified": false
+      "verified": true
     },
     {
       "id": "cs-haworth",
@@ -493,7 +493,7 @@
       "source_alt": "https://planetarynames.wr.usgs.gov/Feature/2393",
       "source_date": "2024-10-28",
       "notes": "Centroid near 86.75\u00b0S, 22.84\u00b0W (-22.84\u00b0E) on the ridge and crater rim near Haworth crater (crater center 87.4\u00b0S, 5.2\u00b0W per USGS Gazetteer). Confirmed in NASA Oct 2024 refined list.\n",
-      "verified": false
+      "verified": true
     },
     {
       "id": "cs-malapert-massif",
@@ -508,7 +508,7 @@
       "source_alt": "https://planetarynames.wr.usgs.gov/Feature/3599",
       "source_date": "2024-10-28",
       "notes": "50-km elevated massif centered at 85.99\u00b0S, 357.07\u00b0E (~120 km north of south pole). Continuous direct line-of-sight to Earth for high-bandwidth communication. Confirmed in Oct 2024 update.\n",
-      "verified": false
+      "verified": true
     },
     {
       "id": "cs-mons-mouton-plateau",
@@ -523,22 +523,22 @@
       "source_alt": "https://planetarynames.wr.usgs.gov/Feature/16147",
       "source_date": "2024-10-28",
       "notes": "Broad elevated flat-topped table mountain (formerly Leibnitz Beta). Confirmed in NASA Oct 2024 refined candidate list.\n",
-      "verified": false
+      "verified": true
     },
     {
       "id": "cs-nobile-rim-1",
       "record_type": "candidate_site",
       "name": "Nobile Rim 1 (Artemis III Candidate Region)",
-      "lat_center": -85.3,
-      "lon_center": 31.5,
+      "lat_center": -85.35,
+      "lon_center": 36.5,
       "coord_type": "planetocentric_east_positive",
       "region_size_km": 15,
       "uncertainty_km": 7.5,
       "source_url": "https://www.nasa.gov/news-release/nasa-provides-update-on-artemis-iii-moon-landing-regions/",
       "source_alt": "https://planetarynames.wr.usgs.gov/Feature/4287",
       "source_date": "2024-10-28",
-      "notes": "Western raised rim structure of Nobile crater; priority for volatile cold trap sampling. Confirmed in NASA Oct 2024 refined list.\n",
-      "verified": false
+      "notes": "Western raised rim structure of Nobile crater (crater center: 85.28\u00b0S, 53.27\u00b0E). Centroid at ~85.35\u00b0S, 36.5\u00b0E (range 36.3\u00b0E\u201337.6\u00b0E) on the elevated illumination ridge. Corrected from previous errant 31.5\u00b0E (which was located on Mons Mouton). Confirmed in NASA Oct 2024 refined list.\n",
+      "verified": true
     },
     {
       "id": "cs-nobile-rim-2",
@@ -553,22 +553,22 @@
       "source_alt": "https://planetarynames.wr.usgs.gov/Feature/4287",
       "source_date": "2024-10-28",
       "notes": "Second Nobile rim segment (Site DM2) evaluated at 84.2\u00b0S, 60.7\u00b0E. Confirmed in NASA Oct 2024 refined list.\n",
-      "verified": false
+      "verified": true
     },
     {
       "id": "cs-faustini-rim-a",
       "record_type": "candidate_site",
       "name": "Faustini Rim A (Artemis III 2022 Candidate Region)",
-      "lat_center": -87.3,
-      "lon_center": 77.0,
+      "lat_center": -87.88,
+      "lon_center": 90.0,
       "coord_type": "planetocentric_east_positive",
       "region_size_km": 15,
       "uncertainty_km": 7.5,
       "source_url": "https://www.nasa.gov/news-release/nasa-identifies-candidate-regions-for-artemis-iii-lunar-landing/",
       "source_alt": "https://planetarynames.wr.usgs.gov/Feature/1987",
       "source_date": "2022-08-19",
-      "notes": "Elevated crater rim segment near Faustini crater at ~87.3\u00b0S, 77.0\u00b0E. Evaluated in 2022 candidate study; volatile cold traps adjacent.\n",
-      "verified": false
+      "notes": "Elevated crater rim ridge overlooking Faustini crater at ~87.88\u00b0S, 90.0\u00b0E (near 90\u00b0E meridian). Corrected from previous crater floor center (-87.3\u00b0S, 77.0\u00b0E per USGS Feature 1987). Identified in NASA Aug 2022 candidate study; volatile cold traps adjacent.\n",
+      "verified": true
     }
   ]
 }
