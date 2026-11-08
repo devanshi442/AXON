@@ -178,6 +178,18 @@ def test_horizons_golden_all_fixtures_all_rows(kernels_dir, prefix, lat, lon):
         G.unload_kernels()
 
 
+def test_benchmark_artifact_present_and_passed():
+    """Verify that the real Horizons benchmark artifact exists and confirms all rows passed within tolerance."""
+    root = Path(__file__).resolve().parent.parent.parent
+    bench_file = root / "science" / "validation" / "benchmark.json"
+    assert bench_file.is_file(), "science/validation/benchmark.json artifact missing"
+    data = json.loads(bench_file.read_text(encoding="utf-8"))
+    assert data["all_passed"] is True
+    assert data["total_rows_tested"] >= 4000
+    assert data["overall_max_el_diff_deg"] < 0.01
+    assert data["overall_max_az_diff_deg"] < 0.01
+
+
 @pytest.mark.needs_kernels
 def test_farside_earth_invisible(kernels_dir):
     """

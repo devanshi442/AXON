@@ -15,6 +15,23 @@ import spiceypy as spice
 from lunarsight_core import constants as C
 
 
+def check_kernel_file(p: Path) -> None:
+    """Check that a kernel file exists and is not an unresolved Git-LFS pointer."""
+    if not p.is_file():
+        raise FileNotFoundError(f"Missing required SPICE kernel: {p}")
+    size = p.stat().st_size
+    if size < 1000:
+        try:
+            head = p.read_bytes()[:60]
+            if b"git-lfs" in head or head.startswith(b"version https://git-lfs"):
+                raise RuntimeError(
+                    f"SPICE kernel '{p.name}' is a Git-LFS pointer ({size} bytes), not the real kernel. "
+                    f"Please run 'python pipeline/fetch_kernels.py' to download the real SPICE kernel."
+                )
+        except Exception:
+            pass
+
+
 def load_kernels(kernels_dir: Optional[Path | str] = None) -> List[str]:
     """Load standard NAIF kernels from kernels_dir or repo default."""
     if kernels_dir is None:
@@ -33,8 +50,7 @@ def load_kernels(kernels_dir: Optional[Path | str] = None) -> List[str]:
     loaded = []
     for k in expected:
         p = kernels_dir / k
-        if not p.is_file():
-            raise FileNotFoundError(f"Missing required SPICE kernel: {p}")
+        check_kernel_file(p)
         spice.furnsh(str(p))
         loaded.append(k)
     return loaded

@@ -114,7 +114,7 @@ needs-check-farside are null. These missions will show in the list but not on th
 - Implemented `pipeline/build_geometry.py` generating full 2024–2028 hourly ephemerides (43,848 hours per site) for all sites with known coordinates:
   - `im-1` (Malapert A)
   - `blue-ghost-m1` (Mare Crisium)
-  - `im-2` (Shackleton Connecting Ridge)
+  - `im-2` (Mons Mouton, -84.7906, 29.1957)
   - `mons-mouton-summit` (VIPER reference)
   - `malapert-crater` (South pole deep crater reference)
 - Exported precomputed assets to `web/public/data/` and `web_public_data/`:

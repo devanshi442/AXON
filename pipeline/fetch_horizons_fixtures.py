@@ -72,17 +72,15 @@ NEW_FIXTURES = [
     },
 ]
 
-# Shackleton-Malapert placeholder — coordinates sourced from Tier 2-D research.
-# Using Shackleton rim candidate coordinates from Colaprete et al. 2012 / NASA LDEP:
-# Shackleton rim: approximately -89.67 S, 0.0 E (closest published point on rim)
-# NOTE: This will be updated once Tier 2-D sourcing is complete.
+# Shackleton rim candidate — coordinates sourced from Artemis III candidate region cs-shackleton-rim:
+# Peak Near Shackleton centroid at -89.68 S, 129.0 E.
 SHACKLETON_FIXTURE = {
     "name": "shackleton-rim",
-    "lat": -89.67,
-    "east_lon": 0.0,
+    "lat": -89.68,
+    "east_lon": 129.0,
     "start": "2025-03-02",
     "stop": "2025-03-30",
-    "note": "Shackleton rim candidate (approx -89.67S,0E); placeholder — update after Tier 2-D",
+    "note": "Peak Near Shackleton (Artemis III region centroid: -89.68S, 129.0E)",
 }
 
 

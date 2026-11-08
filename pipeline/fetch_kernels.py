@@ -54,13 +54,25 @@ DEST = ROOT / "kernels"
 LOCK = ROOT / "kernels.lock"
 
 
+def is_lfs_pointer(p: pathlib.Path) -> bool:
+    """Check if file is a Git-LFS pointer."""
+    if p.stat().st_size < 1000:
+        try:
+            head = p.read_bytes()[:60]
+            if b"git-lfs" in head or head.startswith(b"version https://git-lfs"):
+                return True
+        except Exception:
+            pass
+    return False
+
+
 def sha256_file(path: pathlib.Path) -> str:
-    """Compute SHA-256 of a file using 1 MiB blocks."""
-    h = hashlib.sha256()
-    with path.open("rb") as f:
-        while chunk := f.read(1 << 20):
-            h.update(chunk)
-    return h.hexdigest()
+    """Compute SHA-256 of a file using 1 MiB blocks, normalizing line endings for text files."""
+    data = path.read_bytes()
+    # Normalize CRLF -> LF for text files (.tls, .tpc, .tf, .txt)
+    if path.suffix.lower() in [".tls", ".tpc", ".tf", ".txt"]:
+        data = data.replace(b"\r\n", b"\n")
+    return hashlib.sha256(data).hexdigest()
 
 
 def download_streaming(url: str, dest: pathlib.Path) -> None:
@@ -104,15 +116,19 @@ def main() -> int:
 
         # ── Check cached copy ────────────────────────────────────────────────
         if p.is_file():
-            actual = sha256_file(p)
-            if expected is None or actual == expected:
-                print(f"  OK (cached): {name}  sha256:{actual[:16]}...")
-                hashes[name] = actual
-                already_ok.append(name)
-                continue
-            else:
-                print(f"  WARN: {name} hash mismatch — re-downloading")
+            if is_lfs_pointer(p):
+                print(f"  NOTICE: {name} is a Git-LFS pointer ({p.stat().st_size} bytes). Removing to re-download...")
                 p.unlink()
+            else:
+                actual = sha256_file(p)
+                if expected is None or actual == expected:
+                    print(f"  OK (cached): {name}  sha256:{actual[:16]}...")
+                    hashes[name] = actual
+                    already_ok.append(name)
+                    continue
+                else:
+                    print(f"  WARN: {name} hash mismatch — re-downloading")
+                    p.unlink()
 
         # ── Download ─────────────────────────────────────────────────────────
         url = BASE + rel_path
