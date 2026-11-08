@@ -18,6 +18,24 @@ import yaml
 from lunarsight_core import constants as C
 
 
+# Authoritative site annotations maintained by science model (e.g. region centre vs crest findings)
+SITE_ANNOTATIONS: Dict[str, str] = {
+    "cs-malapert-massif": (
+        "Stated coordinates (-85.99°S, -2.93°E, 4841 m) are the region centre (0% Earth visibility). "
+        "A DEM-derived crest ~1.4 km away (-85.9627°S, -2.3725°E, 4993 m) reaches 100% Earth visibility. "
+        "Artemis III Candidate Region."
+    ),
+}
+
+
+def apply_site_annotations(missions_dict: Dict[str, Any]) -> None:
+    """Enrich compiled missions data dict with authoritative site annotations from sites.py."""
+    for c in missions_dict.get("candidate_sites", []):
+        cid = c.get("id")
+        if cid in SITE_ANNOTATIONS:
+            c["notes"] = SITE_ANNOTATIONS[cid]
+
+
 @dataclass
 class SiteRecord:
     id: str
@@ -166,12 +184,7 @@ def load_site_registry(data_yaml_or_json: Optional[Path | str] = None) -> List[S
         if cand.get("source_alt"):
             sources.append(cand["source_alt"])
 
-        c_notes = cand.get("notes")
-        if cid == "cs-malapert-massif":
-            c_notes = (
-                (c_notes.strip() + " " if c_notes else "")
-                + "Stated coordinates are the region centre (0% Earth visibility); a DEM-derived crest ~1.4 km away reaches 100%."
-            )
+        c_notes = SITE_ANNOTATIONS.get(cid, cand.get("notes"))
 
         rec = SiteRecord(
             id=cid,

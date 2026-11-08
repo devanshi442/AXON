@@ -118,7 +118,7 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
                     : 'text-space-400 hover:text-space-200'
                 }`}
               >
-                Flat Datum (0°)
+                Flat sphere, 0 deg horizon
               </button>
             </div>
           </div>
@@ -228,7 +228,7 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
                 <span className="text-3xs uppercase tracking-wider text-sun-400 font-semibold flex items-center justify-between">
                   <span>Solar Illumination &amp; Power</span>
                   <span className="text-space-400 font-mono font-normal">
-                    {horizonMode === 'terrain' ? 'Terrain Masked' : 'Flat Datum'}
+                    {horizonMode === 'terrain' ? 'Terrain Masked' : 'Flat sphere, 0 deg horizon'}
                   </span>
                 </span>
                 <div className="text-xl font-bold font-mono text-sun-300 mt-1">

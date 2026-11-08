@@ -337,7 +337,7 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
         <div className="flex justify-between text-3xs text-space-400 mb-1 font-mono">
           <span>Nadir (-90°)</span>
           <span className="text-space-300 font-semibold">
-            {horizonMode === 'terrain' ? `Local Skyline (${sunHorizonEl.toFixed(1)}° Sun / ${earthHorizonEl.toFixed(1)}° Earth)` : 'Datum (0°)'}
+            {horizonMode === 'terrain' ? `Local Skyline (${sunHorizonEl.toFixed(1)}° Sun / ${earthHorizonEl.toFixed(1)}° Earth)` : 'Flat sphere, 0 deg horizon'}
           </span>
           <span>Zenith (+90°)</span>
         </div>
@@ -379,7 +379,7 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
           )}
         </div>
         <div className="mt-2 text-3xs text-space-400 flex items-center justify-between">
-          <span>* Mode: {horizonMode === 'terrain' ? `LOLA DEM (${horizon?.dem_id || 'DEM'}, mast: ${mastHeightM}m)` : 'Flat Lunar Datum (0°)'}</span>
+          <span>* Mode: {horizonMode === 'terrain' ? `LOLA DEM (${horizon?.dem_id || 'DEM'}, mast: ${mastHeightM}m)` : 'Flat sphere, 0 deg horizon'}</span>
           <span className="text-space-300">Array: {solarArrayType}</span>
         </div>
       </div>

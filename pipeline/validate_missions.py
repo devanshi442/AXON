@@ -49,6 +49,11 @@ for c in data.get("candidate_sites", []):
 if errors:
     sys.exit(1)
 
+# Apply authoritative site annotations from sites.py (e.g. Malapert Massif region centre vs crest findings)
+sys.path.insert(0, str(root / "science"))
+from lunarsight_core import sites
+sites.apply_site_annotations(data)
+
 payload = {
     "generated_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
     **data,

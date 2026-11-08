@@ -82,14 +82,15 @@ def evaluate_window(
     print("=" * 130)
     print(f"EVALUATION WINDOW: {window_label} ({start_utc} to {stop_utc})")
     print("THRESHOLDS & SEMANTICS:")
+    print("  • Flat baseline     : flat sphere, 0 deg horizon (IAU mean sphere R=1737.4 km, alt=0 m, 0° horizon)")
     print("  • Sun up rule       : sun_center_el + 0.267° > mask_el + 0.0° (sun_extra_margin = 0.0°)")
     print("  • Earth visible rule: earth_center_el >= mask_el + 0.0° (antenna_margin = 0.0°)")
     print("  • Observer mast     : 1.5 m")
     print("  • Mask clamping     : UNCLAMPED (negative skyline angles preserved for high peaks)")
     print("=" * 130)
 
-    header = f"| {'Site ID':27s} | {'Lat':6s} | {'Lon':7s} | {'DEM ID':14s} | {'Flat Sun %':10s} | {'Terr Sun %':10s} | {'Flat DTE %':10s} | {'Terr DTE %':10s} | {'Dark Gap':8s} | {'Flags / Notes':30s} |"
-    sep = "|" + "-"*29 + "|" + "-"*8 + "|" + "-"*9 + "|" + "-"*16 + "|" + "-"*12 + "|" + "-"*12 + "|" + "-"*12 + "|" + "-"*12 + "|" + "-"*10 + "|" + "-"*32 + "|"
+    header = f"| {'Site ID':27s} | {'Lat':6s} | {'Lon':7s} | {'DEM ID':14s} | {'Flat 0° Sun %':13s} | {'Terr Sun %':10s} | {'Flat 0° DTE %':13s} | {'Terr DTE %':10s} | {'Dark Gap':8s} | {'Flags / Notes':30s} |"
+    sep = "|" + "-"*29 + "|" + "-"*8 + "|" + "-"*9 + "|" + "-"*16 + "|" + "-"*15 + "|" + "-"*12 + "|" + "-"*15 + "|" + "-"*12 + "|" + "-"*10 + "|" + "-"*32 + "|"
     print(header)
     print(sep)
 
@@ -135,7 +136,7 @@ def evaluate_window(
             flags.append("Terrain < Flat")
 
         flag_str = "; ".join(flags) if flags else "-"
-        print(f"| {sid:27s} | {lat:6.2f} | {lon:7.2f} | {dem_id:14s} | {flat_sun_pct:9.2f}% | {terr_sun_pct:9.2f}% | {flat_earth_pct:9.2f}% | {terr_earth_pct:9.2f}% | {longest_dark_gap_h:7.1f}h | {flag_str:30s} |")
+        print(f"| {sid:27s} | {lat:6.2f} | {lon:7.2f} | {dem_id:14s} | {flat_sun_pct:12.2f}% | {terr_sun_pct:9.2f}% | {flat_earth_pct:12.2f}% | {terr_earth_pct:9.2f}% | {longest_dark_gap_h:7.1f}h | {flag_str:30s} |")
 
     print(sep)
     print()

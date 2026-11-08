@@ -151,7 +151,7 @@ export default function ComparisonPanel({ sites }: ComparisonPanelProps) {
         </div>
         <div className="flex items-center gap-2">
           <span className="px-2 py-0.5 rounded text-3xs font-mono bg-space-900 border border-space-700 text-emerald-400">
-            Mode: {horizonMode === 'terrain' ? `Terrain (${mastHeightM}m mast)` : 'Flat (0°)'}
+            Mode: {horizonMode === 'terrain' ? `Terrain (${mastHeightM}m mast)` : 'Flat sphere, 0 deg horizon'}
           </span>
         </div>
       </div>

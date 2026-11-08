@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-08T19:48:25.405634+00:00",
+  "generated_at": "2026-11-08T21:13:36.540857+00:00",
   "schema_version": 1,
   "compiled_on": "2026-10-21",
   "missions": [
@@ -507,7 +507,7 @@
       "source_url": "https://www.nasa.gov/news-release/nasa-provides-update-on-artemis-iii-moon-landing-regions/",
       "source_alt": "https://planetarynames.wr.usgs.gov/Feature/3599",
       "source_date": "2024-10-28",
-      "notes": "Stated coordinates (-85.99°S, -2.93°E, 4841 m) are the region centre (0% Earth visibility). A DEM-derived crest ~1.4 km away (-85.9627°S, -2.3725°E, 4993 m) reaches 100% Earth visibility. Artemis III Candidate Region.\n",
+      "notes": "Stated coordinates (-85.99\u00b0S, -2.93\u00b0E, 4841 m) are the region centre (0% Earth visibility). A DEM-derived crest ~1.4 km away (-85.9627\u00b0S, -2.3725\u00b0E, 4993 m) reaches 100% Earth visibility. Artemis III Candidate Region.",
       "verified": true
     },
     {

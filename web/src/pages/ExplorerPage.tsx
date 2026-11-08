@@ -100,9 +100,7 @@ export default function ExplorerPage() {
       uncertainty_km: c.uncertainty_km,
       verified: c.verified ?? false,
       sources: c.sources,
-      notes: c.id === 'cs-malapert-massif'
-        ? 'Stated coordinates (-85.99°S, -2.93°E, 4841 m) are the region centre (0% Earth visibility). A DEM-derived crest ~1.4 km away (-85.9627°S, -2.3725°E, 4993 m) reaches 100% Earth visibility.'
-        : c.notes,
+      notes: c.notes,
     })),
     ...missionsData.reference_sites.map((r) => ({
       id: r.id,
@@ -152,7 +150,7 @@ export default function ExplorerPage() {
           <div>
             <div className="text-3xs text-space-400 font-medium">HORIZON MODE</div>
             <div className="text-2xs font-mono text-emerald-400 font-semibold">
-              {horizonMode === 'terrain' ? `Terrain-Aware (${mastHeightM}m mast)` : 'Idealized Datum (0°)'}
+              {horizonMode === 'terrain' ? `Terrain-Aware (${mastHeightM}m mast)` : 'Flat sphere, 0 deg horizon'}
             </div>
           </div>
         </div>
