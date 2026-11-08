@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import type { MissionsData, SelectableSite } from '../types/mission'
+import type { MissionsData, SelectableSite, CoordKind } from '../types/mission'
 import { useScenarioStore } from '../stores/scenarioStore'
 import MoonMap from '../components/MoonMap'
 import MissionExplorer from '../components/MissionExplorer'
