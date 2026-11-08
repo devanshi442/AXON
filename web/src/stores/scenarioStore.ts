@@ -80,7 +80,7 @@ interface ScenarioStore {
   loadHorizon: (siteId: string) => Promise<void>
 }
 
-export function getMaskForMastHeight(profile?: HorizonProfile | null, mastHeightM: number = 0.0): number[] | null {
+export function getMaskForMastHeight(profile?: HorizonProfile | null, mastHeightM: number = 1.5): number[] | null {
   if (!profile || !profile.masks) return null
   if (mastHeightM <= 0.75) return profile.masks.h_0_0m || null
   if (mastHeightM <= 2.25) return profile.masks.h_1_5m || profile.masks.h_0_0m || null

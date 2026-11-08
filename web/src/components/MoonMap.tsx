@@ -233,13 +233,17 @@ export default function MoonMap({ sites }: MoonMapProps) {
                   Reference Site
                 </span>
               )}
-              {activePin.coord_kind === 'actual' ? (
+              {activePin.coord_kind === 'specific_site' ? (
+                <span className="px-1.5 py-0.5 rounded text-3xs bg-cyan-950 border border-cyan-800 text-cyan-300">
+                  Specific Site
+                </span>
+              ) : activePin.coord_kind === 'actual' ? (
                 <span className="px-1.5 py-0.5 rounded text-3xs bg-emerald-950 border border-emerald-800 text-emerald-300">
                   Actual Touchdown
                 </span>
               ) : (
                 <span className="px-1.5 py-0.5 rounded text-3xs bg-amber-950 border border-amber-800 text-amber-300">
-                  Region Center
+                  Region Centre
                 </span>
               )}
             </div>

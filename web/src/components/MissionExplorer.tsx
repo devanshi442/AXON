@@ -156,7 +156,7 @@ export default function MissionExplorer({ sites }: MissionExplorerProps) {
                     </span>
                     {hasCoords && (
                       <span className="text-space-400">
-                        [{s.coord_kind === 'actual' ? 'Actual' : 'Region Center'}]
+                        [{s.coord_kind === 'specific_site' || s.coord_kind === 'actual' ? 'Specific site' : 'Region centre'}]
                       </span>
                     )}
                   </div>

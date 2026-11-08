@@ -331,7 +331,7 @@ export default function ComparisonPanel({ sites }: ComparisonPanelProps) {
             {/* Terrain Shadow Impact Delta */}
             {horizonMode === 'terrain' && (
               <tr className="bg-amber-950/20 text-amber-300">
-                <td className="py-2.5 px-3 font-sans font-medium">Topographic Masking Loss vs Flat Datum</td>
+                <td className="py-2.5 px-3 font-sans font-medium">Terrain effect vs flat (+ gain / - loss)</td>
                 <td className="py-2.5 px-3">{oppA?.delta_sun_hours ?? 0} h sun</td>
                 <td className="py-2.5 px-3">{oppB?.delta_sun_hours ?? 0} h sun</td>
                 <td className="py-2.5 px-3 text-right font-medium">
