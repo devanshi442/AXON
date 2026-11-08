@@ -321,3 +321,7 @@ def lookup_horizon(mask: Dict[str, Any] | List[float], az_deg: float) -> float:
     v0 = mask_deg[idx0]
     v1 = mask_deg[idx1]
     return float((1.0 - frac) * v0 + frac * v1)
+
+
+# Canonical alias
+compute_horizon = compute_horizon_raymarch
