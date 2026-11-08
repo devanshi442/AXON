@@ -1,8 +1,27 @@
 # AXON LunarSight — Antigravity Implementation Plan
 
+> [!NOTE]
+> **Historical Planning Artifact:** This document is an internal implementation plan prepared during Phase 0–1. It is preserved for development provenance and architecture audit history. For authoritative system documentation, refer to [README.md](README.md), [docs/METHODS.md](docs/METHODS.md), [docs/VALIDATION.md](docs/VALIDATION.md), and [DATA_README.md](DATA_README.md).
+
 > **Purpose:** Give this file to Antigravity IDE while the existing AXON LunarSight repository is open. Read this plan and the repository first, then implement the changes in the existing codebase. Do not merely produce another plan or rewrite the repository from scratch.
 >
 > **Inputs:** The open repository is the implementation source of truth. `AXON_LunarSight_Guidebook_v2.pdf` is the product/feature reference. The repository's `docs/AXON_LunarSight_Master_Blueprint.md`, `docs/BUILD_LOG.md`, README, schema, and science conventions provide additional architecture context where present.
+
+---
+
+## Table of Contents
+- [1. Mission and desired outcome](#1-mission-and-desired-outcome)
+- [2. Architecture decisions (important)](#2-architecture-decisions-important)
+- [3. Non-negotiable science and data integrity rules](#3-non-negotiable-science-and-data-integrity-rules)
+- [4. First task: audit before implementation](#4-first-task-audit-before-implementation)
+- [5. Target architecture and responsibilities](#5-target-architecture-and-responsibilities)
+- [6. Implementation phases](#6-implementation-phases)
+- [7. Required user-facing features and acceptance checklist](#7-required-user-facing-features-and-acceptance-checklist)
+- [8. UI/UX direction](#8-uiux-direction)
+- [9. Implementation workflow for Antigravity](#9-implementation-workflow-for-antigravity)
+- [10. Final instruction](#10-final-instruction)
+
+---
 
 ---
 

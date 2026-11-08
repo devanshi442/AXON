@@ -1,6 +1,35 @@
 # CLPS Lunar Mission Browser — Team Playbook (AXON LunarSight)
 
+> [!NOTE]
+> **Historical Planning Artifact:** This document is an internal team playbook prepared during Phase 0–1 (2026-10-24). It is preserved for development provenance and challenge statement alignment history. For authoritative system documentation, refer to [README.md](README.md), [docs/METHODS.md](docs/METHODS.md), [docs/VALIDATION.md](docs/VALIDATION.md), and [DATA_README.md](DATA_README.md).
+
 *Prepared 2026-10-24 from the uploaded files only. Evidence labels: **[REPO]** seen in the repo dump, **[FIX]** seen in the Horizons fixture files, **[DOC]** stated in the team PDFs, **[UNVERIFIED]** not checked against an authoritative source by me.*
+
+---
+
+## Table of Contents
+- [0. Honesty box](#0-honesty-box-read-first)
+- [0.1 Reconciliation with the official statement](#01-reconciliation-with-the-official-statement-added-2026-10-24)
+- [1. Executive summary](#1-executive-summary)
+- [2. Problem definition & product](#2-problem-definition--product)
+- [3. Requirements traceability matrix](#3-requirements-traceability-matrix)
+- [4. CLPS and lunar concepts](#4-clps-and-lunar-concepts-beginner-section)
+- [5. Data sources](#5-data-sources)
+- [6. Data schema](#6-data-schema)
+- [7. Calculations](#7-calculations)
+- [8. Architecture as it exists](#8-architecture-as-it-exists)
+- [9. Code audit](#9-code-audit-static-inspection-only)
+- [10. Gap analysis & recommended changes](#10-gap-analysis--recommended-changes)
+- [11. MVP priorities](#11-mvp-priorities)
+- [12. UI plan](#12-ui-plan)
+- [13. Testing strategy](#13-testing-strategy)
+- [14. Roadmap](#14-roadmap)
+- [15. Risk register](#15-risk-register)
+- [16. Demo & submission checklist](#16-demo--submission-checklist)
+- [17. Glossary](#17-glossary)
+- [18. References](#18-references-to-be-verified-when-read)
+
+---
 
 ## 0. Honesty box (read first)
 

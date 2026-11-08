@@ -2,6 +2,35 @@
 **CLPS Lunar Mission Browser · NASA Space Apps Challenge 2026**
 Standalone reference: strategy, science method, data catalog, architecture, pipeline, plan, risks.
 
+> [!NOTE]
+> **Document Status: Historical Architecture Blueprint**  
+> This blueprint reflects the initial design and project strategy developed during Phase 0. For active implementation details, validated scientific methods, and live benchmark reports, refer to:
+> - Root Guide: [`README.md`](../README.md)
+> - Data Catalog & DEM Mapping: [`DATA_README.md`](../DATA_README.md)
+> - Scientific Formulations: [`docs/METHODS.md`](METHODS.md)
+> - Benchmark Validation: [`docs/VALIDATION.md`](VALIDATION.md)
+> - Scientific Limitations: [`docs/LIMITATIONS.md`](LIMITATIONS.md)
+> - Chronological Milestones: [`docs/BUILD_LOG.md`](BUILD_LOG.md)
+
+---
+
+## Table of Contents
+- [1. Project summary](#1-project-summary)
+- [2. Design principles](#2-design-principles-design)
+- [3. Scientific background (why this problem is hard)](#3-scientific-background-why-this-problem-is-hard)
+- [4. Science method](#4-science-method)
+- [5. Data catalog](#5-data-catalog)
+- [6. System architecture](#6-system-architecture-design)
+- [7. Differentiators for Best Use of Science / Best Mission Concept](#7-differentiators-for-best-use-of-science--best-mission-concept-research--design)
+- [8. Pipeline](#8-pipeline)
+- [9. Plan with cut lines](#9-plan-with-cut-lines)
+- [10. Risk register](#10-risk-register)
+- [11. Demo script](#11-demo-script-fits-a-7-slide-deck)
+- [12. Submission checklist](#12-submission-checklist)
+- [13. Links](#13-links)
+
+---
+
 > **How to read the trust labels in this file**
 > - **[Guide]** comes from your AXON Project Guide.
 > - **[Research]** comes from the Gemini research report. File sizes, product IDs, URLs and news items are carried over as reported. **Re-verify each one against its source before you cite it in the demo or README.**
