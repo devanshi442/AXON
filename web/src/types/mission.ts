@@ -97,11 +97,17 @@ export interface GeometryTimeseries {
   start_utc: string
   stop_utc: string
   step_seconds: number
+  sample_count?: number
+  scale?: number
   times: string[]
   sun_azimuth_deg: number[]
   sun_elevation_deg: number[]
   earth_azimuth_deg: number[]
   earth_elevation_deg: number[]
+  sun_distance_km?: number[]
+  earth_distance_km?: number[]
+  sun_angular_radius_deg?: number[]
+  earth_angular_radius_deg?: number[]
   frame: string
   abcorr: string
   horizon_mode: string

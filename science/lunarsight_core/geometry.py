@@ -62,7 +62,7 @@ def unload_kernels() -> None:
 
 
 def site_to_enu(
-    lat_deg: float, lon_deg: float, alt_km: float = 0.0
+    lat_deg: float, lon_deg: float, alt_km: float = 0.0, mast_height_m: float = 0.0
 ) -> Tuple[List[float], List[float], List[float], List[float]]:
     """
     Compute Cartesian position and East-North-Up basis vectors in MOON_ME frame.
@@ -76,7 +76,7 @@ def site_to_enu(
 
     lat_rad = math.radians(lat_deg)
     lon_rad = math.radians(lon_deg)
-    r = C.MOON_RADIUS_KM + alt_km
+    r = C.MOON_RADIUS_KM + alt_km + (mast_height_m / 1000.0)
 
     cos_lat = math.cos(lat_rad)
     sin_lat = math.sin(lat_rad)
@@ -150,9 +150,11 @@ def compute_site_timeseries(
     stop_utc: str,
     step_seconds: int = 3600,
     alt_km: float = 0.0,
+    mast_height_m: float = 0.0,
 ) -> Dict[str, Any]:
     """Generate hourly topocentric time series for Sun and Earth."""
-    pos_site, east, north, up = site_to_enu(lat_deg, lon_deg, alt_km)
+    effective_alt_km = alt_km + (mast_height_m / 1000.0)
+    pos_site, east, north, up = site_to_enu(lat_deg, lon_deg, effective_alt_km)
 
     et_start = spice.str2et(start_utc)
     et_stop = spice.str2et(stop_utc)

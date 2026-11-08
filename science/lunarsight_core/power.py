@@ -51,6 +51,16 @@ def compute_incidence_angle_factor(
     el_rad = np.radians(np.asarray(sun_el_deg, dtype=np.float64))
     az_rad = np.radians(np.asarray(sun_az_deg, dtype=np.float64))
 
+    # Aliases
+    if orientation == "flat":
+        orientation = "horizontal"
+    elif orientation in ("vertical", "mast", "omni"):
+        orientation = "vertical_azimuth_tracking"
+    elif orientation in ("tracking", "sun_tracking_2axis"):
+        orientation = "sun_tracking"
+    elif orientation in ("tilted", "fixed_vertical"):
+        orientation = "vertical_fixed"
+
     if orientation == "horizontal":
         # Panel facing zenith: normal is Up vector -> dot(Sun, Normal) = sin(el)
         cos_i = np.sin(el_rad)

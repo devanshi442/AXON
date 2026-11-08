@@ -23,18 +23,26 @@ MOON_RADIUS_M = C.MOON_RADIUS_KM * 1000.0
 
 
 def compute_horizon_raymarch(
-    lat_deg: float,
-    lon_deg: float,
+    lat_deg: Optional[float] = None,
+    lon_deg: Optional[float] = None,
     observer_height_m: float = 0.0,
     max_range_km: float = 50.0,
     az_step_deg: float = 1.0,
     min_range_m: float = 40.0,
     preferred_dem_id: Optional[str] = None,
+    lat: Optional[float] = None,
+    lon: Optional[float] = None,
 ) -> Dict[str, Any]:
     """
     Compute 360-degree terrain horizon mask using great-circle ray-marching in 3D.
     Vectorized along each azimuth ray for performance.
     """
+    if lat_deg is None and lat is not None:
+        lat_deg = lat
+    if lon_deg is None and lon is not None:
+        lon_deg = lon
+    if lat_deg is None or lon_deg is None:
+        raise ValueError("lat_deg and lon_deg must be provided")
     dem_info, coverage_status, valid_ranges = terrain.select_dem_for_site(
         lat_deg, lon_deg, max_range_km=max_range_km, preferred_dem_id=preferred_dem_id
     )
@@ -83,7 +91,7 @@ def compute_horizon_raymarch(
     up = u_site
 
     # Step parameters: half-pixel spacing
-    step_m = max(10.0, dem_info.resolution_m * 0.5)
+    step_m = max(20.0, float(dem_info.resolution_m))
     n_bins = int(round(360.0 / az_step_deg))
     mask_deg = []
     actual_valid_ranges = []
@@ -106,17 +114,17 @@ def compute_horizon_raymarch(
         cos_sigmas = np.cos(sigmas)
         sin_sigmas = np.sin(sigmas)
 
-        # Great-circle 3D positions on unit sphere
+        # Great-circle 3D positions on unit sphere (u_site and v_dir are orthogonal unit vectors)
         pts_u = cos_sigmas[:, None] * u_site[None, :] + sin_sigmas[:, None] * v_dir[None, :]
-        pts_u /= np.linalg.norm(pts_u, axis=1, keepdims=True)
-
-        pts_lat = np.degrees(np.arcsin(np.clip(pts_u[:, 2], -1.0, 1.0)))
-        pts_lon = np.degrees(np.arctan2(pts_u[:, 1], pts_u[:, 0]))
 
         if dem_info.proj_type == "polar_stereographic":
-            pts_x, pts_y = terrain.latlon_to_polar_xy(pts_lat, pts_lon)
+            factor = (2.0 * MOON_RADIUS_M) / (1.0 - pts_u[:, 2])
+            pts_x = factor * pts_u[:, 1]
+            pts_y = factor * pts_u[:, 0]
             heights = w_dem.sample_xy_array(pts_x, pts_y)
         else:
+            pts_lat = np.degrees(np.arcsin(np.clip(pts_u[:, 2], -1.0, 1.0)))
+            pts_lon = np.degrees(np.arctan2(pts_u[:, 1], pts_u[:, 0]))
             heights = w_dem.sample_latlon_array(pts_lat, pts_lon)
 
         valid_pts = ~np.isnan(heights)
@@ -141,8 +149,9 @@ def compute_horizon_raymarch(
         u = diff @ up
         d_horiz = np.hypot(e, n)
 
-        els = np.degrees(np.arctan2(u, d_horiz))
-        max_el = float(np.max(els))
+        inv_d_horiz = 1.0 / d_horiz
+        tan_els = u * inv_d_horiz
+        max_el = math.degrees(math.atan(float(np.max(tan_els))))
 
         mask_deg.append(round(max_el, 3))
         actual_valid_ranges.append(round(float(last_valid_dist) / 1000.0, 2))
@@ -161,6 +170,165 @@ def compute_horizon_raymarch(
         "site_height_m": round(site_h, 2),
         "method": "ray_march",
         "generated": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+    }
+
+
+def compute_horizon_multi(
+    lat_deg: float,
+    lon_deg: float,
+    observer_heights_m: List[float] = [0.0, 1.5, 3.0, 5.0, 10.0],
+    max_ranges_km: List[float] = [20.0, 50.0, 100.0],
+    az_step_deg: float = 1.0,
+    min_range_m: float = 40.0,
+    preferred_dem_id: Optional[str] = None,
+) -> Dict[str, Any]:
+    """
+    High-performance multi-mast-height and multi-range horizon calculation.
+    Samples the underlying DEM along each ray only ONCE at max(max_ranges_km),
+    then vectorizes the elevation calculation across all requested mast heights
+    and range cutoffs simultaneously.
+    """
+    max_overall_range = max(max_ranges_km)
+    dem_info, coverage_status, valid_ranges = terrain.select_dem_for_site(
+        lat_deg, lon_deg, max_range_km=max_overall_range, preferred_dem_id=preferred_dem_id
+    )
+
+    n_bins = int(round(360.0 / az_step_deg))
+
+    masks: Dict[str, List[float]] = {
+        f"h_{str(h).replace('.', '_')}m": [] for h in observer_heights_m
+    }
+    ref_h = 1.5 if 1.5 in observer_heights_m else observer_heights_m[0]
+    sensitivity: Dict[str, List[float]] = {
+        f"range_{int(r)}km": [] for r in max_ranges_km
+    }
+
+    if dem_info is None or coverage_status == "unavailable":
+        empty_mask = [0.0] * n_bins
+        for k in masks:
+            masks[k] = list(empty_mask)
+        for k in sensitivity:
+            sensitivity[k] = list(empty_mask)
+        return {
+            "lat": lat_deg,
+            "lon": lon_deg,
+            "dem_id": None,
+            "resolution_m": None,
+            "coverage_status": "unavailable",
+            "site_height_m": 0.0,
+            "masks": masks,
+            "sensitivity": sensitivity,
+            "generated_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        }
+
+    # Load windowed DEM
+    w_dem = terrain.get_windowed_dem(dem_info, lat_deg, lon_deg, max_range_km=max_overall_range)
+    site_h = w_dem.sample_latlon(lat_deg, lon_deg)
+    if site_h is None:
+        site_h = 0.0
+
+    lat_rad = math.radians(lat_deg)
+    lon_rad = math.radians(lon_deg)
+    cos_lat = math.cos(lat_rad)
+    sin_lat = math.sin(lat_rad)
+    cos_lon = math.cos(lon_rad)
+    sin_lon = math.sin(lon_rad)
+
+    u_site = np.array([cos_lat * cos_lon, cos_lat * sin_lon, sin_lat], dtype=np.float64)
+    pos_site = (MOON_RADIUS_M + site_h) * u_site
+
+    east = np.array([-sin_lon, cos_lon, 0.0], dtype=np.float64)
+    north = np.array([-sin_lat * cos_lon, -sin_lat * sin_lon, cos_lat], dtype=np.float64)
+    up = u_site
+
+    step_m = max(20.0, float(dem_info.resolution_m))
+
+    for i in range(n_bins):
+        az = i * az_step_deg
+        az_rad = math.radians(az)
+        v_dir = math.cos(az_rad) * north + math.sin(az_rad) * east
+
+        max_r_km = valid_ranges[int(round(az)) % 360]
+        max_dist_m = max_r_km * 1000.0
+
+        dists = np.arange(min_range_m, max_dist_m + step_m * 0.5, step_m, dtype=np.float64)
+        if len(dists) == 0:
+            for k in masks:
+                masks[k].append(0.0)
+            for k in sensitivity:
+                sensitivity[k].append(0.0)
+            continue
+
+        sigmas = dists / MOON_RADIUS_M
+        cos_sigmas = np.cos(sigmas)
+        sin_sigmas = np.sin(sigmas)
+
+        # Great-circle 3D positions on unit sphere (u_site and v_dir are orthogonal unit vectors)
+        pts_u = cos_sigmas[:, None] * u_site[None, :] + sin_sigmas[:, None] * v_dir[None, :]
+
+        if dem_info.proj_type == "polar_stereographic":
+            factor = (2.0 * MOON_RADIUS_M) / (1.0 - pts_u[:, 2])
+            pts_x = factor * pts_u[:, 1]
+            pts_y = factor * pts_u[:, 0]
+            heights = w_dem.sample_xy_array(pts_x, pts_y)
+        else:
+            pts_lat = np.degrees(np.arcsin(np.clip(pts_u[:, 2], -1.0, 1.0)))
+            pts_lon = np.degrees(np.arctan2(pts_u[:, 1], pts_u[:, 0]))
+            heights = w_dem.sample_latlon_array(pts_lat, pts_lon)
+
+        valid_pts = ~np.isnan(heights)
+        if not np.any(valid_pts):
+            for k in masks:
+                masks[k].append(0.0)
+            for k in sensitivity:
+                sensitivity[k].append(0.0)
+            continue
+
+        pts_u_v = pts_u[valid_pts]
+        h_v = heights[valid_pts]
+        dists_v = dists[valid_pts]
+
+        p_terrain = (MOON_RADIUS_M + h_v)[:, None] * pts_u_v
+        diff_0 = p_terrain - pos_site[None, :]
+
+        e = diff_0 @ east
+        n = diff_0 @ north
+        d_horiz = np.hypot(e, n)
+        inv_d_horiz = 1.0 / d_horiz
+        u_0 = diff_0 @ up
+
+        default_range_m = (50.0 if lat_deg <= -60.0 else 30.0) * 1000.0
+        in_default_range = dists_v <= default_range_m
+
+        for h in observer_heights_m:
+            key = f"h_{str(h).replace('.', '_')}m"
+            u_h = u_0 - h
+            tan_el = u_h * inv_d_horiz
+            tan_def = tan_el[in_default_range] if np.any(in_default_range) else tan_el
+            max_tan = float(np.max(tan_def)) if len(tan_def) > 0 else 0.0
+            max_el = math.degrees(math.atan(max_tan))
+            masks[key].append(round(max_el, 3))
+
+        u_ref = u_0 - ref_h
+        tan_ref = u_ref * inv_d_horiz
+        for r in max_ranges_km:
+            key = f"range_{int(r)}km"
+            in_r = dists_v <= (r * 1000.0)
+            tan_r = tan_ref[in_r] if np.any(in_r) else tan_ref
+            max_tan = float(np.max(tan_r)) if len(tan_r) > 0 else 0.0
+            max_el = math.degrees(math.atan(max_tan))
+            sensitivity[key].append(round(max_el, 3))
+
+    return {
+        "lat": lat_deg,
+        "lon": lon_deg,
+        "site_height_m": round(site_h, 2),
+        "dem_id": dem_info.id,
+        "resolution_m": dem_info.resolution_m,
+        "coverage_status": coverage_status,
+        "masks": masks,
+        "sensitivity": sensitivity,
+        "generated_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
     }
 
 
@@ -325,3 +493,4 @@ def lookup_horizon(mask: Dict[str, Any] | List[float], az_deg: float) -> float:
 
 # Canonical alias
 compute_horizon = compute_horizon_raymarch
+lookup_horizon_elevation = lookup_horizon

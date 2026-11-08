@@ -94,6 +94,7 @@ LSK_FILENAME: str = "naif0012.tls"
 # ── Ephemeris step constraints (API guard-rails) ──────────────────────────
 MIN_STEP_SECONDS: int = 60              # minimum time step the API will accept
 MAX_DATE_RANGE_DAYS: int = 365 * 9     # cap: 2024 through 2032 inclusive
+MAX_API_DATE_RANGE_DAYS: int = 90      # on-demand API request cap (90 days)
 
 # ── Horizon defaults ─────────────────────────────────────────────────────
 FLAT_HORIZON_DEG: float = 0.0          # flat / idealized horizon elevation

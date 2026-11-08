@@ -449,11 +449,13 @@ class WindowedDEM:
             if not (0 <= col_local < self.width - 1 and 0 <= row_local < self.height - 1):
                 return None
             c0 = int(col_local)
+            c1 = c0 + 1
             r0 = int(row_local)
+            r1 = r0 + 1
             v00 = self.data[r0, c0]
-            v10 = self.data[r0, c0 + 1]
+            v10 = self.data[r0, c1]
             v01 = self.data[r1, c0]
-            v11 = self.data[r1, c0 + 1]
+            v11 = self.data[r1, c1]
             if v00 == NODATA_VALUE or v10 == NODATA_VALUE or v01 == NODATA_VALUE or v11 == NODATA_VALUE:
                 return None
             dc = col_local - c0

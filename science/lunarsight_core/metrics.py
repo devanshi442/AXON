@@ -395,10 +395,21 @@ def compute_site_flat_and_terrain_metrics(
     power_config: Optional[Dict[str, Any]] = None,
     site_lat: Optional[float] = None,
     site_lon: Optional[float] = None,
+    **kwargs: Any,
 ) -> Dict[str, Any]:
     """
     Compute metrics for both Flat and Terrain modes, plus delta (terrain - flat).
     """
+    if "antenna_margin_deg" in kwargs:
+        dte_margin_deg = kwargs["antenna_margin_deg"]
+
+    if power_config is None and ("solar_array_type" in kwargs or "orientation" in kwargs):
+        power_config = {
+            "orientation": kwargs.get("solar_array_type") or kwargs.get("orientation", "flat"),
+            "tilt_deg": kwargs.get("solar_tilt_deg") or kwargs.get("tilt_deg"),
+            "azimuth_deg": kwargs.get("solar_azimuth_deg") or kwargs.get("azimuth_deg"),
+        }
+
     flat_res = compute_comprehensive_metrics(
         timeseries=timeseries,
         mask=None,
@@ -410,7 +421,7 @@ def compute_site_flat_and_terrain_metrics(
         site_lon=site_lon,
     )
 
-    if horizon_mask is None or horizon_mask.get("coverage_status") == "unavailable":
+    if horizon_mask is None or (isinstance(horizon_mask, dict) and horizon_mask.get("coverage_status") == "unavailable"):
         return {
             "flat": flat_res,
             "terrain": None,
@@ -444,6 +455,11 @@ def compute_site_flat_and_terrain_metrics(
         "terrain": terrain_res,
         "delta_terrain_minus_flat": delta,
     }
+
+
+# Backwards compatibility / convenience alias
+compute_dual_metrics = compute_site_flat_and_terrain_metrics
+extract_windows = extract_windows_refined
 
 
 def rank_windows(

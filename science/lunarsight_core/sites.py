@@ -195,6 +195,12 @@ def get_valid_sites(data_yaml_or_json: Optional[Path | str] = None) -> List[Site
     return [s for s in reg if s.is_valid()]
 
 
+def get_skipped_sites(data_yaml_or_json: Optional[Path | str] = None) -> List[SiteRecord]:
+    """Return sites with null or invalid coordinates."""
+    reg = load_site_registry(data_yaml_or_json)
+    return [s for s in reg if not s.is_valid()]
+
+
 def get_site_by_id(site_id: str, data_yaml_or_json: Optional[Path | str] = None) -> Optional[SiteRecord]:
     """Find a specific site by ID."""
     reg = load_site_registry(data_yaml_or_json)

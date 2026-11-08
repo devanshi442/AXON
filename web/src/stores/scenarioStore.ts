@@ -61,7 +61,23 @@ export const useScenarioStore = create<ScenarioStore>((set, get) => ({
       if (!res.ok) {
         throw new Error(`Timeseries for ${siteId} not available (HTTP ${res.status})`)
       }
-      const data: GeometryTimeseries = await res.json()
+      const raw: any = await res.json()
+      if (raw.scale) {
+        const inv = 1.0 / raw.scale
+        raw.sun_azimuth_deg = raw.sun_azimuth_deg.map((v: number) => Math.round(v * inv * 100) / 100)
+        raw.sun_elevation_deg = raw.sun_elevation_deg.map((v: number) => Math.round(v * inv * 100) / 100)
+        raw.earth_azimuth_deg = raw.earth_azimuth_deg.map((v: number) => Math.round(v * inv * 100) / 100)
+        raw.earth_elevation_deg = raw.earth_elevation_deg.map((v: number) => Math.round(v * inv * 100) / 100)
+      }
+      if (!raw.times && raw.start_utc && raw.step_seconds && raw.sun_elevation_deg) {
+        const n = raw.sun_elevation_deg.length
+        const stepMs = raw.step_seconds * 1000
+        const startMs = new Date(raw.start_utc).getTime()
+        raw.times = Array.from({ length: n }, (_, i) =>
+          new Date(startMs + i * stepMs).toISOString().replace('.000Z', 'Z')
+        )
+      }
+      const data: GeometryTimeseries = raw
       set((state) => ({
         timeseriesCache: { ...state.timeseriesCache, [siteId]: data },
         loading: { ...state.loading, [siteId]: false },
