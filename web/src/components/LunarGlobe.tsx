@@ -40,6 +40,22 @@ export function latLonToVector3(latDeg: number, lonDeg: number, radius = GLOBE_R
   return new THREE.Vector3(x, y, z)
 }
 
+/**
+ * Compute camera distance required to fit a sphere of radius R
+ * within the camera's FOV and panel aspect ratio with a small margin.
+ */
+export function computeFittingDistance(
+  radius: number,
+  fovDeg: number,
+  aspect: number,
+  margin = 1.08
+): number {
+  const vHalfFov = (fovDeg * Math.PI) / 360
+  const hHalfFov = Math.atan(aspect * Math.tan(vHalfFov))
+  const minHalfFov = Math.min(vHalfFov, hHalfFov)
+  return (radius * margin) / Math.sin(minHalfFov)
+}
+
 export function isWebGLAvailable(): boolean {
   try {
     const canvas = document.createElement('canvas')
@@ -68,6 +84,7 @@ export default function LunarGlobe({
   const mountRef = useRef<HTMLDivElement>(null)
   const controlsRef = useRef<OrbitControls | null>(null)
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null)
+  const defaultDistanceRef = useRef<number>(3.9)
   const markersGroupRef = useRef<THREE.Group | null>(null)
   const onSelectSiteRef = useRef(onSelectSite)
   onSelectSiteRef.current = onSelectSite
@@ -87,22 +104,23 @@ export default function LunarGlobe({
       if (!camera) return
 
       setCurrentView(view)
+      const dist = defaultDistanceRef.current || computeFittingDistance(GLOBE_RADIUS, camera.fov, camera.aspect, 1.08)
 
       if (view === 'south_pole') {
         // Looking straight down the south pole axis (-Y)
         // With camera.up pointing along +X (0° longitude, Prime Meridian pointing UP)
-        // Tightened distance so south pole candidate markers separate clearly
-        camera.position.set(0, -2.5, 0)
+        // Fitted distance so the full sphere is visible with small margin
+        camera.position.set(0, -dist, 0)
         camera.up.set(1, 0, 0)
         if (controls) controls.target.set(0, 0, 0)
       } else if (view === 'near_side') {
         // Looking at 0° lon, 0° lat (Earth-facing Near Side center)
-        camera.position.set(3.9, 0, 0)
+        camera.position.set(dist, 0, 0)
         camera.up.set(0, 1, 0)
         if (controls) controls.target.set(0, 0, 0)
       } else if (view === 'far_side') {
         // Looking at 180° lon (Far Side center)
-        camera.position.set(-3.9, 0, 0)
+        camera.position.set(-dist, 0, 0)
         camera.up.set(0, 1, 0)
         if (controls) controls.target.set(0, 0, 0)
       }
@@ -121,8 +139,8 @@ export default function LunarGlobe({
       if (!camera) return
 
       setCurrentView('custom')
+      const dist = defaultDistanceRef.current || computeFittingDistance(GLOBE_RADIUS, camera.fov, camera.aspect, 1.08)
       const normal = latLonToVector3(lat, lon, 1.0).normalize()
-      const dist = Math.abs(lat) > 75 ? 2.5 : 3.9
       const targetPos = normal.clone().multiplyScalar(dist)
 
       camera.position.copy(targetPos)
@@ -154,6 +172,8 @@ export default function LunarGlobe({
     if (!webGLSupported || !mountRef.current) return
 
     const container = mountRef.current
+    let controls: OrbitControls | null = null
+    let isUserInteracting = false
 
     // 1. Scene
     const scene = new THREE.Scene()
@@ -173,8 +193,20 @@ export default function LunarGlobe({
       camera.up.set(Math.sin(tiltRad), Math.cos(tiltRad), 0)
       camera.lookAt(0, 0, 0)
     } else {
-      // Looking straight down south pole axis with tightened distance for marker separation
-      camera.position.set(0, -2.5, 0)
+      // Default initial camera distance computed from initial panel size and FOV
+      const initialW = container.clientWidth || 600
+      const initialH = container.clientHeight || 490
+      const initialAspect = initialW / initialH
+      const initialFov =
+        initialAspect < 1
+          ? 2 * Math.atan(Math.tan((45 * Math.PI) / 360) / initialAspect) * (180 / Math.PI)
+          : 45
+      camera.fov = initialFov
+      camera.aspect = initialAspect
+      camera.updateProjectionMatrix()
+      const initialDist = computeFittingDistance(GLOBE_RADIUS, initialFov, initialAspect, 1.08)
+      defaultDistanceRef.current = initialDist
+      camera.position.set(0, -initialDist, 0)
       camera.up.set(1, 0, 0)
       camera.lookAt(0, 0, 0)
     }
@@ -207,6 +239,21 @@ export default function LunarGlobe({
       camera.updateProjectionMatrix()
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
       renderer.setSize(width, height, false)
+
+      // Dynamically compute camera distance so the whole sphere is visible with small margin
+      const fitDist = computeFittingDistance(GLOBE_RADIUS, camera.fov, aspect, 1.08)
+      defaultDistanceRef.current = fitDist
+
+      // If user hasn't manually orbited/zoomed yet, keep the initial South Pole view fitted
+      if (mode !== 'hero' && !isUserInteracting) {
+        camera.position.set(0, -fitDist, 0)
+        camera.up.set(1, 0, 0)
+        camera.lookAt(0, 0, 0)
+        if (controls) {
+          controls.target.set(0, 0, 0)
+          controls.update()
+        }
+      }
     }
 
     const resizeObserver = new ResizeObserver((entries) => {
@@ -224,9 +271,11 @@ export default function LunarGlobe({
     }
 
     // 4. Controls (Interactive mode only)
-    let controls: OrbitControls | null = null
     if (mode === 'interactive') {
       controls = new OrbitControls(camera, renderer.domElement)
+      controls.addEventListener('start', () => {
+        isUserInteracting = true
+      })
       controls.enableDamping = false // Strict: no unexpected inertia drift
       controls.enablePan = false // Keep globe centered
       controls.minDistance = 1.9 // Closer zoom headroom for south pole features (radius = 1.5)
