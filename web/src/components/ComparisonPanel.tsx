@@ -11,6 +11,7 @@ import {
   computeSolarPowerWatts,
   formatUtcDisplay,
 } from '../utils/scienceMath'
+import PanelCornerBrackets from './PanelCornerBrackets'
 
 interface ComparisonPanelProps {
   sites: SelectableSite[]
@@ -138,8 +139,15 @@ export default function ComparisonPanel({ sites }: ComparisonPanelProps) {
 
   const fmtHrs = (val: number | null | undefined) => (val == null ? 'N/A' : `${val} h`)
 
+  const isRegionCentreA =
+    siteA?.coord_kind === 'region_centre' || siteA?.coord_kind === 'planned_region_center'
+  const isRegionCentreB =
+    siteB?.coord_kind === 'region_centre' || siteB?.coord_kind === 'planned_region_center'
+  const hasRegionCentre = isRegionCentreA || isRegionCentreB
+
   return (
-    <div className="bg-[#0D1014] border border-[#2A2D31] rounded p-4 flex flex-col gap-4">
+    <div className="relative bg-[#0D1014] border border-[#2A2D31] rounded p-4 flex flex-col gap-4">
+      <PanelCornerBrackets />
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>
           <h2 className="text-sm font-semibold text-[#E4E4E2] uppercase tracking-wider flex items-center gap-2">
@@ -384,10 +392,15 @@ export default function ComparisonPanel({ sites }: ComparisonPanelProps) {
           )}
           {diffDarkGap != null && (
             <span className="ml-1 text-[#8A8A88]">
-              Longest darkness interval difference is {fmtDiff(diffDarkGap, ' hours')}, which directly impacts lander survival heater battery sizing.
+              {' '}Longest darkness interval difference is {fmtDiff(diffDarkGap, ' hours')}, which directly impacts lander survival heater battery sizing.
             </span>
           )}
         </p>
+        {hasRegionCentre && (
+          <div className="mt-1 pt-1.5 border-t border-[#2A2D31] text-[#E0A04A] font-medium">
+            ⚠️ One site is a region centre, so this is not a like-for-like comparison.
+          </div>
+        )}
       </div>
     </div>
   )

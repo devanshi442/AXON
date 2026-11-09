@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { SelectableSite } from '../types/mission'
 import { useScenarioStore } from '../stores/scenarioStore'
 import { formatUtcDisplay } from '../utils/scienceMath'
+import PanelCornerBrackets from './PanelCornerBrackets'
 
 interface MissionExplorerProps {
   sites: SelectableSite[]
@@ -45,7 +46,8 @@ export default function MissionExplorer({ sites }: MissionExplorerProps) {
   ]
 
   return (
-    <div className="bg-[#0D1014] border border-[#2A2D31] rounded p-4 flex flex-col gap-4">
+    <div className="relative bg-[#0D1014] border border-[#2A2D31] rounded p-4 flex flex-col gap-4">
+      <PanelCornerBrackets />
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h2 className="text-sm font-semibold text-[#E4E4E2] uppercase tracking-wider flex items-center gap-1.5">

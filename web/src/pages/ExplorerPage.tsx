@@ -6,6 +6,7 @@ import MissionExplorer from '../components/MissionExplorer'
 import ScenarioPanel from '../components/ScenarioPanel'
 import OpportunityTimeline from '../components/OpportunityTimeline'
 import ComparisonPanel from '../components/ComparisonPanel'
+import PanelCornerBrackets from '../components/PanelCornerBrackets'
 
 const LunarGlobe = lazy(() => import('../components/LunarGlobe'))
 
@@ -13,7 +14,7 @@ export default function ExplorerPage() {
   const [missionsData, setMissionsData] = useState<MissionsData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [showEducationalCard, setShowEducationalCard] = useState(true)
+  const [showEducationalCard, setShowEducationalCard] = useState(false)
   const [mapViewMode, setMapViewMode] = useState<'globe' | 'flat'>('globe')
 
   const {
@@ -124,7 +125,8 @@ export default function ExplorerPage() {
   return (
     <div className="flex flex-col gap-6 animate-fade-in pb-12">
       {/* Top Banner / Headline */}
-      <div className="bg-[#0D1014] border border-[#2A2D31] p-5 rounded flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="relative bg-[#0D1014] border border-[#2A2D31] p-5 rounded flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <PanelCornerBrackets />
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="px-2 py-0.5 rounded text-3xs font-semibold uppercase bg-[#6FA8C9]/20 text-[#6FA8C9] border border-[#6FA8C9]/40 font-mono">
@@ -161,7 +163,8 @@ export default function ExplorerPage() {
       </div>
 
       {/* Educational Guide Card for Mission Planners, Educators & Public */}
-      <div className="bg-[#0D1014] border border-[#2A2D31] rounded p-4">
+      <div className="relative bg-[#0D1014] border border-[#2A2D31] rounded p-4">
+        <PanelCornerBrackets />
         <div className="flex items-center justify-between cursor-pointer" onClick={() => setShowEducationalCard(!showEducationalCard)}>
           <div className="flex items-center gap-2.5">
             <span className="text-base">🎓</span>

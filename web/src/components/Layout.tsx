@@ -9,7 +9,6 @@ interface LayoutProps {
 const navLinks = [
   { path: '/explorer',   label: 'Explorer',   id: 'nav-explorer' },
   { path: '/methods',    label: 'Methods',    id: 'nav-methods'  },
-  { path: '/globe-test', label: 'Globe Test', id: 'nav-globe-test' },
 ]
 
 export default function Layout({ children }: LayoutProps) {

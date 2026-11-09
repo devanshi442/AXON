@@ -5,6 +5,7 @@ import {
   compute30DayWindows,
 } from '../stores/scenarioStore'
 import { type EarthCriterion, type SolarOrientation, formatUtcDisplay } from '../utils/scienceMath'
+import PanelCornerBrackets from './PanelCornerBrackets'
 
 interface OpportunityTimelineProps {
   sites: SelectableSite[]
@@ -57,7 +58,8 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
   const mastHeights = [0.0, 1.5, 3.0, 5.0, 10.0]
 
   return (
-    <div className="bg-[#0D1014] border border-[#2A2D31] rounded p-4 flex flex-col gap-4">
+    <div className="relative bg-[#0D1014] border border-[#2A2D31] rounded p-4 flex flex-col gap-4">
+      <PanelCornerBrackets />
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h2 className="text-sm font-semibold text-[#E4E4E2] uppercase tracking-wider flex items-center gap-2">

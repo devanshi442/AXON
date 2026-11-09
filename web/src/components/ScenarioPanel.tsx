@@ -1,9 +1,10 @@
-import type { ChangeEvent } from 'react'
+import { useMemo, type ChangeEvent } from 'react'
 import type { SelectableSite } from '../types/mission'
 import {
   useScenarioStore,
   getElevationAtTime,
   getMaskForMastHeight,
+  compute30DayWindows,
   SUN_UPPER_LIMB_DEG,
 } from '../stores/scenarioStore'
 import {
@@ -13,6 +14,7 @@ import {
   computeSolarPowerWatts,
   formatUtcDisplay,
 } from '../utils/scienceMath'
+import PanelCornerBrackets from './PanelCornerBrackets'
 
 interface ScenarioPanelProps {
   type: 'A' | 'B'
@@ -29,6 +31,7 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
     setScenarioB,
     setUtcA,
     setUtcB,
+    thresholdDeg,
     horizonMode,
     mastHeightM,
     dteMarginDeg,
@@ -112,12 +115,44 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
         : earthEl >= dteMarginDeg
       : false
 
+  // 30-Day Opportunity Window computation for plain-language summary
+  const opp = useMemo(() => {
+    return compute30DayWindows(ts, utc, {
+      sunThresholdDeg: thresholdDeg,
+      horizonMode,
+      mastHeightM,
+      dteMarginDeg,
+      earthCriterion,
+      solarArrayType,
+      arrayAreaM2,
+      arrayEfficiency,
+      horizonProfile: horizon,
+    })
+  }, [
+    ts,
+    utc,
+    thresholdDeg,
+    horizonMode,
+    mastHeightM,
+    dteMarginDeg,
+    earthCriterion,
+    solarArrayType,
+    arrayAreaM2,
+    arrayEfficiency,
+    horizon,
+  ])
+
+  const sunlightPct = opp?.sun.percentage ?? 0
+  const sunlightHours = opp ? Math.round(opp.sun.total_hours) : 0
+  const totalPeriodHours = opp ? Math.round(opp.total_period_hours) : 720
+
   const isScenarioA = type === 'A'
   const accentBorder = isScenarioA ? 'border-[#E0A04A]' : 'border-[#6FA8C9]'
   const badgeBg = isScenarioA ? 'bg-[#E0A04A] text-[#050608]' : 'bg-[#6FA8C9] text-[#050608]'
 
   return (
-    <div className={`p-4 bg-[#0D1014] border ${accentBorder} rounded flex flex-col gap-4`}>
+    <div className={`relative p-4 bg-[#0D1014] border ${accentBorder} rounded flex flex-col gap-4`}>
+      <PanelCornerBrackets />
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -301,7 +336,7 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
             <div className="flex items-center justify-between">
               <span className="text-3xs uppercase tracking-wider text-[#6FA8C9] font-semibold flex items-center gap-1 font-mono">
                 <span className="w-2 h-2 rounded-full bg-[#6FA8C9]"></span>
-                Earth (DTE Comm)
+                Earth (<abbr title="Direct-to-Earth contact: Geometric line-of-sight between the lunar surface site and Earth centre" className="cursor-help underline decoration-dotted decoration-[#6FA8C9]/60">Direct-to-Earth contact</abbr>)
               </span>
               <span
                 className={`px-1.5 py-0.2 rounded text-3xs font-medium font-mono ${
@@ -329,6 +364,16 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
               <span className="capitalize">{earthCriterion.replace('_', ' ')}</span>
             </div>
           </div>
+
+          {/* Plain-Language 30-Day Operational Summary */}
+          <div className="col-span-2 p-3 bg-[#050608] border border-[#2A2D31] rounded text-xs text-[#E4E4E2]">
+            <div className="text-3xs uppercase font-mono tracking-wider text-[#8A8A88] mb-1">
+              30-Day Operational Lighting Summary
+            </div>
+            <div className="font-medium text-[#E4E4E2]">
+              Sunlight for <span className="font-bold text-[#E0A04A]">{sunlightPct.toFixed(1)}%</span> of the next 30 days ({sunlightHours} of {totalPeriodHours} h){horizonMode === 'terrain' ? ` at mast ${mastHeightM} m.` : ' on flat sphere (0° horizon).'}
+            </div>
+          </div>
         </div>
       )}
 
@@ -337,7 +382,19 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
         <div className="flex justify-between text-3xs text-[#8A8A88] mb-1 font-mono">
           <span>Nadir (-90°)</span>
           <span className="text-[#E4E4E2] font-semibold">
-            {horizonMode === 'terrain' ? `Local Skyline (${sunHorizonEl.toFixed(1)}° Sun / ${earthHorizonEl.toFixed(1)}° Earth)` : 'Flat sphere, 0 deg horizon'}
+            {horizonMode === 'terrain' ? (
+              <span>
+                <abbr
+                  title="Terrain horizon seen from the site: 3D ray-marched topographic obstacle elevation across 360° azimuth"
+                  className="cursor-help underline decoration-dotted decoration-[#8A8A88]/60"
+                >
+                  Local skyline (terrain horizon seen from the site)
+                </abbr>{' '}
+                ({sunHorizonEl.toFixed(1)}° Sun / {earthHorizonEl.toFixed(1)}° Earth)
+              </span>
+            ) : (
+              'Flat sphere, 0 deg horizon'
+            )}
           </span>
           <span>Zenith (+90°)</span>
         </div>
