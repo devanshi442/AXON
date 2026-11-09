@@ -1,12 +1,13 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, lazy, Suspense } from 'react'
 import type { MissionsData, SelectableSite, CoordKind } from '../types/mission'
 import { useScenarioStore } from '../stores/scenarioStore'
 import MoonMap from '../components/MoonMap'
-import LunarGlobe from '../components/LunarGlobe'
 import MissionExplorer from '../components/MissionExplorer'
 import ScenarioPanel from '../components/ScenarioPanel'
 import OpportunityTimeline from '../components/OpportunityTimeline'
 import ComparisonPanel from '../components/ComparisonPanel'
+
+const LunarGlobe = lazy(() => import('../components/LunarGlobe'))
 
 export default function ExplorerPage() {
   const [missionsData, setMissionsData] = useState<MissionsData | null>(null)
@@ -252,15 +253,23 @@ export default function ExplorerPage() {
 
           {mapViewMode === 'globe' ? (
             <div className="flex flex-col gap-1.5">
-              <LunarGlobe
-                sites={selectableSites}
-                selectedSiteId={scenarioAId}
-                onSelectSite={(site) => setScenarioA(site.id)}
-                scenarioAId={scenarioAId}
-                scenarioBId={scenarioBId}
-                heightClass="min-h-[460px] lg:min-h-[490px]"
-                compact={false}
-              />
+              <Suspense
+                fallback={
+                  <div className="w-full min-h-[460px] lg:min-h-[490px] bg-[#050608] border border-[#2A2D31] rounded flex items-center justify-center text-3xs font-mono text-[#8A8A88]">
+                    Loading 3D lunar globe...
+                  </div>
+                }
+              >
+                <LunarGlobe
+                  sites={selectableSites}
+                  selectedSiteId={scenarioAId}
+                  onSelectSite={(site) => setScenarioA(site.id)}
+                  scenarioAId={scenarioAId}
+                  scenarioBId={scenarioBId}
+                  heightClass="min-h-[460px] lg:min-h-[490px]"
+                  compact={false}
+                />
+              </Suspense>
               <div className="text-3xs font-mono text-[#8A8A88] px-1 text-right">
                 Moon surface: NASA SVS CGI Moon Kit (LRO). Visual backdrop only; results use LOLA elevation data.
               </div>

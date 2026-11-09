@@ -3,8 +3,8 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import type { SelectableSite } from '../types/mission'
 
-interface LunarGlobeProps {
-  sites: SelectableSite[]
+export interface LunarGlobeProps {
+  sites?: SelectableSite[]
   selectedSiteId?: string | null
   onSelectSite?: (site: SelectableSite) => void
   scenarioAId?: string
@@ -14,6 +14,7 @@ interface LunarGlobeProps {
   heightClass?: string
   showControls?: boolean
   compact?: boolean
+  mode?: 'interactive' | 'hero'
 }
 
 const GLOBE_RADIUS = 1.5
@@ -52,7 +53,7 @@ export function isWebGLAvailable(): boolean {
 }
 
 export default function LunarGlobe({
-  sites,
+  sites = [],
   selectedSiteId,
   onSelectSite,
   scenarioAId,
@@ -62,6 +63,7 @@ export default function LunarGlobe({
   heightClass = 'min-h-[380px] sm:min-h-[460px] lg:min-h-[520px]',
   showControls = true,
   compact = false,
+  mode = 'interactive',
 }: LunarGlobeProps) {
   const mountRef = useRef<HTMLDivElement>(null)
   const controlsRef = useRef<OrbitControls | null>(null)
@@ -77,49 +79,49 @@ export default function LunarGlobe({
     typeof window !== 'undefined' &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-  // Preset view navigator
+  // Preset view navigator (interactive mode)
   const setCameraView = useCallback(
     (view: 'south_pole' | 'near_side' | 'far_side') => {
       const camera = cameraRef.current
       const controls = controlsRef.current
-      if (!camera || !controls) return
+      if (!camera) return
 
       setCurrentView(view)
 
       if (view === 'south_pole') {
         // Looking straight down the south pole axis (-Y)
         // With camera.up pointing along +X (0° longitude, Prime Meridian pointing UP)
-        camera.position.set(0, -3.8, 0)
+        camera.position.set(0, -3.9, 0)
         camera.up.set(1, 0, 0)
-        controls.target.set(0, 0, 0)
+        if (controls) controls.target.set(0, 0, 0)
       } else if (view === 'near_side') {
         // Looking at 0° lon, 0° lat (Earth-facing Near Side center)
-        camera.position.set(3.8, 0, 0)
+        camera.position.set(3.9, 0, 0)
         camera.up.set(0, 1, 0)
-        controls.target.set(0, 0, 0)
+        if (controls) controls.target.set(0, 0, 0)
       } else if (view === 'far_side') {
         // Looking at 180° lon (Far Side center)
-        camera.position.set(-3.8, 0, 0)
+        camera.position.set(-3.9, 0, 0)
         camera.up.set(0, 1, 0)
-        controls.target.set(0, 0, 0)
+        if (controls) controls.target.set(0, 0, 0)
       }
 
       camera.lookAt(0, 0, 0)
-      controls.update()
+      if (controls) controls.update()
     },
     []
   )
 
-  // Focus a specific site
+  // Focus a specific site (interactive mode)
   const focusSite = useCallback(
     (lat: number, lon: number) => {
       const camera = cameraRef.current
       const controls = controlsRef.current
-      if (!camera || !controls) return
+      if (!camera) return
 
       setCurrentView('custom')
       const normal = latLonToVector3(lat, lon, 1.0).normalize()
-      const targetPos = normal.clone().multiplyScalar(3.8)
+      const targetPos = normal.clone().multiplyScalar(3.9)
 
       camera.position.copy(targetPos)
       // If polar site, orient camera up toward equator (+X)
@@ -129,57 +131,116 @@ export default function LunarGlobe({
         camera.up.set(0, 1, 0)
       }
       camera.lookAt(0, 0, 0)
-      controls.target.set(0, 0, 0)
-      controls.update()
+      if (controls) {
+        controls.target.set(0, 0, 0)
+        controls.update()
+      }
     },
     []
   )
+
+  // Auto-focus selectedSiteId in interactive mode
+  useEffect(() => {
+    if (mode === 'hero' || !selectedSiteId) return
+    const target = sites.find((s) => s.id === selectedSiteId)
+    if (target && target.lat !== null && target.lon !== null) {
+      focusSite(target.lat, target.lon)
+    }
+  }, [selectedSiteId, sites, focusSite, mode])
 
   useEffect(() => {
     if (!webGLSupported || !mountRef.current) return
 
     const container = mountRef.current
-    const width = container.clientWidth || 640
-    const height = container.clientHeight || 520
 
     // 1. Scene
     const scene = new THREE.Scene()
-    scene.background = new THREE.Color(0x050608)
+    scene.background = mode === 'hero' ? null : new THREE.Color(0x050608)
 
     // 2. Camera
-    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100)
+    const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100)
     cameraRef.current = camera
 
-    // Start looking straight down south pole axis
-    camera.position.set(0, -3.8, 0)
-    camera.up.set(1, 0, 0) // Prime Meridian points UP
-    camera.lookAt(0, 0, 0)
+    if (mode === 'hero') {
+      // Near side, tilted about 25 deg so the southern region is visible toward bottom
+      const tiltRad = (25 * Math.PI) / 180
+      const dist = 3.9
+      const camX = dist * Math.cos(tiltRad)
+      const camY = -dist * Math.sin(tiltRad)
+      camera.position.set(camX, camY, 0)
+      camera.up.set(Math.sin(tiltRad), Math.cos(tiltRad), 0)
+      camera.lookAt(0, 0, 0)
+    } else {
+      // Looking straight down south pole axis
+      camera.position.set(0, -3.9, 0)
+      camera.up.set(1, 0, 0)
+      camera.lookAt(0, 0, 0)
+    }
 
-    // 3. Renderer
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false })
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-    renderer.setSize(width, height)
+    // 3. Renderer with sizing logic
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: mode === 'hero' })
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
+    renderer.domElement.style.width = '100%'
+    renderer.domElement.style.height = '100%'
+    renderer.domElement.style.display = 'block'
+    renderer.domElement.setAttribute('aria-label', 'Rendering of the Moon')
     container.innerHTML = ''
     container.appendChild(renderer.domElement)
 
-    // 4. Controls: no inertia surprises, zoom clamped
-    const controls = new OrbitControls(camera, renderer.domElement)
-    controls.enableDamping = false // Strict: no unexpected inertia drift
-    controls.enablePan = false // Keep globe centered
-    controls.minDistance = 2.2 // Prevent clipping into sphere (radius = 1.5)
-    controls.maxDistance = 8.0
-    controls.rotateSpeed = prefersReducedMotion ? 0.4 : 0.8
-    controls.zoomSpeed = prefersReducedMotion ? 0.4 : 0.8
+    // Sizing & Aspect handling via ResizeObserver
+    const updateDimensions = (width: number, height: number) => {
+      if (width <= 0 || height <= 0) return
+      const aspect = width / height
+      camera.aspect = aspect
 
-    // Auto-rotation (landing page mode)
-    if (autoRotate && !prefersReducedMotion) {
-      controls.autoRotate = true
-      controls.autoRotateSpeed = autoRotateSpeed
-    } else {
-      controls.autoRotate = false
+      // Ensure the sphere is NEVER cropped by the viewport:
+      // Standard vertical FOV is 45°. If aspect < 1 (portrait/narrow),
+      // adapt FOV so horizontal coverage matches 45° landscape.
+      if (aspect < 1) {
+        camera.fov = 2 * Math.atan(Math.tan((45 * Math.PI) / 360) / aspect) * (180 / Math.PI)
+      } else {
+        camera.fov = 45
+      }
+
+      camera.updateProjectionMatrix()
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
+      renderer.setSize(width, height, false)
     }
 
-    controlsRef.current = controls
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const { width, height } = entry.contentRect
+        updateDimensions(width, height)
+      }
+    })
+    resizeObserver.observe(container)
+
+    // Initial measurement
+    const initialRect = container.getBoundingClientRect()
+    if (initialRect.width > 0 && initialRect.height > 0) {
+      updateDimensions(initialRect.width, initialRect.height)
+    }
+
+    // 4. Controls (Interactive mode only)
+    let controls: OrbitControls | null = null
+    if (mode === 'interactive') {
+      controls = new OrbitControls(camera, renderer.domElement)
+      controls.enableDamping = false // Strict: no unexpected inertia drift
+      controls.enablePan = false // Keep globe centered
+      controls.minDistance = 2.2 // Prevent clipping into sphere (radius = 1.5)
+      controls.maxDistance = 8.0
+      controls.rotateSpeed = prefersReducedMotion ? 0.4 : 0.8
+      controls.zoomSpeed = prefersReducedMotion ? 0.4 : 0.8
+
+      if (autoRotate && !prefersReducedMotion) {
+        controls.autoRotate = true
+        controls.autoRotateSpeed = autoRotateSpeed
+      } else {
+        controls.autoRotate = false
+      }
+
+      controlsRef.current = controls
+    }
 
     // 5. Lighting
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.95)
@@ -205,67 +266,86 @@ export default function LunarGlobe({
     const moonMesh = new THREE.Mesh(sphereGeom, sphereMat)
     scene.add(moonMesh)
 
-    // 7. Markers Group
-    const markersGroup = new THREE.Group()
-    scene.add(markersGroup)
-    markersGroupRef.current = markersGroup
-
-    // 8. Raycasting for interactive click selection
-    const raycaster = new THREE.Raycaster()
-    const mouse = new THREE.Vector2()
-
-    const onPointerDown = (event: MouseEvent) => {
-      const rect = renderer.domElement.getBoundingClientRect()
-      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1
-      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1
-
-      raycaster.setFromCamera(mouse, camera)
-      const intersects = raycaster.intersectObjects(markersGroup.children, true)
-
-      if (intersects.length > 0) {
-        // Find top object with site data
-        let cur: THREE.Object3D | null = intersects[0].object
-        while (cur && !cur.userData.site) {
-          cur = cur.parent
-        }
-        if (cur && cur.userData.site && onSelectSiteRef.current) {
-          onSelectSiteRef.current(cur.userData.site)
-        }
-      }
+    // 7. Markers Group (Interactive mode only)
+    let markersGroup: THREE.Group | null = null
+    if (mode === 'interactive') {
+      markersGroup = new THREE.Group()
+      scene.add(markersGroup)
+      markersGroupRef.current = markersGroup
     }
 
-    renderer.domElement.addEventListener('click', onPointerDown)
+    // 8. Raycasting for interactive click selection
+    let onPointerDown: ((event: MouseEvent) => void) | null = null
+    let onPointerEnter: (() => void) | null = null
+    let onPointerLeave: (() => void) | null = null
+
+    if (mode === 'interactive' && markersGroup) {
+      const raycaster = new THREE.Raycaster()
+      const mouse = new THREE.Vector2()
+
+      onPointerDown = (event: MouseEvent) => {
+        const rect = renderer.domElement.getBoundingClientRect()
+        mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1
+        mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1
+
+        raycaster.setFromCamera(mouse, camera)
+        const intersects = raycaster.intersectObjects(markersGroup!.children, true)
+
+        if (intersects.length > 0) {
+          let cur: THREE.Object3D | null = intersects[0].object
+          while (cur && !cur.userData.site) {
+            cur = cur.parent
+          }
+          if (cur && cur.userData.site && onSelectSiteRef.current) {
+            onSelectSiteRef.current(cur.userData.site)
+          }
+        }
+      }
+
+      renderer.domElement.addEventListener('click', onPointerDown)
+
+      // Hover pause for auto-rotation
+      if (autoRotate && controls) {
+        onPointerEnter = () => {
+          if (controls && !prefersReducedMotion) controls.autoRotate = false
+        }
+        onPointerLeave = () => {
+          if (controls && !prefersReducedMotion) controls.autoRotate = true
+        }
+        renderer.domElement.addEventListener('pointerenter', onPointerEnter)
+        renderer.domElement.addEventListener('pointerleave', onPointerLeave)
+      }
+    }
 
     // 9. Render Loop
     let animId = 0
     const animate = () => {
       animId = requestAnimationFrame(animate)
-      if (controls.autoRotate) {
+
+      if (mode === 'hero') {
+        // Gentle slow drift of at most +/-10 deg (0.1745 rad)
+        if (!prefersReducedMotion) {
+          const drift = Math.sin(performance.now() * 0.00035) * ((10 * Math.PI) / 180)
+          moonMesh.rotation.y = drift
+        } else {
+          moonMesh.rotation.y = 0
+        }
+      } else if (controls && controls.autoRotate) {
         controls.update()
       }
+
       renderer.render(scene, camera)
     }
     animate()
 
-    // 10. Resize Observer
-    const handleResize = () => {
-      if (!mountRef.current) return
-      const w = mountRef.current.clientWidth
-      const h = mountRef.current.clientHeight
-      camera.aspect = w / h
-      camera.updateProjectionMatrix()
-      renderer.setSize(w, h)
-    }
-    window.addEventListener('resize', handleResize)
-
-    // Initial camera view
-    setCameraView('south_pole')
-
     // Cleanup
     return () => {
       cancelAnimationFrame(animId)
-      window.removeEventListener('resize', handleResize)
-      renderer.domElement.removeEventListener('click', onPointerDown)
+      resizeObserver.disconnect()
+      if (onPointerDown) renderer.domElement.removeEventListener('click', onPointerDown)
+      if (onPointerEnter) renderer.domElement.removeEventListener('pointerenter', onPointerEnter)
+      if (onPointerLeave) renderer.domElement.removeEventListener('pointerleave', onPointerLeave)
+      if (controls) controls.dispose()
       renderer.dispose()
       sphereGeom.dispose()
       sphereMat.dispose()
@@ -274,10 +354,11 @@ export default function LunarGlobe({
         container.removeChild(renderer.domElement)
       }
     }
-  }, [webGLSupported, setCameraView, autoRotate, autoRotateSpeed, prefersReducedMotion])
+  }, [webGLSupported, mode, autoRotate, autoRotateSpeed, prefersReducedMotion])
 
-  // Update Markers whenever sites, selection, or scenario assignments change
+  // Update Markers whenever sites, selection, or scenario assignments change (Interactive mode)
   useEffect(() => {
+    if (mode === 'hero') return
     const group = markersGroupRef.current
     if (!group) return
 
@@ -293,7 +374,7 @@ export default function LunarGlobe({
       }
     }
 
-    // Colors matching Phase B unified design tokens:
+    // Design tokens:
     // Scenario A: amber #E0A04A
     // Scenario B: steel blue #6FA8C9
     // All others: white #FFFFFF
@@ -371,10 +452,32 @@ export default function LunarGlobe({
 
       group.add(markerMeshGroup)
     })
-  }, [sites, selectedSiteId, scenarioAId, scenarioBId])
+  }, [sites, selectedSiteId, scenarioAId, scenarioBId, mode])
 
   // Fallback view when WebGL is unavailable
   if (!webGLSupported) {
+    if (mode === 'hero') {
+      return (
+        <div
+          className={`w-full h-full relative overflow-hidden pointer-events-none select-none ${heightClass}`}
+          style={{
+            maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 72%, rgba(0,0,0,0) 100%)',
+            WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 72%, rgba(0,0,0,0) 100%)',
+          }}
+        >
+          <img
+            src="/images/moon_color_2k.jpg"
+            alt="Rendering of the Moon"
+            aria-label="Rendering of the Moon"
+            className="w-full h-full object-cover rounded-full"
+            style={{
+              filter: 'sepia(0.18) contrast(1.05) brightness(0.95)',
+            }}
+          />
+        </div>
+      )
+    }
+
     return (
       <div className="p-4 bg-[#0D1014] border border-[#2A2D31] rounded text-[#E4E4E2]">
         <h3 className="text-xs font-bold text-[#E0A04A] mb-1">
@@ -410,6 +513,24 @@ export default function LunarGlobe({
     )
   }
 
+  // Hero Mode: Return plain container with CSS mask & sepia filter
+  if (mode === 'hero') {
+    return (
+      <div
+        ref={mountRef}
+        id="hero-moon-canvas-container"
+        className={`w-full h-full relative overflow-hidden pointer-events-none select-none ${heightClass}`}
+        style={{
+          maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 72%, rgba(0,0,0,0) 100%)',
+          WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 72%, rgba(0,0,0,0) 100%)',
+          filter: 'sepia(0.18) contrast(1.05) brightness(0.95)',
+        }}
+        aria-label="Rendering of the Moon"
+      />
+    )
+  }
+
+  // Interactive Mode
   return (
     <div className="flex flex-col gap-2 w-full">
       {/* Globe View Controls Bar */}

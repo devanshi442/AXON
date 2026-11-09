@@ -149,7 +149,8 @@ export default {
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
-        mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+        mono: ['"Roboto Mono"', 'JetBrains Mono', 'monospace'],
+        jost: ['"Jost"', 'sans-serif'],
       },
       fontSize: {
         '3xs': ['0.5625rem', { lineHeight: '0.75rem' }],

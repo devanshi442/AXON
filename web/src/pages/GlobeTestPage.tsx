@@ -1,7 +1,8 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, lazy, Suspense } from 'react'
 import type { MissionsData, SelectableSite, CoordKind } from '../types/mission'
 import { useScenarioStore } from '../stores/scenarioStore'
-import LunarGlobe from '../components/LunarGlobe'
+
+const LunarGlobe = lazy(() => import('../components/LunarGlobe'))
 
 // Known verification landmarks to prove orientation
 const TEST_VERIFICATION_LANDMARKS: SelectableSite[] = [
@@ -205,13 +206,21 @@ export default function GlobeTestPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Column: 3D Globe Viewport */}
         <div className="lg:col-span-7 xl:col-span-8 flex flex-col gap-3">
-          <LunarGlobe
-            sites={validSites}
-            selectedSiteId={selectedSiteId}
-            onSelectSite={(site) => setSelectedSiteId(site.id)}
-            scenarioAId={scenarioAId}
-            scenarioBId={scenarioBId}
-          />
+          <Suspense
+            fallback={
+              <div className="w-full min-h-[460px] bg-[#050608] border border-[#2A2D31] rounded flex items-center justify-center text-3xs font-mono text-[#8A8A88]">
+                Loading 3D lunar globe...
+              </div>
+            }
+          >
+            <LunarGlobe
+              sites={validSites}
+              selectedSiteId={selectedSiteId}
+              onSelectSite={(site) => setSelectedSiteId(site.id)}
+              scenarioAId={scenarioAId}
+              scenarioBId={scenarioBId}
+            />
+          </Suspense>
 
           {/* Selected Site Detail Card */}
           {selectedSite && (
