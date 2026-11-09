@@ -88,8 +88,8 @@ export default function Layout({ children }: LayoutProps) {
         </div>
         <div className="mt-1">
           AXON LunarSight · NASA Space Apps Challenge 2026 ·{' '}
-          <span className="text-[#E0A04A]">☀</span> Sun = amber (#E0A04A) ·{' '}
-          <span className="text-[#6FA8C9]">⊕</span> Earth = steel blue (#6FA8C9) ·{' '}
+          <span className="text-[#E0A04A]">☀</span> Sun = amber,{' '}
+          <span className="text-[#6FA8C9]">⊕</span> Earth = steel blue ·{' '}
           Geometry is not a link budget or mission recommendation.
         </div>
       </footer>

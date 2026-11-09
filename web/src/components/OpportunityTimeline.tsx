@@ -74,7 +74,8 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
         <div className="flex items-center gap-1 bg-[#050608] p-1 rounded border border-[#2A2D31] text-xs font-mono">
           <button
             onClick={() => setActiveTab('A')}
-            className={`px-3 py-1 rounded font-medium transition-colors ${
+            title={`Scenario A (${sites.find((s) => s.id === scenarioAId)?.name || 'A'})`}
+            className={`px-3 py-1 rounded font-medium transition-colors max-w-[160px] sm:max-w-[220px] truncate ${
               activeTab === 'A'
                 ? 'bg-[#E0A04A] text-[#050608] font-bold'
                 : 'text-[#8A8A88] hover:text-[#E4E4E2]'
@@ -84,7 +85,8 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
           </button>
           <button
             onClick={() => setActiveTab('B')}
-            className={`px-3 py-1 rounded font-medium transition-colors ${
+            title={`Scenario B (${sites.find((s) => s.id === scenarioBId)?.name || 'B'})`}
+            className={`px-3 py-1 rounded font-medium transition-colors max-w-[160px] sm:max-w-[220px] truncate ${
               activeTab === 'B'
                 ? 'bg-[#6FA8C9] text-[#050608] font-bold'
                 : 'text-[#8A8A88] hover:text-[#E4E4E2]'

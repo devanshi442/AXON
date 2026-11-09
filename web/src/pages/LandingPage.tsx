@@ -133,8 +133,7 @@ export default function LandingPage() {
               fontSize: '9px',
             }}
           >
-            Moon surface: NASA SVS CGI Moon Kit (LRO). Visual backdrop only; results use
-            LOLA elevation data.
+            Moon photo: Safwan CK, Pexels.
           </span>
         </div>
       </div>

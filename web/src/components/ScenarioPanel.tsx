@@ -239,14 +239,14 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
               {formatUtcDisplay(utc)}
             </span>
           </div>
-          <div className="flex items-center gap-1.5">
+          <div className="flex flex-wrap items-center gap-1.5">
             <input
               type="datetime-local"
               value={dtLocalValue}
               onChange={handleDateChange}
-              className="flex-1 px-2.5 py-1.5 bg-[#050608] border border-[#2A2D31] rounded text-xs text-[#E4E4E2] font-mono focus:outline-none focus:border-[#B9A58C]"
+              className="flex-1 min-w-0 px-2.5 py-1.5 bg-[#050608] border border-[#2A2D31] rounded text-xs text-[#E4E4E2] font-mono focus:outline-none focus:border-[#B9A58C]"
             />
-            <div className="flex gap-1 text-3xs font-mono">
+            <div className="flex gap-1 text-3xs font-mono shrink-0">
               <button
                 onClick={() => stepHours(-24)}
                 className="px-1.5 py-1 bg-[#171B22] hover:bg-[#2A2D31] text-[#E4E4E2] rounded"
@@ -333,13 +333,15 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
 
           {/* Earth Elevation Card */}
           <div className="p-3 rounded bg-[#050608] border border-[#2A2D31] flex flex-col justify-between">
-            <div className="flex items-center justify-between">
-              <span className="text-3xs uppercase tracking-wider text-[#6FA8C9] font-semibold flex items-center gap-1 font-mono">
-                <span className="w-2 h-2 rounded-full bg-[#6FA8C9]"></span>
-                Earth (<abbr title="Direct-to-Earth contact: Geometric line-of-sight between the lunar surface site and Earth centre" className="cursor-help underline decoration-dotted decoration-[#6FA8C9]/60">Direct-to-Earth contact</abbr>)
+            <div className="flex flex-wrap items-center justify-between gap-1.5">
+              <span className="text-3xs uppercase tracking-wider text-[#6FA8C9] font-semibold flex items-center gap-1 font-mono min-w-0">
+                <span className="w-2 h-2 rounded-full bg-[#6FA8C9] shrink-0"></span>
+                <abbr title="Direct-to-Earth contact: Geometric line-of-sight between the lunar surface site and Earth centre" className="cursor-help underline decoration-dotted decoration-[#6FA8C9]/60 whitespace-nowrap">
+                  EARTH · DIRECT-TO-EARTH CONTACT
+                </abbr>
               </span>
               <span
-                className={`px-1.5 py-0.2 rounded text-3xs font-medium font-mono ${
+                className={`px-1.5 py-0.5 rounded text-3xs font-medium font-mono shrink-0 ${
                   isEarthUp
                     ? 'bg-[#6FA8C9]/20 text-[#6FA8C9] border border-[#6FA8C9]/40'
                     : 'bg-[#171B22] text-[#8A8A88] border border-[#2A2D31]'

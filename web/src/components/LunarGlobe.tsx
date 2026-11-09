@@ -91,7 +91,8 @@ export default function LunarGlobe({
       if (view === 'south_pole') {
         // Looking straight down the south pole axis (-Y)
         // With camera.up pointing along +X (0° longitude, Prime Meridian pointing UP)
-        camera.position.set(0, -3.9, 0)
+        // Tightened distance so south pole candidate markers separate clearly
+        camera.position.set(0, -2.5, 0)
         camera.up.set(1, 0, 0)
         if (controls) controls.target.set(0, 0, 0)
       } else if (view === 'near_side') {
@@ -121,7 +122,8 @@ export default function LunarGlobe({
 
       setCurrentView('custom')
       const normal = latLonToVector3(lat, lon, 1.0).normalize()
-      const targetPos = normal.clone().multiplyScalar(3.9)
+      const dist = Math.abs(lat) > 75 ? 2.5 : 3.9
+      const targetPos = normal.clone().multiplyScalar(dist)
 
       camera.position.copy(targetPos)
       // If polar site, orient camera up toward equator (+X)
@@ -171,8 +173,8 @@ export default function LunarGlobe({
       camera.up.set(Math.sin(tiltRad), Math.cos(tiltRad), 0)
       camera.lookAt(0, 0, 0)
     } else {
-      // Looking straight down south pole axis
-      camera.position.set(0, -3.9, 0)
+      // Looking straight down south pole axis with tightened distance for marker separation
+      camera.position.set(0, -2.5, 0)
       camera.up.set(1, 0, 0)
       camera.lookAt(0, 0, 0)
     }
@@ -227,7 +229,7 @@ export default function LunarGlobe({
       controls = new OrbitControls(camera, renderer.domElement)
       controls.enableDamping = false // Strict: no unexpected inertia drift
       controls.enablePan = false // Keep globe centered
-      controls.minDistance = 2.2 // Prevent clipping into sphere (radius = 1.5)
+      controls.minDistance = 1.9 // Closer zoom headroom for south pole features (radius = 1.5)
       controls.maxDistance = 8.0
       controls.rotateSpeed = prefersReducedMotion ? 0.4 : 0.8
       controls.zoomSpeed = prefersReducedMotion ? 0.4 : 0.8
@@ -330,8 +332,18 @@ export default function LunarGlobe({
         } else {
           moonMesh.rotation.y = 0
         }
-      } else if (controls && controls.autoRotate) {
-        controls.update()
+      } else {
+        if (controls && controls.autoRotate) {
+          controls.update()
+        }
+        // Scale marker size down as camera zooms in so markers stay separated and sharp
+        if (markersGroup && markersGroup.children.length > 0) {
+          const camDist = camera.position.length()
+          const markerScale = Math.max(0.35, Math.min(1.0, camDist / 3.9))
+          for (let i = 0; i < markersGroup.children.length; i++) {
+            markersGroup.children[i].scale.set(markerScale, markerScale, markerScale)
+          }
+        }
       }
 
       renderer.render(scene, camera)
