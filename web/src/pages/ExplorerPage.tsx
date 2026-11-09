@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, lazy, Suspense } from 'react'
 import type { MissionsData, SelectableSite, CoordKind } from '../types/mission'
 import { useScenarioStore } from '../stores/scenarioStore'
 import MoonMap from '../components/MoonMap'
@@ -6,16 +6,21 @@ import MissionExplorer from '../components/MissionExplorer'
 import ScenarioPanel from '../components/ScenarioPanel'
 import OpportunityTimeline from '../components/OpportunityTimeline'
 import ComparisonPanel from '../components/ComparisonPanel'
+import PanelCornerBrackets from '../components/PanelCornerBrackets'
+
+const LunarGlobe = lazy(() => import('../components/LunarGlobe'))
 
 export default function ExplorerPage() {
   const [missionsData, setMissionsData] = useState<MissionsData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [showEducationalCard, setShowEducationalCard] = useState(true)
+  const [showEducationalCard, setShowEducationalCard] = useState(false)
+  const [mapViewMode, setMapViewMode] = useState<'globe' | 'flat'>('globe')
 
   const {
     scenarioAId,
     scenarioBId,
+    setScenarioA,
     loadTimeseries,
     loadHorizon,
     horizonMode,
@@ -51,8 +56,8 @@ export default function ExplorerPage() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center py-32 text-space-400 gap-3">
-        <div className="w-8 h-8 border-2 border-earth-500 border-t-transparent rounded-full animate-spin" />
+      <div className="flex flex-col items-center justify-center py-32 text-[#8A8A88] gap-3">
+        <div className="w-8 h-8 border-2 border-[#6FA8C9] border-t-transparent rounded-full animate-spin" />
         <span className="text-sm font-medium">Loading CLPS mission registry and lunar ephemerides...</span>
       </div>
     )
@@ -60,7 +65,7 @@ export default function ExplorerPage() {
 
   if (error || !missionsData) {
     return (
-      <div className="p-6 bg-rose-950/40 border border-rose-800 rounded-2xl text-rose-300 max-w-lg mx-auto my-12 text-center">
+      <div className="p-6 bg-[#2A1210] border border-[#7F2318] rounded text-[#E5604A] max-w-lg mx-auto my-12 text-center">
         <h2 className="text-base font-semibold mb-1">Failed to Load Missions</h2>
         <p className="text-xs">{error || 'Data is unavailable'}</p>
       </div>
@@ -120,36 +125,37 @@ export default function ExplorerPage() {
   return (
     <div className="flex flex-col gap-6 animate-fade-in pb-12">
       {/* Top Banner / Headline */}
-      <div className="bg-gradient-to-r from-space-800 via-space-800/90 to-space-900 border border-space-700 p-5 rounded-2xl shadow-card flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="relative bg-[#0D1014] border border-[#2A2D31] p-5 rounded flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <PanelCornerBrackets />
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="px-2 py-0.5 rounded text-3xs font-semibold uppercase bg-earth-500/20 text-earth-300 border border-earth-500/40">
+            <span className="px-2 py-0.5 rounded text-3xs font-semibold uppercase bg-[#6FA8C9]/20 text-[#6FA8C9] border border-[#6FA8C9]/40 font-mono">
               CLPS Mission Browser
             </span>
-            <span className="px-2 py-0.5 rounded text-3xs font-semibold uppercase bg-amber-500/20 text-amber-300 border border-amber-500/40">
+            <span className="px-2 py-0.5 rounded text-3xs font-semibold uppercase bg-[#E0A04A]/20 text-[#E0A04A] border border-[#E0A04A]/40 font-mono">
               South Pole Focus
             </span>
-            <span className="text-3xs text-space-400 font-mono hidden sm:inline">
+            <span className="text-3xs text-[#8A8A88] font-mono hidden sm:inline">
               SPICE Ephemerides · Horizons Validated
             </span>
           </div>
-          <h1 className="text-xl sm:text-2xl font-bold text-space-100">
+          <h1 className="text-xl sm:text-2xl font-bold text-[#E4E4E2]">
             Compare Lunar Landing Sites &amp; Visibility Windows
           </h1>
-          <p className="text-xs text-space-300 mt-1 max-w-2xl">
+          <p className="text-xs text-[#8A8A88] mt-1 max-w-2xl">
             An intuitive trade-off evaluation tool for mission planners, educators, and the public to compare candidate landing sites, assess solar power generation potential, and direct-to-Earth (DTE) communication windows without complex GIS interfaces.
           </p>
         </div>
 
-        <div className="flex items-center gap-3 self-start md:self-auto bg-space-900/80 px-4 py-2.5 rounded-xl border border-space-700/80 text-xs">
+        <div className="flex items-center gap-3 self-start md:self-auto bg-[#050608] px-4 py-2.5 rounded border border-[#2A2D31] text-xs">
           <div>
-            <div className="text-3xs text-space-400 font-medium">CONVENTIONS</div>
-            <div className="text-2xs font-mono text-space-200">MOON_ME Frame · UTC Time</div>
+            <div className="text-3xs text-[#8A8A88] font-medium font-mono">CONVENTIONS</div>
+            <div className="text-2xs font-mono text-[#E4E4E2]">MOON_ME Frame · UTC Time</div>
           </div>
-          <div className="h-6 w-px bg-space-700" />
+          <div className="h-6 w-px bg-[#2A2D31]" />
           <div>
-            <div className="text-3xs text-space-400 font-medium">HORIZON MODE</div>
-            <div className="text-2xs font-mono text-emerald-400 font-semibold">
+            <div className="text-3xs text-[#8A8A88] font-medium font-mono">HORIZON MODE</div>
+            <div className="text-2xs font-mono text-[#6DBF8B] font-semibold">
               {horizonMode === 'terrain' ? `Terrain-Aware (${mastHeightM}m mast)` : 'Flat sphere, 0 deg horizon'}
             </div>
           </div>
@@ -157,66 +163,128 @@ export default function ExplorerPage() {
       </div>
 
       {/* Educational Guide Card for Mission Planners, Educators & Public */}
-      <div className="bg-space-800/90 border border-earth-500/30 rounded-2xl p-4 shadow-card">
+      <div className="relative bg-[#0D1014] border border-[#2A2D31] rounded p-4">
+        <PanelCornerBrackets />
         <div className="flex items-center justify-between cursor-pointer" onClick={() => setShowEducationalCard(!showEducationalCard)}>
           <div className="flex items-center gap-2.5">
             <span className="text-base">🎓</span>
             <div>
-              <h2 className="text-xs font-semibold text-space-100 uppercase tracking-wider flex items-center gap-2">
+              <h2 className="text-xs font-semibold text-[#E4E4E2] uppercase tracking-wider flex items-center gap-2">
                 Why the Moon's South Pole? — Extreme Lighting &amp; Communication Constraints
               </h2>
-              <p className="text-3xs text-space-400">
+              <p className="text-3xs text-[#8A8A88]">
                 Educational context on polar solar elevation, lunar libration, and direct-to-Earth (DTE) communication physics.
               </p>
             </div>
           </div>
           <button
             type="button"
-            className="text-xs text-earth-400 hover:text-earth-300 font-mono px-2 py-0.5 rounded bg-space-900 border border-space-700"
+            className="text-xs text-[#6FA8C9] hover:text-[#B8D9EC] font-mono px-2 py-0.5 rounded bg-[#050608] border border-[#2A2D31]"
           >
             {showEducationalCard ? 'Hide Guide ▲' : 'Show Guide ▼'}
           </button>
         </div>
 
         {showEducationalCard && (
-          <div className="mt-3 pt-3 border-t border-space-700/70 grid grid-cols-1 md:grid-cols-3 gap-3.5 text-2xs text-space-300">
-            <div className="bg-space-900/70 p-3 rounded-xl border border-space-700/60 flex flex-col gap-1">
-              <span className="text-sun-400 font-semibold text-xs flex items-center gap-1.5">
+          <div className="mt-3 pt-3 border-t border-[#2A2D31] grid grid-cols-1 md:grid-cols-3 gap-3.5 text-2xs text-[#8A8A88]">
+            <div className="bg-[#050608] p-3 rounded border border-[#2A2D31] flex flex-col gap-1">
+              <span className="text-[#E0A04A] font-semibold text-xs flex items-center gap-1.5 font-sans">
                 <span>☀️</span> Grazing Polar Sunlight (~1.54° Tilt)
               </span>
-              <p className="text-space-400 leading-relaxed text-3xs">
+              <p className="text-[#8A8A88] leading-relaxed text-3xs font-sans">
                 Because the Moon's rotational axis is tilted only 1.54° relative to the ecliptic, the Sun always skims low along the horizon at the south pole. Small elevation changes determine whether solar panels are in bright sunlight or long crater shadows.
               </p>
             </div>
 
-            <div className="bg-space-900/70 p-3 rounded-xl border border-space-700/60 flex flex-col gap-1">
-              <span className="text-earth-400 font-semibold text-xs flex items-center gap-1.5">
+            <div className="bg-[#050608] p-3 rounded border border-[#2A2D31] flex flex-col gap-1">
+              <span className="text-[#6FA8C9] font-semibold text-xs flex items-center gap-1.5 font-sans">
                 <span>🌍</span> Lunar Libration &amp; Earth Horizon Wobble
               </span>
-              <p className="text-space-400 leading-relaxed text-3xs">
+              <p className="text-[#8A8A88] leading-relaxed text-3xs font-sans">
                 The Moon wobbles slightly in its orbit (libration of ~±6.7° latitude over ~27.3 days). At high southern latitudes, Earth hovers right near the horizon, oscillating above and below local line-of-sight for direct communication.
               </p>
             </div>
 
-            <div className="bg-space-900/70 p-3 rounded-xl border border-space-700/60 flex flex-col gap-1">
-              <span className="text-emerald-400 font-semibold text-xs flex items-center gap-1.5">
+            <div className="bg-[#050608] p-3 rounded border border-[#2A2D31] flex flex-col gap-1">
+              <span className="text-[#6DBF8B] font-semibold text-xs flex items-center gap-1.5 font-sans">
                 <span>⚡</span> The Joint Power &amp; Comm Window
               </span>
-              <p className="text-space-400 leading-relaxed text-3xs">
-                Without relay orbiters or nuclear power, landers can only operate when the Sun generates solar power <strong className="text-space-200">and</strong> Earth is visible for telemetry. Our <span className="text-emerald-300 font-mono">Joint Opportunity</span> timeline shows this exact overlap.
+              <p className="text-[#8A8A88] leading-relaxed text-3xs font-sans">
+                Without relay orbiters or nuclear power, landers can only operate when the Sun generates solar power <strong className="text-[#E4E4E2]">and</strong> Earth is visible for telemetry. Our <span className="text-[#6DBF8B] font-mono">Joint Opportunity</span> timeline shows this exact overlap.
               </p>
             </div>
           </div>
         )}
       </div>
 
-      {/* Grid: Mission Explorer & Moon Map */}
+      {/* Grid: Mission Explorer & Moon Map / Globe */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div className="lg:col-span-6">
           <MissionExplorer sites={selectableSites} />
         </div>
-        <div className="lg:col-span-6">
-          <MoonMap sites={selectableSites} />
+        <div className="lg:col-span-6 flex flex-col gap-2">
+          {/* Map view switcher: Globe (default) / Flat polar map */}
+          <div className="flex items-center justify-between p-2 bg-[#0D1014] border border-[#2A2D31] rounded text-xs">
+            <span className="text-3xs uppercase font-mono text-[#8A8A88] font-semibold">
+              Map View:
+            </span>
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => setMapViewMode('globe')}
+                className={`px-2.5 py-1 rounded text-3xs font-mono font-medium transition-colors ${
+                  mapViewMode === 'globe'
+                    ? 'bg-[#E0A04A]/20 text-[#E0A04A] border border-[#E0A04A]/50'
+                    : 'bg-[#050608] text-[#8A8A88] hover:text-[#E4E4E2] border border-[#2A2D31]'
+                }`}
+              >
+                🌐 3D Interactive Globe
+              </button>
+              <button
+                type="button"
+                onClick={() => setMapViewMode('flat')}
+                className={`px-2.5 py-1 rounded text-3xs font-mono font-medium transition-colors ${
+                  mapViewMode === 'flat'
+                    ? 'bg-[#6FA8C9]/20 text-[#6FA8C9] border border-[#6FA8C9]/50'
+                    : 'bg-[#050608] text-[#8A8A88] hover:text-[#E4E4E2] border border-[#2A2D31]'
+                }`}
+              >
+                🗺️ Flat polar map
+              </button>
+            </div>
+          </div>
+
+          {mapViewMode === 'globe' ? (
+            <div className="flex flex-col gap-1.5">
+              <Suspense
+                fallback={
+                  <div className="w-full min-h-[460px] lg:min-h-[490px] bg-[#050608] border border-[#2A2D31] rounded flex items-center justify-center text-3xs font-mono text-[#8A8A88]">
+                    Loading 3D lunar globe...
+                  </div>
+                }
+              >
+                <LunarGlobe
+                  sites={selectableSites}
+                  selectedSiteId={scenarioAId}
+                  onSelectSite={(site) => setScenarioA(site.id)}
+                  scenarioAId={scenarioAId}
+                  scenarioBId={scenarioBId}
+                  heightClass="min-h-[460px] lg:min-h-[490px]"
+                  compact={false}
+                />
+              </Suspense>
+              <div className="text-3xs font-mono text-[#8A8A88] px-1 text-right">
+                Moon surface: NASA SVS CGI Moon Kit (LRO). Visual backdrop only; results use LOLA elevation data.
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-1.5">
+              <MoonMap sites={selectableSites} />
+              <div className="text-3xs font-mono text-[#8A8A88] px-1 text-right">
+                Flat polar stereographic projection (R=1737.4 km).
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

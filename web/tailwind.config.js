@@ -7,83 +7,177 @@ export default {
   darkMode: 'class',
   theme: {
     extend: {
-      // ── AXON LunarSight design tokens ──────────────────────────────────
-      // Colour-blind safe: amber/gold for Sun, cyan/blue for Earth.
-      // Never use red vs green for these two bodies (fails deuteranopia/protanopia).
+      // ── AXON LunarSight Unified Design Tokens (Phase B) ──────────────────
+      // Background: #050608
+      // Panels:     #0D1014
+      // Borders:    #2A2D31
+      // Text:       #E4E4E2 (primary) / #8A8A88 (secondary/muted)
+      // Frame/Headings tan: #B9A58C
+      // Scenario A amber:   #E0A04A
+      // Scenario B steel:   #6FA8C9
+      // Lit green:          #6DBF8B
+      // Dark grey:          #6B6F75
+      // Warning:            #E5604A
+      // Radius <= 4 px, no glow
       colors: {
-        // Brand neutrals (dark-mode first)
         space: {
-          950: '#05060f',   // deepest background
-          900: '#0b0e1e',   // app background (dark)
-          800: '#121629',   // card/panel background (dark)
-          700: '#1a1f38',   // elevated surface
-          600: '#252c4a',   // border / divider
-          500: '#3d4870',   // muted
-          400: '#6574a8',   // secondary text
-          300: '#96a3cc',   // tertiary text
-          200: '#c5cce0',   // body text (dark mode)
-          100: '#e8eaf5',   // high-emphasis text (dark mode)
-          50:  '#f4f5fa',   // app background (light)
+          950: '#050608',   // app background deepest
+          900: '#050608',   // app background main
+          850: '#090C10',
+          800: '#0D1014',   // card/panel background
+          750: '#13171E',
+          700: '#171B22',   // elevated surface
+          600: '#2A2D31',   // border / divider
+          500: '#6B6F75',   // dark grey
+          400: '#8A8A88',   // secondary text
+          300: '#8A8A88',   // tertiary text
+          200: '#E4E4E2',   // body text
+          100: '#E4E4E2',   // high-emphasis text
+          50:  '#FFFFFF',
         },
-        // Sun — amber/gold (distinguishable by protanopes and deuteranopes)
+        tan: {
+          DEFAULT: '#B9A58C',
+          300: '#D1C2AF',
+          400: '#B9A58C',
+          500: '#A48E73',
+          600: '#8E7A60',
+        },
         sun: {
-          50:  '#fffbeb',
-          100: '#fef3c7',
-          200: '#fde68a',
-          300: '#fcd34d',
-          400: '#fbbf24',
-          500: '#f59e0b',
-          600: '#d97706',
-          700: '#b45309',
-          800: '#92400e',
-          900: '#78350f',
+          DEFAULT: '#E0A04A',
+          50:  '#FDF8EE',
+          100: '#FAECD0',
+          200: '#F5D9A1',
+          300: '#E0A04A',
+          400: '#E0A04A',
+          500: '#E0A04A',
+          600: '#C88B35',
+          700: '#A46F25',
+          800: '#7E5318',
+          900: '#54360E',
         },
-        // Earth — cyan/teal (distinguishable by all common CVD types)
         earth: {
-          50:  '#ecfeff',
-          100: '#cffafe',
-          200: '#a5f3fc',
-          300: '#67e8f9',
-          400: '#22d3ee',
-          500: '#06b6d4',
-          600: '#0891b2',
-          700: '#0e7490',
-          800: '#155e75',
-          900: '#164e63',
+          DEFAULT: '#6FA8C9',
+          50:  '#F0F7FB',
+          100: '#DBECF5',
+          200: '#B8D9EC',
+          300: '#6FA8C9',
+          400: '#6FA8C9',
+          500: '#6FA8C9',
+          600: '#548EA9',
+          700: '#3E7089',
+          800: '#2C5367',
+          900: '#1D3745',
         },
-        // Status colours (chosen to be CVD-safe)
-        status: {
-          success:  '#3b82f6',   // blue (not green)
-          partial:  '#f59e0b',   // amber
-          failed:   '#8b5cf6',   // violet (not red)
-          planned:  '#6b7280',   // gray
-          launched: '#60a5fa',   // light blue
-          unknown:  '#374151',   // dark gray
+        amber: {
+          DEFAULT: '#E0A04A',
+          300: '#E0A04A',
+          400: '#E0A04A',
+          500: '#E0A04A',
+          600: '#C88B35',
         },
-        // Verified badge
-        verified:   '#3b82f6',   // blue
-        unverified: '#6b7280',   // gray
+        steel: {
+          DEFAULT: '#6FA8C9',
+          300: '#6FA8C9',
+          400: '#6FA8C9',
+          500: '#6FA8C9',
+        },
+        lit: {
+          DEFAULT: '#6DBF8B',
+          300: '#8FD2A7',
+          400: '#6DBF8B',
+          500: '#6DBF8B',
+          600: '#539E6E',
+        },
+        emerald: {
+          DEFAULT: '#6DBF8B',
+          300: '#6DBF8B',
+          400: '#6DBF8B',
+          500: '#6DBF8B',
+          600: '#539E6E',
+        },
+        darkgrey: {
+          DEFAULT: '#6B6F75',
+          400: '#6B6F75',
+          500: '#6B6F75',
+        },
+        gray: {
+          DEFAULT: '#6B6F75',
+          300: '#8A8A88',
+          400: '#8A8A88',
+          500: '#6B6F75',
+          600: '#4E5257',
+          700: '#2A2D31',
+          800: '#171B22',
+          900: '#0D1014',
+        },
+        warning: {
+          DEFAULT: '#E5604A',
+          300: '#E5604A',
+          400: '#E5604A',
+          500: '#E5604A',
+          800: '#7F2318',
+          950: '#2A1210',
+        },
+        rose: {
+          DEFAULT: '#E5604A',
+          300: '#E5604A',
+          400: '#E5604A',
+          500: '#E5604A',
+          800: '#7F2318',
+          950: '#2A1210',
+        },
+        cyan: {
+          DEFAULT: '#6FA8C9',
+          300: '#6FA8C9',
+          400: '#6FA8C9',
+          500: '#6FA8C9',
+          800: '#2C5367',
+          950: '#0C1C24',
+        },
+        purple: {
+          DEFAULT: '#6FA8C9',
+          300: '#6FA8C9',
+          400: '#6FA8C9',
+          500: '#6FA8C9',
+        },
+        indigo: {
+          DEFAULT: '#6FA8C9',
+          300: '#6FA8C9',
+          400: '#6FA8C9',
+          500: '#6FA8C9',
+        },
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
-        mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+        mono: ['"Roboto Mono"', 'JetBrains Mono', 'monospace'],
+        jost: ['"Jost"', 'sans-serif'],
       },
       fontSize: {
+        '3xs': ['0.5625rem', { lineHeight: '0.75rem' }],
         '2xs': ['0.625rem', { lineHeight: '0.875rem' }],
       },
-      spacing: {
-        '18': '4.5rem',
-        '22': '5.5rem',
-      },
       borderRadius: {
-        'xl': '0.875rem',
-        '2xl': '1.25rem',
+        none: '0',
+        sm: '2px',
+        DEFAULT: '4px',
+        md: '4px',
+        lg: '4px',
+        xl: '4px',
+        '2xl': '4px',
+        '3xl': '4px',
+        full: '9999px',
       },
       boxShadow: {
-        'glow-sun':   '0 0 20px 4px rgba(251, 191, 36, 0.25)',
-        'glow-earth': '0 0 20px 4px rgba(6, 182, 212, 0.25)',
-        'card':       '0 4px 24px rgba(0,0,0,0.4)',
-        'panel':      '0 2px 12px rgba(0,0,0,0.3)',
+        none: 'none',
+        'glow-sun': 'none',
+        'glow-earth': 'none',
+        card: 'none',
+        panel: 'none',
+        sm: 'none',
+        DEFAULT: 'none',
+        md: 'none',
+        lg: 'none',
+        xl: 'none',
       },
       animation: {
         'fade-in':    'fadeIn 0.2s ease-out',
