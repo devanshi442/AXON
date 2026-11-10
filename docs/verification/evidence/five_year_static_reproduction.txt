@@ -1,0 +1,45 @@
+================================================================================
+5-YEAR MULTI-YEAR REPRODUCTION OVER 2024-01-01 TO 2028-12-31 (43,848 HOURS)
+================================================================================
+
+Site: cs-connecting-ridge-site (Connecting Ridge (Evaluated Site))
+  Coordinates: -89.5340°, -150.0520°
+  Total Period: 2024-01-01 to 2028-12-31 (43,848 h)
+  Compute Time: 0.230 s
+  Static file (stored):
+    Flat Sun %:    57.1% (25025.0 h)
+    Terrain Sun %: 59.0% (25892.0 h)
+    Terrain Earth%: 48.2% (21149.0 h)
+  Recomputed with current strict window engine:
+    Flat Sun %:    57.0% (25009.0 h)
+    Terrain Sun %: 58.7% (25758.0 h)
+    Terrain Earth%: 48.1% (21080.0 h)
+    Terrain Joint%: 31.9% (13979.0 h)
+
+Site: cs-connecting-ridge (Connecting Ridge (Artemis III Candidate Region))
+  Coordinates: -89.4500°, -136.0000°
+  Total Period: 2024-01-01 to 2028-12-31 (43,848 h)
+  Compute Time: 0.216 s
+  Static file (stored):
+    Flat Sun %:    57.1% (25053.0 h)
+    Terrain Sun %: 48.0% (21051.0 h)
+    Terrain Earth%: 63.5% (27853.0 h)
+  Recomputed with current strict window engine:
+    Flat Sun %:    57.1% (25034.0 h)
+    Terrain Sun %: 47.8% (20975.0 h)
+    Terrain Earth%: 63.4% (27785.0 h)
+    Terrain Joint%: 30.7% (13476.0 h)
+
+Site: cs-shackleton-rim (Peak Near Shackleton (Artemis III Candidate Region))
+  Coordinates: -89.6800°, +129.0000°
+  Total Period: 2024-01-01 to 2028-12-31 (43,848 h)
+  Compute Time: 0.212 s
+  Static file (stored):
+    Flat Sun %:    57.0% (25014.0 h)
+    Terrain Sun %: 0.0% (0 h)
+    Terrain Earth%: 0.0% (0 h)
+  Recomputed with current strict window engine:
+    Flat Sun %:    57.0% (24996.0 h)
+    Terrain Sun %: 0.0% (0 h)
+    Terrain Earth%: 0.0% (0 h)
+    Terrain Joint%: 0.0% (0 h)
