@@ -20,6 +20,8 @@ from science.lunarsight_core.horizon import compute_horizon
 from science.lunarsight_core.geometry import load_kernels, compute_site_timeseries
 from science.lunarsight_core.visibility import compute_sun_visibility
 
+pytestmark = pytest.mark.needs_dems
+
 
 @pytest.fixture(scope="module", autouse=True)
 def setup_kernels():

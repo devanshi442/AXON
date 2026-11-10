@@ -4,7 +4,7 @@ between Shackleton Rim, Connecting Ridge, Apollo 11, and Far-Side.
 
 Verifies:
 1. Identical synchronized UTC interval across all 4 sites.
-2. Accurate DEM selection and tier reporting (T1 polar vs T2/T3 equatorial/far-side).
+2. Accurate DEM selection and tier reporting (T1 polar vs T2 global vs T3 flat datum fallback).
 3. Physical validity of sunlight metrics (polar persistent light vs equatorial diurnal cycle).
 4. Earth visibility extremes (Apollo 11 near-side ~100% vs Far-side exactly 0.0%).
 5. Joint operating window constraints (Far-side strictly 0.0h joint).
@@ -22,6 +22,8 @@ sys.path.insert(0, str(ROOT / "api"))
 sys.path.insert(0, str(ROOT))
 
 from main import app
+
+pytestmark = pytest.mark.needs_dems
 
 
 @pytest.fixture(scope="module")

@@ -1,6 +1,6 @@
 """
 test_terrain_coverage_matrix.py — Verification of DEM selection, projection transforms,
-elevation sampling, and T1/T2/T3 fallback behavior across the complete lunar coordinate domain.
+elevation sampling, and T1, T2, and T3 fallback behavior across the complete lunar coordinate domain.
 """
 
 from pathlib import Path
@@ -10,6 +10,8 @@ import numpy as np
 from lunarsight_core import constants as C
 from lunarsight_core import terrain
 from lunarsight_core import horizon
+
+pytestmark = pytest.mark.needs_dems
 
 
 def test_south_pole_dem_selection():

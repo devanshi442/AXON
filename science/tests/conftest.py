@@ -39,9 +39,10 @@ def pytest_collection_modifyitems(config, items):
             reason="DEM assets not found in terrain/. Run `python pipeline/download_dems.py --download` to fetch."
         )
         for item in items:
-            if "needs_dems" in item.keywords or "terrain" in item.nodeid:
-                if "synthetic" not in item.name:
-                    item.add_marker(skip_dems)
+            if item.get_closest_marker("needs_dems") or "needs_dems" in item.keywords:
+                item.add_marker(skip_dems)
+            elif item.name in ("test_dem_selection_coverage_rules", "test_cross_check_real_polar_sites", "test_observer_mast_height_monotone"):
+                item.add_marker(skip_dems)
 
 
 @pytest.fixture
