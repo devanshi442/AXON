@@ -163,6 +163,8 @@ Returns details for a single site, including availability flags for precomputed 
   "dem_id": "LDEM_875S_20M",
   "coverage_status": "full",
   "coverage_tier": "T1",
+  "tier": "T1",
+  "site_origin": "published_candidate",
   "site_elevation_m": 1653.0,
   "instantaneous": {
     "utc": "2026-03-01T00:00:00Z",
@@ -256,6 +258,7 @@ Compares 2 to 4 lunar locations across a common, synchronized analysis window (o
 {
   "start_utc": "2026-03-01T00:00:00Z",
   "window_days": 15,
+  "baseline_site_id": "im-2",
   "sites": [
     {
       "id": "im-2",
@@ -281,11 +284,14 @@ Compares 2 to 4 lunar locations across a common, synchronized analysis window (o
     {
       "id": "im-2",
       "name": "IM-2 (Mons Mouton)",
+      "site_origin": "official_mission",
       "status": "success",
       "lat": -84.7906,
       "lon": 29.1957,
       "mast_height_m": 1.5,
       "dem_id": "LDEM_80S_20M",
+      "coverage_tier": "T1",
+      "tier": "T1",
       "instantaneous": { ... },
       "flat": { ... },
       "terrain": { ... },
@@ -294,17 +300,41 @@ Compares 2 to 4 lunar locations across a common, synchronized analysis window (o
     {
       "id": "custom--89.8000-+100.0000",
       "name": "Custom Shackleton Flank",
+      "site_origin": "user_defined",
       "status": "success",
       "lat": -89.8,
       "lon": 100.0,
       "mast_height_m": 2.5,
       "dem_id": "LDEM_85S_20M",
+      "coverage_tier": "T1",
+      "tier": "T1",
       "instantaneous": { ... },
       "flat": { ... },
       "terrain": { ... },
       "power": { ... }
     }
   ],
+  "baseline_site_id": "im-2",
+  "deltas_vs_baseline": {
+    "im-2": {
+      "site_name": "IM-2 (Mons Mouton)",
+      "sun_hours": 0.0,
+      "sun_pct": 0.0,
+      "dte_hours": 0.0,
+      "dte_pct": 0.0,
+      "energy_kwh": 0.0,
+      "energy_kwh_m2": 0.0
+    },
+    "custom--89.8000-+100.0000": {
+      "site_name": "Custom Shackleton Flank",
+      "sun_hours": 24.5,
+      "sun_pct": 6.8,
+      "dte_hours": 0.0,
+      "dte_pct": 0.0,
+      "energy_kwh": 9.42,
+      "energy_kwh_m2": 9.42
+    }
+  },
   "pairwise_delta_1_minus_0": {
     "sun_hours": 24.5,
     "sun_pct": 6.8,
@@ -328,6 +358,7 @@ Compares 2 to 4 lunar locations across a common, synchronized analysis window (o
   "antenna_margin_deg": 1.0,
   "solar_array_type": "vertical",
   "warnings": [],
+  "api_version": "0.3.0",
   "elapsed_ms": 34.2
 }
 ```

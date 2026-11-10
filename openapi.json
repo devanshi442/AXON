@@ -1,0 +1,2267 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "AXON LunarSight API",
+    "description": "NASA Space Apps Challenge 2026 \u2014 Lunar landing site evaluation model.\n\nCalculates lunar surface topocentric geometry, 3D LOLA DEM terrain horizon skylines, photovoltaic solar generation proxies, and direct-to-Earth (DTE) communication visibility.",
+    "version": "0.3.0"
+  },
+  "paths": {
+    "/api/health": {
+      "get": {
+        "tags": [
+          "LunarSight Science API"
+        ],
+        "summary": "Service Health Check",
+        "description": "Basic service liveness check returning version and kernel availability.",
+        "operationId": "health_api_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ready": {
+      "get": {
+        "tags": [
+          "LunarSight Science API"
+        ],
+        "summary": "Scientific Service Readiness Check",
+        "description": "Distinguishes running HTTP server from fully operational scientific engine (kernels, DEMs).",
+        "operationId": "readiness_api_ready_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadinessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/provenance": {
+      "get": {
+        "tags": [
+          "LunarSight Science API"
+        ],
+        "summary": "Scientific Provenance & Audit Benchmark",
+        "description": "Returns planetary reference frames, constants, SPICE kernel hashes, and benchmark audit results.",
+        "operationId": "provenance_api_provenance_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sites": {
+      "get": {
+        "tags": [
+          "LunarSight Science API"
+        ],
+        "summary": "List All Normalized Lunar Sites",
+        "description": "Returns normalized site registry containing missions, reference sites, and candidate regions.",
+        "operationId": "list_sites_api_sites_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sites/{site_id}": {
+      "get": {
+        "tags": [
+          "LunarSight Science API"
+        ],
+        "summary": "Get Site Details & Precomputed Assets",
+        "description": "Retrieve detailed metadata, coordinates, and precomputed asset availability for a site.",
+        "operationId": "get_site_api_sites__site_id__get",
+        "parameters": [
+          {
+            "name": "site_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Site Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/geometry/timeseries": {
+      "post": {
+        "tags": [
+          "LunarSight Science API"
+        ],
+        "summary": "Topocentric Geometry Timeseries",
+        "description": "Generate hourly topocentric Sun and Earth azimuth/elevation timeseries in MOON_ME.\nSupports both idealized flat sphere (Tier 3) and 3D terrain-aware ray-marching.",
+        "operationId": "get_timeseries_api_geometry_timeseries_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TimeseriesRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TimeseriesResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/geometry/events": {
+      "post": {
+        "tags": [
+          "LunarSight Science API"
+        ],
+        "summary": "Visibility Opportunity Events",
+        "description": "Extract contiguous illumination and communication windows with optional 1-minute SPICE refinement.",
+        "operationId": "get_events_api_geometry_events_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/horizon": {
+      "post": {
+        "tags": [
+          "LunarSight Science API"
+        ],
+        "summary": "360-degree Topographic Horizon Mask",
+        "description": "Compute 360\u00b0 topographic skyline elevation angles via 3D ray-marching through LOLA DEMs.\nRaises 503 if requested DEM assets are unavailable.",
+        "operationId": "get_horizon_api_horizon_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HorizonRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HorizonResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/site/analyze": {
+      "post": {
+        "tags": [
+          "LunarSight Science API"
+        ],
+        "summary": "Comprehensive Site / Custom Coordinate Analysis",
+        "description": "Comprehensive illumination, direct-to-Earth communication, and solar power analysis.\nWorks for arbitrary lunar coordinates [-90\u00b0, +90\u00b0], [-180\u00b0, +180\u00b0] and registered sites.",
+        "operationId": "analyze_site_api_site_analyze_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SiteAnalyzeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/compare": {
+      "post": {
+        "tags": [
+          "LunarSight Science API"
+        ],
+        "summary": "2 to 4 Site Comparative Analysis",
+        "description": "Fair, synchronized comparative evaluation between 2 and 4 lunar locations.\nSupports registered catalog sites, arbitrary custom coordinates, or mixed selections.",
+        "operationId": "compare_sites_api_compare_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MultiCompareRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultiCompareResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/site/best-windows": {
+      "post": {
+        "tags": [
+          "LunarSight Science API"
+        ],
+        "summary": "Best Operating Window Search",
+        "description": "Search across an extended interval for candidate operating windows meeting duration\nand line-of-sight constraints. Ranked transparently without arbitrary composite scores.",
+        "operationId": "search_best_windows_api_site_best_windows_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WindowSearchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WindowSearchResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/verify": {
+      "post": {
+        "tags": [
+          "LunarSight Science API"
+        ],
+        "summary": "Live JPL Horizons Independent Verification",
+        "description": "Live verification of SPICE topocentric coordinates against NASA JPL Horizons API with 15s timeout.",
+        "operationId": "verify_site_live_api_verify_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/cache/stats": {
+      "get": {
+        "tags": [
+          "LunarSight Science API"
+        ],
+        "summary": "Scientific Cache Statistics",
+        "description": "Return memory and hit/miss statistics for scientific calculation caches.",
+        "operationId": "get_cache_stats_api_cache_stats_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CacheStatsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/cache/clear": {
+      "post": {
+        "tags": [
+          "LunarSight Science API"
+        ],
+        "summary": "Clear Scientific Calculation Caches",
+        "description": "Invalidate all cached results in memory.\n\nIf AXON_ADMIN_KEY is configured in the environment, callers must supply\na matching X-Admin-Key header.\nIn production (AXON_ENV=production), if AXON_ADMIN_KEY is unset, fails closed (403 Forbidden).",
+        "operationId": "clear_caches_api_cache_clear_post",
+        "parameters": [
+          {
+            "name": "X-Admin-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Admin-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CacheStatsResponse": {
+        "properties": {
+          "analysis_cache": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Analysis Cache"
+          },
+          "horizon_cache": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Horizon Cache"
+          }
+        },
+        "type": "object",
+        "required": [
+          "analysis_cache",
+          "horizon_cache"
+        ],
+        "title": "CacheStatsResponse"
+      },
+      "CompareSiteSpec": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "lat": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 90.0,
+                "minimum": -90.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lat"
+          },
+          "lon": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 180.0,
+                "minimum": -180.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lon"
+          },
+          "utc": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Utc",
+            "description": "Site-specific start UTC (for legacy per-site mode)"
+          },
+          "mast_height_m": {
+            "type": "number",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Mast Height M",
+            "default": 1.5
+          }
+        },
+        "type": "object",
+        "title": "CompareSiteSpec"
+      },
+      "ComparedSiteResult": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "'success' or 'failed'",
+            "default": "success"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "lat": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lat"
+          },
+          "lon": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lon"
+          },
+          "utc": {
+            "type": "string",
+            "title": "Utc"
+          },
+          "mast_height_m": {
+            "type": "number",
+            "title": "Mast Height M"
+          },
+          "dem_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dem Id"
+          },
+          "coverage_status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Coverage Status"
+          },
+          "coverage_tier": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Coverage Tier"
+          },
+          "tier": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tier"
+          },
+          "site_elevation_m": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Site Elevation M"
+          },
+          "instantaneous": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Instantaneous"
+          },
+          "flat": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Flat"
+          },
+          "terrain": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Terrain"
+          },
+          "delta_terrain_minus_flat": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delta Terrain Minus Flat"
+          },
+          "power": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Power"
+          },
+          "site_origin": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Site Origin"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "utc",
+          "mast_height_m"
+        ],
+        "title": "ComparedSiteResult"
+      },
+      "EventsRequest": {
+        "properties": {
+          "lat": {
+            "type": "number",
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Lat"
+          },
+          "lon": {
+            "type": "number",
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Lon"
+          },
+          "start_utc": {
+            "type": "string",
+            "title": "Start Utc"
+          },
+          "stop_utc": {
+            "type": "string",
+            "title": "Stop Utc"
+          },
+          "threshold_deg": {
+            "type": "number",
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Threshold Deg",
+            "default": 0.0
+          },
+          "antenna_margin_deg": {
+            "type": "number",
+            "maximum": 90.0,
+            "minimum": 0.0,
+            "title": "Antenna Margin Deg",
+            "default": 0.0
+          },
+          "earth_criterion": {
+            "type": "string",
+            "pattern": "^(center|full_disk|any_limb)$",
+            "title": "Earth Criterion",
+            "default": "center"
+          },
+          "step_seconds": {
+            "type": "integer",
+            "minimum": 60.0,
+            "title": "Step Seconds",
+            "default": 3600
+          },
+          "mast_height_m": {
+            "type": "number",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Mast Height M",
+            "default": 0.0
+          },
+          "horizon_mode": {
+            "type": "string",
+            "pattern": "^(flat|terrain)$",
+            "title": "Horizon Mode",
+            "default": "flat"
+          },
+          "refine_precision": {
+            "type": "boolean",
+            "title": "Refine Precision",
+            "description": "Refine event edges to ~1-minute via SPICE bisection",
+            "default": true
+          }
+        },
+        "type": "object",
+        "required": [
+          "lat",
+          "lon",
+          "start_utc",
+          "stop_utc"
+        ],
+        "title": "EventsRequest"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HealthResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "default": "ok",
+            "examples": [
+              "ok"
+            ]
+          },
+          "version": {
+            "type": "string",
+            "title": "Version",
+            "examples": [
+              "0.3.0"
+            ]
+          },
+          "service": {
+            "type": "string",
+            "title": "Service",
+            "default": "AXON LunarSight API"
+          },
+          "kernels_loaded": {
+            "type": "boolean",
+            "title": "Kernels Loaded",
+            "description": "True if SPICE kernels are currently furnished"
+          }
+        },
+        "type": "object",
+        "required": [
+          "version",
+          "kernels_loaded"
+        ],
+        "title": "HealthResponse"
+      },
+      "HorizonRequest": {
+        "properties": {
+          "lat": {
+            "type": "number",
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Lat"
+          },
+          "lon": {
+            "type": "number",
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Lon"
+          },
+          "observer_height_m": {
+            "type": "number",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Observer Height M",
+            "default": 0.0
+          },
+          "max_range_km": {
+            "type": "number",
+            "maximum": 150.0,
+            "minimum": 5.0,
+            "title": "Max Range Km",
+            "default": 50.0
+          },
+          "az_step_deg": {
+            "type": "number",
+            "maximum": 10.0,
+            "minimum": 0.1,
+            "title": "Az Step Deg",
+            "default": 1.0
+          },
+          "preferred_dem_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Preferred Dem Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "lat",
+          "lon"
+        ],
+        "title": "HorizonRequest"
+      },
+      "HorizonResponse": {
+        "properties": {
+          "lat": {
+            "type": "number",
+            "title": "Lat"
+          },
+          "lon": {
+            "type": "number",
+            "title": "Lon"
+          },
+          "h_m": {
+            "type": "number",
+            "title": "H M"
+          },
+          "dem_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dem Id"
+          },
+          "resolution_m": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resolution M"
+          },
+          "max_range_km": {
+            "type": "number",
+            "title": "Max Range Km"
+          },
+          "az_step": {
+            "type": "number",
+            "title": "Az Step"
+          },
+          "mask_deg": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array",
+            "title": "Mask Deg"
+          },
+          "coverage_status": {
+            "type": "string",
+            "title": "Coverage Status"
+          },
+          "max_valid_range_km": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array",
+            "title": "Max Valid Range Km"
+          },
+          "site_height_m": {
+            "type": "number",
+            "title": "Site Height M"
+          },
+          "coverage_tier": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Coverage Tier"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Warnings"
+          },
+          "method": {
+            "type": "string",
+            "title": "Method"
+          },
+          "generated": {
+            "type": "string",
+            "title": "Generated"
+          }
+        },
+        "type": "object",
+        "required": [
+          "lat",
+          "lon",
+          "h_m",
+          "dem_id",
+          "resolution_m",
+          "max_range_km",
+          "az_step",
+          "mask_deg",
+          "coverage_status",
+          "max_valid_range_km",
+          "site_height_m",
+          "method",
+          "generated"
+        ],
+        "title": "HorizonResponse"
+      },
+      "MultiCompareRequest": {
+        "properties": {
+          "sites": {
+            "items": {
+              "$ref": "#/components/schemas/CompareSiteSpec"
+            },
+            "type": "array",
+            "maxItems": 4,
+            "minItems": 2,
+            "title": "Sites",
+            "description": "2 to 4 lunar locations"
+          },
+          "baseline_site_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Baseline Site Id",
+            "description": "Site ID or name to use as comparison baseline. Defaults to the first successful site."
+          },
+          "start_utc": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start Utc",
+            "description": "Common UTC start timestamp for fair comparison"
+          },
+          "stop_utc": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stop Utc",
+            "description": "Common UTC stop timestamp"
+          },
+          "window_days": {
+            "type": "integer",
+            "maximum": 90.0,
+            "minimum": 1.0,
+            "title": "Window Days",
+            "description": "Comparison duration in days",
+            "default": 30
+          },
+          "threshold_deg": {
+            "type": "number",
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Threshold Deg",
+            "default": 0.0
+          },
+          "antenna_margin_deg": {
+            "type": "number",
+            "maximum": 90.0,
+            "minimum": 0.0,
+            "title": "Antenna Margin Deg",
+            "default": 0.0
+          },
+          "solar_array_type": {
+            "type": "string",
+            "pattern": "^(flat|horizontal|vertical|vertical_fixed|vertical_azimuth_tracking|tilted|tracking|sun_tracking)$",
+            "title": "Solar Array Type",
+            "default": "vertical"
+          },
+          "array_area_m2": {
+            "type": "number",
+            "exclusiveMinimum": 0.0,
+            "title": "Array Area M2",
+            "default": 1.0
+          },
+          "array_efficiency": {
+            "type": "number",
+            "maximum": 1.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Array Efficiency",
+            "default": 0.28
+          },
+          "horizon_mode": {
+            "type": "string",
+            "pattern": "^(terrain|flat)$",
+            "title": "Horizon Mode",
+            "default": "terrain"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sites"
+        ],
+        "title": "MultiCompareRequest"
+      },
+      "MultiCompareResponse": {
+        "properties": {
+          "sites": {
+            "items": {
+              "$ref": "#/components/schemas/ComparedSiteResult"
+            },
+            "type": "array",
+            "title": "Sites"
+          },
+          "baseline_site_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Baseline Site Id"
+          },
+          "deltas_vs_baseline": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deltas Vs Baseline",
+            "description": "Deltas for all compared sites relative to baseline_site_id"
+          },
+          "pairwise_delta_1_minus_0": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pairwise Delta 1 Minus 0",
+            "description": "DEPRECATED: Use deltas_vs_baseline instead. Retained for backwards compatibility."
+          },
+          "rankings": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TransparentRankings"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "window_days": {
+            "type": "integer",
+            "title": "Window Days"
+          },
+          "common_window": {
+            "type": "boolean",
+            "title": "Common Window"
+          },
+          "start_utc": {
+            "type": "string",
+            "title": "Start Utc"
+          },
+          "stop_utc": {
+            "type": "string",
+            "title": "Stop Utc"
+          },
+          "threshold_deg": {
+            "type": "number",
+            "title": "Threshold Deg"
+          },
+          "antenna_margin_deg": {
+            "type": "number",
+            "title": "Antenna Margin Deg"
+          },
+          "solar_array_type": {
+            "type": "string",
+            "title": "Solar Array Type"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Warnings"
+          },
+          "elapsed_ms": {
+            "type": "number",
+            "title": "Elapsed Ms"
+          },
+          "reproducibility": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reproducibility"
+          },
+          "api_version": {
+            "type": "string",
+            "title": "Api Version",
+            "description": "AXON API version",
+            "default": "0.3.0"
+          },
+          "cached": {
+            "type": "boolean",
+            "title": "Cached",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "sites",
+          "window_days",
+          "common_window",
+          "start_utc",
+          "stop_utc",
+          "threshold_deg",
+          "antenna_margin_deg",
+          "solar_array_type",
+          "elapsed_ms"
+        ],
+        "title": "MultiCompareResponse"
+      },
+      "RankedWindow": {
+        "properties": {
+          "rank": {
+            "type": "integer",
+            "title": "Rank"
+          },
+          "is_tie": {
+            "type": "boolean",
+            "title": "Is Tie",
+            "description": "True if this window tied with another candidate window",
+            "default": false
+          },
+          "start_utc": {
+            "type": "string",
+            "title": "Start Utc"
+          },
+          "end_utc": {
+            "type": "string",
+            "title": "End Utc"
+          },
+          "duration_hours": {
+            "type": "number",
+            "title": "Duration Hours"
+          },
+          "duration_days": {
+            "type": "number",
+            "title": "Duration Days"
+          },
+          "sun_availability_hours": {
+            "type": "number",
+            "title": "Sun Availability Hours"
+          },
+          "earth_visibility_hours": {
+            "type": "number",
+            "title": "Earth Visibility Hours"
+          },
+          "longest_dark_gap_hours": {
+            "type": "number",
+            "title": "Longest Dark Gap Hours"
+          },
+          "precision": {
+            "type": "string",
+            "title": "Precision"
+          }
+        },
+        "type": "object",
+        "required": [
+          "rank",
+          "start_utc",
+          "end_utc",
+          "duration_hours",
+          "duration_days",
+          "sun_availability_hours",
+          "earth_visibility_hours",
+          "longest_dark_gap_hours",
+          "precision"
+        ],
+        "title": "RankedWindow"
+      },
+      "ReadinessResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "examples": [
+              "ready"
+            ]
+          },
+          "ready": {
+            "type": "boolean",
+            "title": "Ready",
+            "description": "True if all critical scientific assets and engines are ready"
+          },
+          "kernels_loaded": {
+            "type": "boolean",
+            "title": "Kernels Loaded"
+          },
+          "kernels_available": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Kernels Available"
+          },
+          "terrain_dems_available": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Terrain Dems Available"
+          },
+          "benchmark_status": {
+            "type": "string",
+            "title": "Benchmark Status"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Warnings"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "ready",
+          "kernels_loaded",
+          "kernels_available",
+          "terrain_dems_available",
+          "benchmark_status"
+        ],
+        "title": "ReadinessResponse"
+      },
+      "SiteAnalyzeRequest": {
+        "properties": {
+          "site_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Site Id",
+            "description": "Optional registered site ID from catalog (e.g. 'im-2')"
+          },
+          "site_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Site Name",
+            "description": "Custom label for the evaluated location"
+          },
+          "lat": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 90.0,
+                "minimum": -90.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lat",
+            "description": "Planetocentric latitude in degrees [-90, +90]"
+          },
+          "lon": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 180.0,
+                "minimum": -180.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lon",
+            "description": "East-positive longitude in degrees [-180, +180]"
+          },
+          "start_utc": {
+            "type": "string",
+            "title": "Start Utc",
+            "description": "UTC start timestamp (ISO 8601)",
+            "examples": [
+              "2026-03-01T00:00:00Z"
+            ]
+          },
+          "stop_utc": {
+            "type": "string",
+            "title": "Stop Utc",
+            "description": "UTC stop timestamp (ISO 8601)",
+            "examples": [
+              "2026-03-15T00:00:00Z"
+            ]
+          },
+          "step_seconds": {
+            "type": "integer",
+            "minimum": 60.0,
+            "title": "Step Seconds",
+            "description": "Ephemeris time step in seconds (min 60)",
+            "default": 3600
+          },
+          "mast_height_m": {
+            "type": "number",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Mast Height M",
+            "description": "Observer/hardware mast height in meters",
+            "default": 1.5
+          },
+          "horizon_mode": {
+            "type": "string",
+            "pattern": "^(terrain|flat)$",
+            "title": "Horizon Mode",
+            "description": "Horizon mode: 'terrain' (default) or 'flat'",
+            "default": "terrain"
+          },
+          "solar_array_type": {
+            "type": "string",
+            "pattern": "^(flat|horizontal|vertical|vertical_fixed|vertical_azimuth_tracking|tilted|tracking|sun_tracking)$",
+            "title": "Solar Array Type",
+            "description": "Solar panel orientation model",
+            "default": "vertical"
+          },
+          "solar_tilt_deg": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 90.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Solar Tilt Deg",
+            "description": "Panel tilt relative to horizontal (deg)"
+          },
+          "solar_azimuth_deg": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 360.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Solar Azimuth Deg",
+            "description": "Fixed panel facing azimuth (deg from North)"
+          },
+          "array_area_m2": {
+            "type": "number",
+            "exclusiveMinimum": 0.0,
+            "title": "Array Area M2",
+            "description": "Total photovoltaic surface area in square meters",
+            "default": 1.0
+          },
+          "array_efficiency": {
+            "type": "number",
+            "maximum": 1.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Array Efficiency",
+            "description": "Solar cell conversion efficiency (default 0.28 = 28%)",
+            "default": 0.28
+          },
+          "antenna_margin_deg": {
+            "type": "number",
+            "maximum": 90.0,
+            "minimum": 0.0,
+            "title": "Antenna Margin Deg",
+            "description": "Antenna elevation clearance margin above topography",
+            "default": 0.0
+          },
+          "earth_criterion": {
+            "type": "string",
+            "pattern": "^(center|full_disk|any_limb)$",
+            "title": "Earth Criterion",
+            "description": "DTE line-of-sight criterion",
+            "default": "center"
+          },
+          "refine_precision": {
+            "type": "boolean",
+            "title": "Refine Precision",
+            "description": "Refine event window transition edges via SPICE bisection",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "start_utc",
+          "stop_utc"
+        ],
+        "title": "SiteAnalyzeRequest"
+      },
+      "TimeseriesRequest": {
+        "properties": {
+          "lat": {
+            "type": "number",
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Lat",
+            "description": "Planetocentric latitude in degrees [-90, +90]"
+          },
+          "lon": {
+            "type": "number",
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Lon",
+            "description": "East-positive longitude in degrees [-180, +180]"
+          },
+          "start_utc": {
+            "type": "string",
+            "title": "Start Utc",
+            "description": "UTC start date-time ISO string",
+            "examples": [
+              "2026-03-01T00:00:00Z"
+            ]
+          },
+          "stop_utc": {
+            "type": "string",
+            "title": "Stop Utc",
+            "description": "UTC stop date-time ISO string",
+            "examples": [
+              "2026-03-02T00:00:00Z"
+            ]
+          },
+          "step_seconds": {
+            "type": "integer",
+            "minimum": 60.0,
+            "title": "Step Seconds",
+            "description": "Time step in seconds (min 60)",
+            "default": 3600
+          },
+          "alt_km": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Alt Km",
+            "description": "Observer altitude above reference sphere in km",
+            "default": 0.0
+          },
+          "mast_height_m": {
+            "type": "number",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Mast Height M",
+            "description": "Observer mast height in meters",
+            "default": 0.0
+          },
+          "horizon_mode": {
+            "type": "string",
+            "pattern": "^(flat|terrain)$",
+            "title": "Horizon Mode",
+            "description": "'flat' or 'terrain'",
+            "default": "flat"
+          }
+        },
+        "type": "object",
+        "required": [
+          "lat",
+          "lon",
+          "start_utc",
+          "stop_utc"
+        ],
+        "title": "TimeseriesRequest"
+      },
+      "TimeseriesResponse": {
+        "properties": {
+          "start_utc": {
+            "type": "string",
+            "title": "Start Utc"
+          },
+          "stop_utc": {
+            "type": "string",
+            "title": "Stop Utc"
+          },
+          "step_seconds": {
+            "type": "integer",
+            "title": "Step Seconds"
+          },
+          "times": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Times"
+          },
+          "sun_azimuth_deg": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array",
+            "title": "Sun Azimuth Deg"
+          },
+          "sun_elevation_deg": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array",
+            "title": "Sun Elevation Deg"
+          },
+          "earth_azimuth_deg": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array",
+            "title": "Earth Azimuth Deg"
+          },
+          "earth_elevation_deg": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array",
+            "title": "Earth Elevation Deg"
+          },
+          "sun_distance_km": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sun Distance Km"
+          },
+          "earth_distance_km": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Earth Distance Km"
+          },
+          "sun_angular_radius_deg": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sun Angular Radius Deg"
+          },
+          "earth_angular_radius_deg": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Earth Angular Radius Deg"
+          },
+          "frame": {
+            "type": "string",
+            "title": "Frame"
+          },
+          "abcorr": {
+            "type": "string",
+            "title": "Abcorr"
+          },
+          "horizon_mode": {
+            "type": "string",
+            "title": "Horizon Mode"
+          },
+          "terrain_dem_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Terrain Dem Id"
+          },
+          "sun_fraction": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sun Fraction"
+          },
+          "sun_visible": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "boolean"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sun Visible"
+          },
+          "earth_visible": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "boolean"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Earth Visible"
+          },
+          "horizon_warning": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Horizon Warning"
+          }
+        },
+        "type": "object",
+        "required": [
+          "start_utc",
+          "stop_utc",
+          "step_seconds",
+          "times",
+          "sun_azimuth_deg",
+          "sun_elevation_deg",
+          "earth_azimuth_deg",
+          "earth_elevation_deg",
+          "frame",
+          "abcorr",
+          "horizon_mode"
+        ],
+        "title": "TimeseriesResponse"
+      },
+      "TransparentRankings": {
+        "properties": {
+          "by_sunlight_percentage": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "By Sunlight Percentage"
+          },
+          "by_earth_visibility_percentage": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "By Earth Visibility Percentage"
+          },
+          "by_joint_availability_hours": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "By Joint Availability Hours"
+          },
+          "by_shortest_dark_gap": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "By Shortest Dark Gap"
+          },
+          "by_solar_energy": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "By Solar Energy"
+          }
+        },
+        "type": "object",
+        "required": [
+          "by_sunlight_percentage",
+          "by_earth_visibility_percentage",
+          "by_joint_availability_hours",
+          "by_shortest_dark_gap",
+          "by_solar_energy"
+        ],
+        "title": "TransparentRankings"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "VerifyRequest": {
+        "properties": {
+          "lat": {
+            "type": "number",
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Lat"
+          },
+          "lon": {
+            "type": "number",
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Lon"
+          },
+          "utc": {
+            "type": "string",
+            "title": "Utc",
+            "description": "UTC ISO date-time string",
+            "examples": [
+              "2026-03-01T00:00:00Z"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "lat",
+          "lon",
+          "utc"
+        ],
+        "title": "VerifyRequest"
+      },
+      "WindowSearchRequest": {
+        "properties": {
+          "site_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Site Id"
+          },
+          "site_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Site Name"
+          },
+          "lat": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 90.0,
+                "minimum": -90.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lat"
+          },
+          "lon": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 180.0,
+                "minimum": -180.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lon"
+          },
+          "search_start_utc": {
+            "type": "string",
+            "title": "Search Start Utc",
+            "description": "UTC start of search interval",
+            "examples": [
+              "2026-03-01T00:00:00Z"
+            ]
+          },
+          "search_stop_utc": {
+            "type": "string",
+            "title": "Search Stop Utc",
+            "description": "UTC end of search interval",
+            "examples": [
+              "2026-04-15T00:00:00Z"
+            ]
+          },
+          "min_window_hours": {
+            "type": "number",
+            "maximum": 720.0,
+            "minimum": 1.0,
+            "title": "Min Window Hours",
+            "description": "Minimum window duration in hours",
+            "default": 24.0
+          },
+          "step_seconds": {
+            "type": "integer",
+            "minimum": 60.0,
+            "title": "Step Seconds",
+            "default": 3600
+          },
+          "mast_height_m": {
+            "type": "number",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Mast Height M",
+            "default": 1.5
+          },
+          "horizon_mode": {
+            "type": "string",
+            "pattern": "^(terrain|flat)$",
+            "title": "Horizon Mode",
+            "default": "terrain"
+          },
+          "sun_threshold_deg": {
+            "type": "number",
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Sun Threshold Deg",
+            "default": 0.0
+          },
+          "antenna_margin_deg": {
+            "type": "number",
+            "maximum": 90.0,
+            "minimum": 0.0,
+            "title": "Antenna Margin Deg",
+            "default": 0.0
+          },
+          "earth_criterion": {
+            "type": "string",
+            "pattern": "^(center|full_disk|any_limb)$",
+            "title": "Earth Criterion",
+            "default": "center"
+          },
+          "top_n": {
+            "type": "integer",
+            "maximum": 50.0,
+            "minimum": 1.0,
+            "title": "Top N",
+            "default": 10
+          }
+        },
+        "type": "object",
+        "required": [
+          "search_start_utc",
+          "search_stop_utc"
+        ],
+        "title": "WindowSearchRequest"
+      },
+      "WindowSearchResponse": {
+        "properties": {
+          "site_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Site Id"
+          },
+          "site_name": {
+            "type": "string",
+            "title": "Site Name"
+          },
+          "site_origin": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Site Origin"
+          },
+          "lat": {
+            "type": "number",
+            "title": "Lat"
+          },
+          "lon": {
+            "type": "number",
+            "title": "Lon"
+          },
+          "search_start_utc": {
+            "type": "string",
+            "title": "Search Start Utc"
+          },
+          "search_stop_utc": {
+            "type": "string",
+            "title": "Search Stop Utc"
+          },
+          "min_window_hours": {
+            "type": "number",
+            "title": "Min Window Hours"
+          },
+          "horizon_mode": {
+            "type": "string",
+            "title": "Horizon Mode"
+          },
+          "dem_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dem Id"
+          },
+          "coverage_tier": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Coverage Tier"
+          },
+          "tier": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tier"
+          },
+          "candidate_windows_count": {
+            "type": "integer",
+            "title": "Candidate Windows Count"
+          },
+          "ranked_windows": {
+            "items": {
+              "$ref": "#/components/schemas/RankedWindow"
+            },
+            "type": "array",
+            "title": "Ranked Windows"
+          },
+          "ranking_criterion": {
+            "type": "string",
+            "title": "Ranking Criterion",
+            "description": "Explanation of transparent sorting logic (no arbitrary magic score)",
+            "default": "Sorted by continuous joint operating window duration, then lowest dark gap"
+          },
+          "ranking_criteria": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ranking Criteria",
+            "description": "Explicit ordered ranking criteria",
+            "default": [
+              "duration_hours DESC",
+              "longest_dark_gap_hours ASC",
+              "chronological_start ASC"
+            ]
+          },
+          "tie_handling": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tie Handling",
+            "description": "Tie handling specification",
+            "default": "Equal duration and dark gap assign identical rank with is_tie=True"
+          },
+          "elapsed_ms": {
+            "type": "number",
+            "title": "Elapsed Ms"
+          }
+        },
+        "type": "object",
+        "required": [
+          "site_name",
+          "lat",
+          "lon",
+          "search_start_utc",
+          "search_stop_utc",
+          "min_window_hours",
+          "horizon_mode",
+          "candidate_windows_count",
+          "ranked_windows",
+          "elapsed_ms"
+        ],
+        "title": "WindowSearchResponse"
+      }
+    }
+  }
+}

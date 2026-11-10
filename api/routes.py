@@ -330,6 +330,7 @@ def compare_sites(req: MultiCompareRequest):
     sites_specs = [s.model_dump() for s in req.sites]
     return analysis_service.compare_sites(
         sites_specs=sites_specs,
+        baseline_site_id=req.baseline_site_id,
         start_utc=req.start_utc,
         stop_utc=req.stop_utc,
         window_days=req.window_days,

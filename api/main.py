@@ -185,10 +185,11 @@ async def security_and_limit_middleware(request: Request, call_next):
 
     # 3. Simple in-memory sliding-window rate limit (skip health and ready probes)
     if request.url.path not in ["/api/health", "/api/ready"]:
-        client_ip = (
-            request.headers.get("x-forwarded-for", "").split(",")[0].strip()
-            or (request.client.host if request.client else "127.0.0.1")
-        )
+        from api.config import AXON_TRUST_PROXY
+        if AXON_TRUST_PROXY and request.headers.get("x-forwarded-for"):
+            client_ip = request.headers.get("x-forwarded-for", "").split(",")[0].strip()
+        else:
+            client_ip = request.client.host if request.client else "127.0.0.1"
         now = time.time()
         bucket = [t for t in _RATE_LIMIT_BUCKETS[client_ip] if now - t < 60.0]
         if len(bucket) >= RATE_LIMIT_PER_MINUTE:
@@ -209,6 +210,14 @@ async def security_and_limit_middleware(request: Request, call_next):
         _RATE_LIMIT_BUCKETS[client_ip] = bucket
 
     # 4. Per-request timeout execution wrapper
+    # Note on wait_for and _SPICE_LOCK:
+    # Python's asyncio.wait_for raises TimeoutError when the timeout expires.
+    # However, synchronous C-extension code (such as CSPICE calls inside spiceypy)
+    # running inside an executor or thread holding _SPICE_LOCK cannot be preemptively
+    # interrupted mid-call by asyncio. To prevent thread starvation and unbounded execution:
+    # 1. Strict upfront validation caps sample count to N <= 8,784 (validate_sample_count).
+    # 2. Maximum date range is capped to 90 days for comparison and window search.
+    # 3. Single-worker deployment serializes CSPICE calls safely without mutex deadlocks.
     try:
         response = await asyncio.wait_for(call_next(request), timeout=REQUEST_TIMEOUT_SECONDS)
         response.headers["X-Request-ID"] = request_id

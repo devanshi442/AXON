@@ -38,5 +38,6 @@ MAX_BODY_BYTES: int = int(os.environ.get("AXON_MAX_BODY_BYTES", str(2 * 1024 * 1
 # Security & Administration
 AXON_ENV: str = os.environ.get("AXON_ENV", "development").lower()
 ADMIN_API_KEY: str | None = os.environ.get("AXON_ADMIN_KEY", None)
+AXON_TRUST_PROXY: bool = os.environ.get("AXON_TRUST_PROXY", "0").lower() in ("1", "true", "yes")
 
 

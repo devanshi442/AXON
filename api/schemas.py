@@ -239,6 +239,8 @@ class SiteAnalyzeResponse(BaseModel):
     dem_id: Optional[str] = None
     coverage_status: str
     coverage_tier: str
+    tier: Optional[str] = Field(default=None, description="Convenience alias for coverage_tier: T1 | T2 | T3")
+    site_origin: Optional[str] = Field(default=None, description="Site origin classification: official_mission | published_candidate | user_defined | dem_derived")
     site_elevation_m: Optional[float] = None
     instantaneous: Optional[InstantaneousGeometrySchema] = None
     sun: BodyOpportunitySchema
@@ -273,6 +275,7 @@ class CompareSiteSpec(BaseModel):
 
 class MultiCompareRequest(BaseModel):
     sites: List[CompareSiteSpec] = Field(..., min_length=2, max_length=4, description="2 to 4 lunar locations")
+    baseline_site_id: Optional[str] = Field(default=None, description="Site ID or name to use as comparison baseline. Defaults to the first successful site.")
     start_utc: Optional[str] = Field(default=None, description="Common UTC start timestamp for fair comparison")
     stop_utc: Optional[str] = Field(default=None, description="Common UTC stop timestamp")
     window_days: int = Field(default=30, ge=1, le=90, description="Comparison duration in days")
@@ -296,6 +299,7 @@ class ComparedSiteResult(BaseModel):
     dem_id: Optional[str] = None
     coverage_status: Optional[str] = None
     coverage_tier: Optional[str] = None
+    tier: Optional[str] = None
     site_elevation_m: Optional[float] = None
     instantaneous: Optional[Dict[str, Any]] = None
     flat: Optional[Dict[str, Any]] = None
@@ -315,7 +319,9 @@ class TransparentRankings(BaseModel):
 
 class MultiCompareResponse(BaseModel):
     sites: List[ComparedSiteResult]
-    pairwise_delta_1_minus_0: Optional[Dict[str, Any]] = None
+    baseline_site_id: Optional[str] = None
+    deltas_vs_baseline: Optional[Dict[str, Dict[str, Any]]] = Field(default=None, description="Deltas for all compared sites relative to baseline_site_id")
+    pairwise_delta_1_minus_0: Optional[Dict[str, Any]] = Field(default=None, description="DEPRECATED: Use deltas_vs_baseline instead. Retained for backwards compatibility.")
     rankings: Optional[TransparentRankings] = None
     window_days: int
     common_window: bool
@@ -327,6 +333,7 @@ class MultiCompareResponse(BaseModel):
     warnings: List[str] = Field(default_factory=list)
     elapsed_ms: float
     reproducibility: Optional[Dict[str, Any]] = None
+    api_version: str = Field(default="0.3.0", description="AXON API version")
     cached: bool = False
 
 
@@ -353,6 +360,7 @@ class WindowSearchRequest(BaseModel):
 
 class RankedWindow(BaseModel):
     rank: int
+    is_tie: bool = Field(default=False, description="True if this window tied with another candidate window")
     start_utc: str
     end_utc: str
     duration_hours: float
@@ -364,7 +372,9 @@ class RankedWindow(BaseModel):
 
 
 class WindowSearchResponse(BaseModel):
+    site_id: Optional[str] = None
     site_name: str
+    site_origin: Optional[str] = None
     lat: float
     lon: float
     search_start_utc: str
@@ -372,11 +382,21 @@ class WindowSearchResponse(BaseModel):
     min_window_hours: float
     horizon_mode: str
     dem_id: Optional[str] = None
+    coverage_tier: Optional[str] = None
+    tier: Optional[str] = None
     candidate_windows_count: int
     ranked_windows: List[RankedWindow]
     ranking_criterion: str = Field(
         default="Sorted by continuous joint operating window duration, then lowest dark gap",
         description="Explanation of transparent sorting logic (no arbitrary magic score)",
+    )
+    ranking_criteria: Optional[List[str]] = Field(
+        default=["duration_hours DESC", "longest_dark_gap_hours ASC", "chronological_start ASC"],
+        description="Explicit ordered ranking criteria",
+    )
+    tie_handling: Optional[str] = Field(
+        default="Equal duration and dark gap assign identical rank with is_tie=True",
+        description="Tie handling specification",
     )
     elapsed_ms: float
 

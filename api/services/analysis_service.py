@@ -567,6 +567,8 @@ class AnalysisService:
             "dem_id": dem_id,
             "coverage_status": coverage_status,
             "coverage_tier": coverage_tier,
+            "tier": coverage_tier,
+            "site_origin": r_kind,
             "site_elevation_m": site_elevation_m,
             "instantaneous": instantaneous,
             "sun": active_metrics["sun"],
@@ -671,6 +673,7 @@ class AnalysisService:
     def compare_sites(
         self,
         sites_specs: List[Dict[str, Any]],
+        baseline_site_id: Optional[str] = None,
         start_utc: Optional[str] = None,
         stop_utc: Optional[str] = None,
         window_days: int = 30,
@@ -697,6 +700,7 @@ class AnalysisService:
         kernel_hash = self._get_kernel_composite_hash()
         cache_params = {
             "sites": sites_specs,
+            "baseline_site_id": baseline_site_id,
             "start_utc": start_utc,
             "stop_utc": stop_utc,
             "window_days": window_days,
@@ -820,6 +824,7 @@ class AnalysisService:
                     "dem_id": dem_id,
                     "coverage_status": cov_status,
                     "coverage_tier": cov_tier,
+                    "tier": cov_tier,
                     "site_elevation_m": site_elev,
                     "instantaneous": instantaneous,
                     "flat": dual["flat"],
@@ -840,10 +845,47 @@ class AnalysisService:
                 })
                 warnings.append(f"Site {spec.get('name') or spec.get('id') or idx+1} failed: {exc}")
 
-        # Pairwise deltas for the first 2 successful sites
+        # Pairwise and baseline deltas for successful sites
         successful_sites = [s for s in results if s["status"] == "success"]
         pairwise_delta = None
+        deltas_vs_baseline = None
+        base_id_resolved = None
+
         if len(successful_sites) >= 2:
+            # 1. Resolve baseline site
+            base_site = None
+            if baseline_site_id:
+                for s in successful_sites:
+                    if s["id"] == baseline_site_id or s["name"] == baseline_site_id:
+                        base_site = s
+                        break
+            if base_site is None:
+                base_site = successful_sites[0]
+            base_id_resolved = base_site["id"]
+
+            # 2. Compute deltas relative to baseline site for every site
+            deltas_vs_baseline = {}
+            base_data = base_site.get("terrain") or base_site.get("flat") or {}
+            base_p = base_site.get("power") or {}
+            base_sun = base_data.get("sun", {})
+            base_earth = base_data.get("earth", {})
+
+            for s in successful_sites:
+                s_data = s.get("terrain") or s.get("flat") or {}
+                s_p = s.get("power") or {}
+                s_sun = s_data.get("sun", {})
+                s_earth = s_data.get("earth", {})
+                deltas_vs_baseline[s["id"]] = {
+                    "site_name": s["name"],
+                    "sun_hours": round(s_sun.get("total_hours", 0.0) - base_sun.get("total_hours", 0.0), 1),
+                    "sun_pct": round(s_sun.get("percentage", 0.0) - base_sun.get("percentage", 0.0), 2),
+                    "dte_hours": round(s_earth.get("total_hours", 0.0) - base_earth.get("total_hours", 0.0), 1),
+                    "dte_pct": round(s_earth.get("percentage", 0.0) - base_earth.get("percentage", 0.0), 2),
+                    "energy_kwh": round(s_p.get("total_energy_kwh", 0.0) - base_p.get("total_energy_kwh", 0.0), 2),
+                    "energy_kwh_m2": round(s_p.get("specific_energy_kwh_m2", 0.0) - base_p.get("specific_energy_kwh_m2", 0.0), 2),
+                }
+
+            # 3. Retain backwards-compatible pairwise delta (Site 1 minus Site 0)
             s0 = successful_sites[0]
             s1 = successful_sites[1]
             site0_data = s0.get("terrain") or s0.get("flat") or {}
@@ -898,6 +940,8 @@ class AnalysisService:
 
         result = {
             "sites": results,
+            "baseline_site_id": base_id_resolved,
+            "deltas_vs_baseline": deltas_vs_baseline,
             "pairwise_delta_1_minus_0": pairwise_delta,
             "rankings": rankings,
             "window_days": window_days,
@@ -1015,7 +1059,7 @@ class AnalysisService:
         step_seconds = validate_step_seconds(step_seconds)
         validate_sample_count(dt_start, dt_stop, step_seconds)
         mast_height_m = validate_mast_height(mast_height_m)
-        r_id, r_name, r_lat, r_lon, _ = self.resolve_site(site_id, lat, lon, site_name)
+        r_id, r_name, r_lat, r_lon, r_kind = self.resolve_site(site_id, lat, lon, site_name)
 
         # Cache check
         kernel_hash = self._get_kernel_composite_hash()
@@ -1116,19 +1160,33 @@ class AnalysisService:
                     "precision": w.get("precision", "hourly"),
                 })
 
-        # Transparent sorting: longest continuous duration first, then lowest dark gap
-        candidates.sort(key=lambda x: (x["duration_hours"], -x["longest_dark_gap_hours"]), reverse=True)
+        # Transparent sorting: longest continuous duration first, then lowest dark gap, then chronological
+        candidates.sort(key=lambda x: (x["duration_hours"], -x["longest_dark_gap_hours"], x["start_utc"]), reverse=True)
 
         ranked = []
-        for i, c in enumerate(candidates[:top_n], start=1):
-            c["rank"] = i
+        for i, c in enumerate(candidates[:top_n]):
+            if i > 0:
+                prev = candidates[i - 1]
+                if c["duration_hours"] == prev["duration_hours"] and c["longest_dark_gap_hours"] == prev["longest_dark_gap_hours"]:
+                    c["rank"] = prev["rank"]
+                    c["is_tie"] = True
+                    prev["is_tie"] = True
+                else:
+                    c["rank"] = i + 1
+                    c["is_tie"] = False
+            else:
+                c["rank"] = 1
+                c["is_tie"] = False
             ranked.append(c)
 
         elapsed_ms = round((time.perf_counter() - t0) * 1000.0, 2)
+        cov_tier = "T2" if dem_id == "LDEM_64" else ("T1" if dem_id else "T3")
 
         result = {
             "status": "success",
+            "site_id": r_id,
             "site_name": r_name,
+            "site_origin": r_kind,
             "lat": r_lat,
             "lon": r_lon,
             "search_start_utc": search_start_utc,
@@ -1136,11 +1194,15 @@ class AnalysisService:
             "min_window_hours": min_window_hours,
             "horizon_mode": horizon_mode if mask_data else "flat",
             "dem_id": dem_id,
+            "coverage_tier": cov_tier,
+            "tier": cov_tier,
             "candidate_windows_count": len(candidates),
             "total_candidates_found": len(candidates),
             "ranked_windows": ranked,
             "windows": ranked,
             "ranking_criterion": "Sorted by continuous joint operating window duration, then lowest dark gap",
+            "ranking_criteria": ["duration_hours DESC", "longest_dark_gap_hours ASC", "chronological_start ASC"],
+            "tie_handling": "Equal duration and dark gap assign identical rank with is_tie=True",
             "elapsed_ms": elapsed_ms,
             "cached": False,
         }
