@@ -1,0 +1,40 @@
+================================================================================
+AXON LUNARSIGHT — PRODUCTION BENCHMARK & CONCURRENCY PROFILE
+================================================================================
+
+[Memory] Process Initial RSS: 88.48 MB
+
+[Benchmark 1/3] Single Site Analysis (Apollo 11, 14 days, hourly = 336 steps):
+  Cold Cache: p50 = 79.19 ms | p95 = 271.55 ms
+  Warm Cache: p50 = 13.06 ms | p95 = 15.21 ms
+
+[Benchmark 2/3] 3D Terrain Horizon Mask Build (Shackleton, 360 rays, 50 km):
+  Cold Cache: p50 = 458.07 ms | p95 = 7289.94 ms (first raymarch disk read)
+  Warm Cache: p50 = 0.02 ms | p95 = 0.03 ms (memory cache hit)
+
+[Benchmark 3/3] 4-Site Synchronized Comparison (7 days common window):
+  Cold Cache: p50 = 396.44 ms | p95 = 418.85 ms
+  Warm Cache: p50 = 613.87 ms | p95 = 821.79 ms
+
+[Memory] Whole-Process Resident Set Size (RSS): 165.40 MB
+
+[Benchmark Concurrency] 5 Concurrent Requests during Active Long Calculation:
+  Endpoint: long_task    | Latency: 927.15 ms | Status: 200
+  Endpoint: health_1     | Latency: 251.41 ms | Status: 200
+  Endpoint: health_2     | Latency: 263.38 ms | Status: 200
+  Endpoint: ready        | Latency: 335.55 ms | Status: 200
+  Endpoint: sites        | Latency: 485.26 ms | Status: 200
+
+  Average /api/health Latency during Active Load: 257.39 ms
+
+================================================================================
+FINAL PRODUCTION PERFORMANCE SUMMARY
+================================================================================
+Operation                           | Cold p50   | Cold p95   | Warm p50   | Warm p95  
+--------------------------------------------------------------------------------
+Single Site Analysis                |   79.19 ms |  271.55 ms |   13.06 ms |   15.21 ms
+3D Terrain Horizon Build            |  458.07 ms | 7289.94 ms |    0.02 ms |    0.03 ms
+4-Site Synchronized Compare         |  396.44 ms |  418.85 ms |  613.87 ms |  821.79 ms
+Whole-Process RSS                   |  165.40 MB
+================================================================================
+

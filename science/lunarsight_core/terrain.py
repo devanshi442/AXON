@@ -330,6 +330,8 @@ class WindowedDEM:
         col_offset: int,
         row_offset: int,
         transform: Any,
+        is_wrapped: bool = False,
+        center_lon: float = 0.0,
     ):
         self.dem_info = dem_info
         self.data = data  # 2D array of DN (int16 or float32)
@@ -337,6 +339,8 @@ class WindowedDEM:
         self.row_offset = row_offset
         self.transform = transform
         self.height, self.width = data.shape
+        self.is_wrapped = is_wrapped
+        self.center_lon = center_lon
 
     def sample_xy(self, x: float, y: float) -> Optional[float]:
         """
@@ -344,6 +348,13 @@ class WindowedDEM:
         using bilinear interpolation.
         Returns None if out of window or nodata.
         """
+        if self.dem_info.proj_type == "cylindrical":
+            if self.is_wrapped:
+                d_lon = ((x - self.center_lon + 180.0) % 360.0) - 180.0
+                x = self.center_lon + d_lon
+            else:
+                x = ((x + 180.0) % 360.0) - 180.0
+
         # Pixel coordinates
         inv_trans = ~self.transform
         col_f, row_f = inv_trans @ (x, y)
@@ -385,6 +396,14 @@ class WindowedDEM:
         """
         xs = np.asarray(xs, dtype=np.float64)
         ys = np.asarray(ys, dtype=np.float64)
+
+        if self.dem_info.proj_type == "cylindrical":
+            if self.is_wrapped:
+                d_lon = ((xs - self.center_lon + 180.0) % 360.0) - 180.0
+                xs = self.center_lon + d_lon
+            else:
+                xs = ((xs + 180.0) % 360.0) - 180.0
+
         c_trans = self.transform
 
         col_f = (xs - c_trans[2]) / c_trans[0]
@@ -441,32 +460,7 @@ class WindowedDEM:
             x, y = latlon_to_polar_xy(lat_deg, lon_deg)
             return self.sample_xy(x, y)
         elif self.dem_info.proj_type == "cylindrical":
-            # For cylindrical, transform is (lon, lat)
-            inv_trans = ~self.transform
-            col_f, row_f = inv_trans * (lon_deg, lat_deg)
-            col_local = col_f - self.col_offset
-            row_local = row_f - self.row_offset
-            if not (0 <= col_local < self.width - 1 and 0 <= row_local < self.height - 1):
-                return None
-            c0 = int(col_local)
-            c1 = c0 + 1
-            r0 = int(row_local)
-            r1 = r0 + 1
-            v00 = self.data[r0, c0]
-            v10 = self.data[r0, c1]
-            v01 = self.data[r1, c0]
-            v11 = self.data[r1, c1]
-            if v00 == NODATA_VALUE or v10 == NODATA_VALUE or v01 == NODATA_VALUE or v11 == NODATA_VALUE:
-                return None
-            dc = col_local - c0
-            dr = row_local - r0
-            interp_dn = (
-                (1.0 - dc) * (1.0 - dr) * v00
-                + dc * (1.0 - dr) * v10
-                + (1.0 - dc) * dr * v01
-                + dc * dr * v11
-            )
-            return float(interp_dn * self.dem_info.scale)
+            return self.sample_xy(lon_deg, lat_deg)
         return None
 
 
@@ -504,22 +498,59 @@ def get_windowed_dem(
 
             col_min_f, row_max_f = inv_trans @ (x_min, y_min)
             col_max_f, row_min_f = inv_trans @ (x_max, y_max)
+            c_min = max(0, int(math.floor(min(col_min_f, col_max_f))))
+            c_max = min(src.width, int(math.ceil(max(col_min_f, col_max_f))))
+            r_min = max(0, int(math.floor(min(row_min_f, row_max_f))))
+            r_max = min(src.height, int(math.ceil(max(row_min_f, row_max_f))))
+            width = c_max - c_min
+            height = r_max - r_min
+            window = Window(c_min, r_min, width, height)
+            data = src.read(1, window=window)
+            is_wrapped = False
+            center_lon = lon_deg
         else:
-            # Cylindrical
+            # Cylindrical with seamless anti-meridian wrap support
             d_deg = (max_range_km + 5.0) / (C.MOON_RADIUS_KM * math.pi / 180.0)
-            col_min_f, row_max_f = inv_trans @ (lon_deg - d_deg, lat_deg - d_deg)
-            col_max_f, row_min_f = inv_trans @ (lon_deg + d_deg, lat_deg + d_deg)
+            norm_lon = ((lon_deg + 180.0) % 360.0) - 180.0
+            col_center_f, row_center_f = inv_trans @ (norm_lon, lat_deg)
+            half_w = int(math.ceil(d_deg / transform[0])) + 2
+            half_h = int(math.ceil(d_deg / abs(transform[4]))) + 2
 
-        c_min = max(0, int(math.floor(min(col_min_f, col_max_f))))
-        c_max = min(src.width, int(math.ceil(max(col_min_f, col_max_f))))
-        r_min = max(0, int(math.floor(min(row_min_f, row_max_f))))
-        r_max = min(src.height, int(math.ceil(max(row_min_f, row_max_f))))
+            r_min = max(0, int(math.floor(row_center_f - half_h)))
+            r_max = min(src.height, int(math.ceil(row_center_f + half_h)))
+            h_win = r_max - r_min
 
-        width = c_max - c_min
-        height = r_max - r_min
+            c_left_idx = int(math.floor(col_center_f - half_w))
+            c_right_idx = int(math.ceil(col_center_f + half_w))
 
-        window = Window(c_min, r_min, width, height)
-        data = src.read(1, window=window)
+            if c_left_idx < 0:
+                # Wraps across -180 longitude seam
+                w_left = Window(0, r_min, c_right_idx, h_win)
+                d_left = src.read(1, window=w_left)
+                wrap_w = -c_left_idx
+                w_wrap = Window(src.width - wrap_w, r_min, wrap_w, h_win)
+                d_wrap = src.read(1, window=w_wrap)
+                data = np.hstack([d_wrap, d_left])
+                c_min = src.width - wrap_w
+                is_wrapped = True
+                center_lon = 180.0
+            elif c_right_idx > src.width:
+                # Wraps across +180 longitude seam
+                w_right = Window(c_left_idx, r_min, src.width - c_left_idx, h_win)
+                d_right = src.read(1, window=w_right)
+                wrap_w = c_right_idx - src.width
+                w_wrap = Window(0, r_min, wrap_w, h_win)
+                d_wrap = src.read(1, window=w_wrap)
+                data = np.hstack([d_right, d_wrap])
+                c_min = c_left_idx
+                is_wrapped = True
+                center_lon = 180.0
+            else:
+                window = Window(c_left_idx, r_min, c_right_idx - c_left_idx, h_win)
+                data = src.read(1, window=window)
+                c_min = c_left_idx
+                is_wrapped = False
+                center_lon = norm_lon
 
         w_dem = WindowedDEM(
             dem_info=dem_info,
@@ -527,6 +558,8 @@ def get_windowed_dem(
             col_offset=c_min,
             row_offset=r_min,
             transform=transform,
+            is_wrapped=is_wrapped,
+            center_lon=center_lon,
         )
 
         # Evict cache if too large (> 10 items)

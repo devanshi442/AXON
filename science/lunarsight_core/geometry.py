@@ -7,6 +7,7 @@ in the MOON_ME frame, adhering to project science conventions.
 
 from __future__ import annotations
 
+import datetime
 import math
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -285,7 +286,15 @@ def compute_opportunities(
     sun_el = timeseries["sun_elevation_deg"]
     earth_el = timeseries["earth_elevation_deg"]
     step_s = timeseries.get("step_seconds", 3600)
-    total_hours = len(times) * (step_s / 3600.0)
+    if "start_utc" in timeseries and "stop_utc" in timeseries:
+        try:
+            dt_s = datetime.datetime.fromisoformat(timeseries["start_utc"].replace("Z", "+00:00"))
+            dt_e = datetime.datetime.fromisoformat(timeseries["stop_utc"].replace("Z", "+00:00"))
+            total_hours = max(0.0, (dt_e - dt_s).total_seconds() / 3600.0)
+        except Exception:
+            total_hours = (len(times) - 1) * (step_s / 3600.0) if len(times) > 1 else len(times) * (step_s / 3600.0)
+    else:
+        total_hours = len(times) * (step_s / 3600.0)
 
     # Sun mask includes upper-limb correction
     sun_mask = [(el + C.SUN_ANGULAR_RADIUS_DEG) >= threshold_deg for el in sun_el]
@@ -296,9 +305,9 @@ def compute_opportunities(
     earth_windows = find_intervals(times, earth_mask, step_s)
     joint_windows = find_intervals(times, joint_mask, step_s)
 
-    sun_hours = sum(w["duration_hours"] for w in sun_windows)
-    earth_hours = sum(w["duration_hours"] for w in earth_windows)
-    joint_hours = sum(w["duration_hours"] for w in joint_windows)
+    sun_hours = min(total_hours, sum(w["duration_hours"] for w in sun_windows))
+    earth_hours = min(total_hours, sum(w["duration_hours"] for w in earth_windows))
+    joint_hours = min(total_hours, sum(w["duration_hours"] for w in joint_windows))
 
     return {
         "threshold_deg": threshold_deg,

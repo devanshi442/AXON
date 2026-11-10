@@ -1,0 +1,77 @@
+name: AXON LunarSight Backend CI & Container Verification
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  scientific-test:
+    name: Scientific Engine & API Verification
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install System Dependencies (GDAL / Spatial)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libopenjp2-7 libgdal-dev gdal-bin
+
+      - name: Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r api/requirements.txt
+          pip install pytest pytest-asyncio httpx
+
+      - name: Fetch NAIF SPICE Kernels
+        run: |
+          python pipeline/fetch_kernels.py
+
+      - name: Verify SPICE Kernel Checksums
+        run: |
+          python pipeline/step2_kernels.py
+
+      - name: Verify LOLA DEM Checksums (terrain.lock)
+        run: |
+          python pipeline/download_dems.py
+
+      - name: Run Full Pytest Suite
+        run: |
+          pytest science/tests/ -v
+
+  container-build-smoke:
+    name: Docker Build & Smoke Test
+    needs: scientific-test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker Image
+        run: |
+          docker build -t axon-lunarsight-backend:ci -f Dockerfile .
+
+      - name: Run Docker Container
+        run: |
+          docker run -d --name axon-api -p 8000:8000 -e AXON_ENV=production axon-lunarsight-backend:ci
+          sleep 5
+
+      - name: Container Health Check
+        run: |
+          curl --fail --retry 5 --retry-delay 2 http://localhost:8000/api/health
+
+      - name: Container Stop & Cleanup
+        if: always()
+        run: |
+          docker stop axon-api || true
+          docker rm axon-api || true

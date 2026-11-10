@@ -101,7 +101,10 @@ python pipeline/build_all.py
 # 5. Execute Python scientific test suite
 pytest science/tests/ -v
 
-# 6. Install web dependencies, run tests, build and launch the application
+# 6. Start the production backend API service
+uvicorn api.main:app --host 0.0.0.0 --port 8000 --workers 1
+
+# 7. In a separate terminal: Install web dependencies, run tests, build and launch the application
 cd web
 npm install
 npm test

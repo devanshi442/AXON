@@ -1,0 +1,17 @@
+.git
+.github
+.gitignore
+.gitattributes
+.venv
+venv
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache
+web/node_modules
+web/dist
+web/.vite
+docs/5_6262684812948021825.pdf
+*.tmp
+

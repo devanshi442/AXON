@@ -111,8 +111,20 @@ def compute_solar_power(
     power_watts = specific_power_w_m2 * area_m2
 
     step_hours = step_seconds / 3600.0
-    total_energy_wh = float(np.sum(power_watts) * step_hours)
-    specific_energy_wh_m2 = float(np.sum(specific_power_w_m2) * step_hours)
+    n_pts = len(power_watts)
+    if n_pts >= 2:
+        try:
+            total_energy_wh = float(np.trapezoid(power_watts, dx=step_hours))
+            specific_energy_wh_m2 = float(np.trapezoid(specific_power_w_m2, dx=step_hours))
+        except AttributeError:
+            total_energy_wh = float(np.trapz(power_watts, dx=step_hours))
+            specific_energy_wh_m2 = float(np.trapz(specific_power_w_m2, dx=step_hours))
+    elif n_pts == 1:
+        total_energy_wh = float(power_watts[0] * step_hours)
+        specific_energy_wh_m2 = float(specific_power_w_m2[0] * step_hours)
+    else:
+        total_energy_wh = 0.0
+        specific_energy_wh_m2 = 0.0
 
     peak_power_w = float(np.max(power_watts)) if np.size(power_watts) > 0 else 0.0
     mean_power_w = float(np.mean(power_watts)) if np.size(power_watts) > 0 else 0.0

@@ -91,6 +91,7 @@ def extract_windows_refined(
     margin_deg: float = 0.0,
     criterion: str = "center",
     refine_edges: bool = True,
+    total_period_hours: Optional[float] = None,
 ) -> List[Dict[str, Any]]:
     """
     Extract contiguous True intervals with optional ~1-minute SPICE edge refinement.
@@ -151,8 +152,16 @@ def extract_windows_refined(
                 except Exception:
                     pass
 
-            # Calculate duration in hours
-            if precision != "hourly":
+            # Calculate duration in hours: strict end - start equality when interval period is defined
+            if total_period_hours is not None:
+                try:
+                    dt_start = datetime.datetime.fromisoformat(start_utc.replace("Z", "+00:00"))
+                    dt_end = datetime.datetime.fromisoformat(end_utc.replace("Z", "+00:00"))
+                    dur_hrs = round((dt_end - dt_start).total_seconds() / 3600.0, 4)
+                except Exception:
+                    dur_hrs = round((end_idx - start_idx) * (step_seconds / 3600.0), 4)
+                dur_hrs = min(dur_hrs, total_period_hours)
+            elif precision == "1-minute":
                 try:
                     dt_start = datetime.datetime.fromisoformat(start_utc.replace("Z", "+00:00"))
                     dt_end = datetime.datetime.fromisoformat(end_utc.replace("Z", "+00:00"))
@@ -191,7 +200,15 @@ def extract_windows_refined(
             except Exception:
                 pass
 
-        if precision != "hourly":
+        if total_period_hours is not None:
+            try:
+                dt_start = datetime.datetime.fromisoformat(start_utc.replace("Z", "+00:00"))
+                dt_end = datetime.datetime.fromisoformat(end_utc.replace("Z", "+00:00"))
+                dur_hrs = round((dt_end - dt_start).total_seconds() / 3600.0, 4)
+            except Exception:
+                dur_hrs = round((end_idx - start_idx) * (step_seconds / 3600.0), 4)
+            dur_hrs = min(dur_hrs, total_period_hours)
+        elif precision == "1-minute":
             try:
                 dt_start = datetime.datetime.fromisoformat(start_utc.replace("Z", "+00:00"))
                 dt_end = datetime.datetime.fromisoformat(end_utc.replace("Z", "+00:00"))
@@ -238,7 +255,28 @@ def compute_comprehensive_metrics(
     sun_radius = timeseries.get("sun_angular_radius_deg", C.SUN_ANGULAR_RADIUS_DEG)
     earth_radius = timeseries.get("earth_angular_radius_deg", C.EARTH_ANGULAR_RADIUS_DEG)
     step_s = timeseries.get("step_seconds", 3600)
-    total_hours = len(times) * (step_s / 3600.0)
+
+    # True elapsed duration calculation
+    if "start_utc" in timeseries and "stop_utc" in timeseries:
+        try:
+            dt_s = datetime.datetime.fromisoformat(timeseries["start_utc"].replace("Z", "+00:00"))
+            dt_e = datetime.datetime.fromisoformat(timeseries["stop_utc"].replace("Z", "+00:00"))
+            total_hours = max(0.0, (dt_e - dt_s).total_seconds() / 3600.0)
+        except Exception:
+            total_hours = (len(times) - 1) * (step_s / 3600.0) if len(times) > 1 else len(times) * (step_s / 3600.0)
+    elif len(times) > 1:
+        try:
+            dt_s = datetime.datetime.fromisoformat(times[0].replace("Z", "+00:00"))
+            dt_e = datetime.datetime.fromisoformat(times[-1].replace("Z", "+00:00"))
+            diff_h = (dt_e - dt_s).total_seconds() / 3600.0
+            if abs(diff_h - (len(times) - 1) * (step_s / 3600.0)) < 1e-3:
+                total_hours = diff_h
+            else:
+                total_hours = len(times) * (step_s / 3600.0)
+        except Exception:
+            total_hours = len(times) * (step_s / 3600.0)
+    else:
+        total_hours = len(times) * (step_s / 3600.0)
 
     # 1. Compute visibility
     sun_vis = visibility.compute_sun_visibility(
@@ -258,37 +296,40 @@ def compute_comprehensive_metrics(
         site_lat=site_lat, site_lon=site_lon, target_body_id=C.SUN_NAIF_ID,
         horizon_mask=mask, threshold_deg=sun_threshold_deg, is_sun=True,
         refine_edges=refine_edges,
+        total_period_hours=total_hours,
     )
     earth_windows = extract_windows_refined(
         times, earth_mask, step_seconds=step_s,
         site_lat=site_lat, site_lon=site_lon, target_body_id=C.EARTH_NAIF_ID,
         horizon_mask=mask, margin_deg=dte_margin_deg, criterion=earth_criterion, is_sun=False,
         refine_edges=refine_edges,
+        total_period_hours=total_hours,
     )
     joint_windows = extract_windows_refined(
         times, joint_mask, step_seconds=step_s,
         site_lat=site_lat, site_lon=site_lon, target_body_id=C.SUN_NAIF_ID,
         horizon_mask=mask, threshold_deg=sun_threshold_deg, is_sun=True,
         refine_edges=False,  # Joint edge depends on both bodies, keep hourly
+        total_period_hours=total_hours,
     )
 
-    # Totals and extremes
-    sun_hours = sum(w["duration_hours"] for w in sun_windows)
-    earth_hours = sum(w["duration_hours"] for w in earth_windows)
-    joint_hours = sum(w["duration_hours"] for w in joint_windows)
+    # Totals and extremes, mathematically bounded by total elapsed period
+    sun_hours = min(total_hours, sum(w["duration_hours"] for w in sun_windows))
+    earth_hours = min(total_hours, sum(w["duration_hours"] for w in earth_windows))
+    joint_hours = min(total_hours, sum(w["duration_hours"] for w in joint_windows))
 
-    sun_fraction = sun_hours / total_hours if total_hours else 0.0
-    earth_fraction = earth_hours / total_hours if total_hours else 0.0
-    joint_fraction = joint_hours / total_hours if total_hours else 0.0
+    sun_fraction = min(1.0, max(0.0, sun_hours / total_hours)) if total_hours else 0.0
+    earth_fraction = min(1.0, max(0.0, earth_hours / total_hours)) if total_hours else 0.0
+    joint_fraction = min(1.0, max(0.0, joint_hours / total_hours)) if total_hours else 0.0
 
-    longest_sun_w = max((w["duration_hours"] for w in sun_windows), default=0.0)
-    longest_dark_gap = _longest_run_hours(sun_mask, step_s, False)
+    longest_sun_w = min(total_hours, max((w["duration_hours"] for w in sun_windows), default=0.0))
+    longest_dark_gap = min(total_hours, _longest_run_hours(sun_mask, step_s, False))
 
-    longest_earth_w = max((w["duration_hours"] for w in earth_windows), default=0.0)
-    longest_earth_outage = _longest_run_hours(earth_mask, step_s, False)
+    longest_earth_w = min(total_hours, max((w["duration_hours"] for w in earth_windows), default=0.0))
+    longest_earth_outage = min(total_hours, _longest_run_hours(earth_mask, step_s, False))
 
-    longest_joint_w = max((w["duration_hours"] for w in joint_windows), default=0.0)
-    longest_joint_gap = _longest_run_hours(joint_mask, step_s, False)
+    longest_joint_w = min(total_hours, max((w["duration_hours"] for w in joint_windows), default=0.0))
+    longest_joint_gap = min(total_hours, _longest_run_hours(joint_mask, step_s, False))
 
     # 3. Power Model
     p_cfg = power_config or {}
@@ -345,6 +386,7 @@ def compute_comprehensive_metrics(
         "sun": {
             "total_hours": round(sun_hours, 1),
             "percentage": round(sun_fraction * 100.0, 1),
+            "window_count": len(sun_windows),
             "windows_count": len(sun_windows),
             "longest_window_hours": longest_sun_w,
             "longest_dark_gap_hours": longest_dark_gap,
@@ -353,6 +395,7 @@ def compute_comprehensive_metrics(
         "earth": {
             "total_hours": round(earth_hours, 1),
             "percentage": round(earth_fraction * 100.0, 1),
+            "window_count": len(earth_windows),
             "windows_count": len(earth_windows),
             "longest_window_hours": longest_earth_w,
             "longest_dark_gap_hours": longest_earth_outage,
@@ -363,6 +406,7 @@ def compute_comprehensive_metrics(
         "joint": {
             "total_hours": round(joint_hours, 1),
             "percentage": round(joint_fraction * 100.0, 1),
+            "window_count": len(joint_windows),
             "windows_count": len(joint_windows),
             "longest_window_hours": longest_joint_w,
             "longest_joint_gap_hours": longest_joint_gap,
@@ -403,11 +447,19 @@ def compute_site_flat_and_terrain_metrics(
     if "antenna_margin_deg" in kwargs:
         dte_margin_deg = kwargs["antenna_margin_deg"]
 
-    if power_config is None and ("solar_array_type" in kwargs or "orientation" in kwargs):
+    if site_lat is None and "lat" in timeseries:
+        site_lat = timeseries["lat"]
+    if site_lon is None and "lon" in timeseries:
+        site_lon = timeseries["lon"]
+    refine_edges = kwargs.get("refine_edges", False)
+
+    if power_config is None:
         power_config = {
             "orientation": kwargs.get("solar_array_type") or kwargs.get("orientation", "flat"),
             "tilt_deg": kwargs.get("solar_tilt_deg") or kwargs.get("tilt_deg"),
             "azimuth_deg": kwargs.get("solar_azimuth_deg") or kwargs.get("azimuth_deg"),
+            "area_m2": kwargs.get("area_m2") or kwargs.get("array_area_m2", 1.0),
+            "efficiency": kwargs.get("efficiency") or kwargs.get("array_efficiency", 0.28),
         }
 
     flat_res = compute_comprehensive_metrics(
@@ -419,6 +471,7 @@ def compute_site_flat_and_terrain_metrics(
         power_config=power_config,
         site_lat=site_lat,
         site_lon=site_lon,
+        refine_edges=refine_edges,
     )
 
     if horizon_mask is None or (isinstance(horizon_mask, dict) and horizon_mask.get("coverage_status") == "unavailable"):
@@ -437,6 +490,7 @@ def compute_site_flat_and_terrain_metrics(
         power_config=power_config,
         site_lat=site_lat,
         site_lon=site_lon,
+        refine_edges=refine_edges,
     )
 
     # Compute headline delta: how wrong flat horizon is
