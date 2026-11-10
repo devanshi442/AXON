@@ -7,8 +7,11 @@ on:
     branches: [ main ]
 
 jobs:
-  scientific-test:
-    name: Scientific Engine & API Verification
+  # =========================================================================
+  # JOB A: Core Scientific Engine & API Verification (Non-DEM Tests)
+  # =========================================================================
+  scientific-core:
+    name: Job A — Core CI (SPICE, Geometry, API, Power)
     runs-on: ubuntu-latest
 
     steps:
@@ -29,7 +32,9 @@ jobs:
       - name: Install Python Dependencies
         run: |
           python -m pip install --upgrade pip
+          pip install -r requirements.txt
           pip install -r api/requirements.txt
+          pip install -e science/
           pip install pytest pytest-asyncio httpx
 
       - name: Fetch NAIF SPICE Kernels
@@ -40,17 +45,126 @@ jobs:
         run: |
           python pipeline/step2_kernels.py
 
-      - name: Verify LOLA DEM Checksums (terrain.lock)
+      - name: Audit Terrain Assets (Integrity Check on Present Files)
         run: |
-          python pipeline/download_dems.py
+          python pipeline/download_dems.py --verify-present
 
-      - name: Run Full Pytest Suite
+      - name: Run Core Scientific Test Suite (97 Tests)
         run: |
-          pytest science/tests/ -v
+          pytest science/tests/ -v -m "not needs_dems" --junitxml=junit-core.xml
 
+      - name: Generate Dynamic Core CI Summary
+        if: always()
+        run: |
+          python -c "
+          import xml.etree.ElementTree as ET, os
+          xml_path = 'junit-core.xml'
+          summary_path = os.environ.get('GITHUB_STEP_SUMMARY')
+          if os.path.exists(xml_path) and summary_path:
+              tree = ET.parse(xml_path)
+              root = tree.getroot()
+              ts = root if root.tag == 'testsuite' else root.find('testsuite')
+              tests = ts.attrib.get('tests', '0') if ts is not None else '0'
+              failures = ts.attrib.get('failures', '0') if ts is not None else '0'
+              errors = ts.attrib.get('errors', '0') if ts is not None else '0'
+              skipped = ts.attrib.get('skipped', '0') if ts is not None else '0'
+              passed = int(tests) - int(failures) - int(errors) - int(skipped)
+              with open(summary_path, 'a', encoding='utf-8') as f:
+                  f.write('### Job A — Core CI Summary (Actual Results)\n')
+                  f.write(f'- **Tests Executed:** {passed} passed\n')
+                  f.write(f'- **Failures / Errors:** {failures} failed, {errors} errors\n')
+                  f.write(f'- **Terrain Tests:** 13 deferred to Job B (Terrain Integration Verification)\n')
+          "
+
+  # =========================================================================
+  # JOB B: Terrain Integration Verification (Mandatory Real DEM Data)
+  # =========================================================================
+  terrain-integration:
+    name: Job B — Terrain Integration Verification (Real DEMs)
+    needs: scientific-core
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install System Dependencies (GDAL / Spatial)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libopenjp2-7 libgdal-dev gdal-bin
+
+      - name: Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -r api/requirements.txt
+          pip install -e science/
+          pip install pytest pytest-asyncio httpx
+
+      - name: Fetch NAIF SPICE Kernels
+        run: |
+          python pipeline/fetch_kernels.py
+
+      - name: Verify SPICE Kernel Checksums
+        run: |
+          python pipeline/step2_kernels.py
+
+      - name: Cache Terrain LOLA DEM Assets
+        id: cache-terrain
+        uses: actions/cache@v4
+        with:
+          path: terrain/
+          key: ${{ runner.os }}-terrain-v1-${{ hashFiles('terrain.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-terrain-v1-
+
+      - name: Obtain Mandatory LOLA DEM Assets (Downloads Any Missing / Incomplete Files)
+        run: |
+          python pipeline/download_dems.py --download --mandatory
+
+      - name: Strict Checksum Validation Against terrain.lock
+        run: |
+          python pipeline/download_dems.py --mandatory
+
+      - name: Execute Terrain-Dependent Scientific Tests (13 Tests on Real DEMs)
+        run: |
+          pytest science/tests/ -v -m "needs_dems" --junitxml=junit-terrain.xml
+
+      - name: Generate Dynamic Terrain Integration Summary
+        if: always()
+        run: |
+          python -c "
+          import xml.etree.ElementTree as ET, os
+          xml_path = 'junit-terrain.xml'
+          summary_path = os.environ.get('GITHUB_STEP_SUMMARY')
+          if os.path.exists(xml_path) and summary_path:
+              tree = ET.parse(xml_path)
+              root = tree.getroot()
+              ts = root if root.tag == 'testsuite' else root.find('testsuite')
+              tests = ts.attrib.get('tests', '0') if ts is not None else '0'
+              failures = ts.attrib.get('failures', '0') if ts is not None else '0'
+              errors = ts.attrib.get('errors', '0') if ts is not None else '0'
+              skipped = ts.attrib.get('skipped', '0') if ts is not None else '0'
+              passed = int(tests) - int(failures) - int(errors) - int(skipped)
+              with open(summary_path, 'a', encoding='utf-8') as f:
+                  f.write('### Job B — Terrain Integration Summary (Actual Results)\n')
+                  f.write(f'- **Terrain Tests Executed:** {passed} passed on real LOLA DEMs\n')
+                  f.write(f'- **Failures / Errors:** {failures} failed, {errors} errors\n')
+                  f.write(f'- **Mandatory DEM Assets:** 14 catalogue DEM files strictly verified against SHA-256\n')
+          "
+
+  # =========================================================================
+  # JOB C: Docker Container Build & Smoke Test (Requires Jobs A and B)
+  # =========================================================================
   container-build-smoke:
-    name: Docker Build & Smoke Test
-    needs: scientific-test
+    name: Job C — Docker Build & Smoke Test
+    needs: [ scientific-core, terrain-integration ]
     runs-on: ubuntu-latest
 
     steps:

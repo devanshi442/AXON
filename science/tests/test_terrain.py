@@ -114,6 +114,7 @@ def test_synthetic_bowl_crater():
     assert rim_elevation_deg > 8.0, f"Crater rim elevation should be strongly positive, got {rim_elevation_deg}°"
 
 
+@pytest.mark.needs_dems
 def test_dem_selection_coverage_rules():
     """Verify DEM selection logic adheres to Section 4.2 requirements."""
     # 1. IM-1 (-80.13°, 1.44°): 50 km window reaches ~-78.5°, so must select LDEM_75S_30M
@@ -135,6 +136,7 @@ def test_dem_selection_coverage_rules():
     assert status_bg == "full"
 
 
+@pytest.mark.needs_dems
 def test_cross_check_real_polar_sites():
     """
     Built-in cross-check: ray-march vs independent pixel-binning on real polar DEMs.
@@ -160,6 +162,7 @@ def test_cross_check_real_polar_sites():
         assert median_diff <= 0.10, f"{name} cross-check failed: median diff={median_diff:.3f}° > 0.10°"
 
 
+@pytest.mark.needs_dems
 def test_observer_mast_height_monotone():
     """Observer mast height test: increasing observer height lowers or maintains horizon elevation."""
     lat, lon = -89.68, 129.0
