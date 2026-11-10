@@ -146,8 +146,12 @@ def verify_and_fetch_dems(
                 continue
             else:
                 print(f"  CORRUPT CHECKSUM: {rel_path} (expected {expected_hash}, got {actual_hash})")
-                corrupt_files.append(rel_path)
-                continue
+                if download_missing:
+                    print(f"  Removing corrupted file to allow clean re-download: {rel_path}")
+                    file_path.unlink(missing_ok=True)
+                else:
+                    corrupt_files.append(rel_path)
+                    continue
 
         # 2. File is missing
         missing_files.append(rel_path)
