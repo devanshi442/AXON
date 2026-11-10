@@ -209,6 +209,65 @@ def test_solar_energy_trapezoidal_integration():
     assert math.isclose(res["specific_energy_wh_m2"], expected_energy_wh / area_m2, rel_tol=1e-3)
 
 
+def test_48_hour_strict_equality_flat_window_accounting():
+    """
+    Strict-equality test for 48-hour flat horizon case (-89.534, -150.052, 2026-03-01..03, 1h step).
+    Asserts:
+    1. For every window, duration_hours == (end - start) exactly.
+    2. percentage == (total_hours / total_period_hours) * 100 exactly.
+    3. Flat Earth duration == 41.0h, Earth percentage == 85.4%.
+    4. Flat Sun duration == 0.0h, Sun percentage == 0.0%.
+    """
+    import sys
+    from pathlib import Path
+    root = Path(__file__).resolve().parent.parent.parent
+    if str(root / "api") not in sys.path:
+        sys.path.insert(0, str(root / "api"))
+    if str(root) not in sys.path:
+        sys.path.insert(0, str(root))
+
+    from api.services.analysis_service import analysis_service
+    analysis_service.load_kernels()
+
+    res = analysis_service.analyze_site(
+        lat=-89.534,
+        lon=-150.052,
+        start_utc="2026-03-01T00:00:00Z",
+        stop_utc="2026-03-03T00:00:00Z",
+        step_seconds=3600,
+        mast_height_m=2.0,
+        horizon_mode="flat",
+    )
+    m = res["flat"]
+    total_period = m["total_period_hours"]
+    assert total_period == 48.0
+
+    for domain in ["sun", "earth", "joint"]:
+        d_meta = m[domain]
+        total_h = d_meta["total_hours"]
+        pct = d_meta["percentage"]
+
+        # Assert percentage == (total / period) * 100
+        expected_pct = round((total_h / total_period) * 100.0, 1)
+        assert pct == expected_pct, f"{domain} percentage mismatch: {pct} != {expected_pct}"
+
+        # Assert every window satisfies duration_hours == (end - start) exactly
+        for w in d_meta["windows"]:
+            dt_s = datetime.datetime.fromisoformat(w["start"].replace("Z", "+00:00"))
+            dt_e = datetime.datetime.fromisoformat(w["end"].replace("Z", "+00:00"))
+            exact_diff = (dt_e - dt_s).total_seconds() / 3600.0
+            assert w["duration_hours"] == exact_diff, f"Window {w} fails duration == (end - start)"
+
+    # Specific 48h physical flat results (Earth dips below 0° tangent for 7h)
+    assert m["earth"]["total_hours"] == 41.0
+    assert m["earth"]["percentage"] == 85.4
+    assert m["sun"]["total_hours"] == 0.0
+    assert m["sun"]["percentage"] == 0.0
+    assert m["joint"]["total_hours"] == 0.0
+    assert m["joint"]["percentage"] == 0.0
+
+
+@pytest.mark.needs_dems
 def test_48_hour_strict_equality_window_accounting():
     """
     Strict-equality test for 48-hour case (-89.534, -150.052, 2026-03-01..03, 1h step).
@@ -238,7 +297,8 @@ def test_48_hour_strict_equality_window_accounting():
         mast_height_m=2.0,
         horizon_mode="terrain",
     )
-    m = res.get("terrain") or res.get("flat")
+    assert res.get("terrain") is not None, "Connecting Ridge polar DEM required for terrain window accounting"
+    m = res["terrain"]
     total_period = m["total_period_hours"]
     assert total_period == 48.0
 

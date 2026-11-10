@@ -49,7 +49,7 @@ jobs:
         run: |
           python pipeline/download_dems.py --verify-present
 
-      - name: Run Core Scientific Test Suite (97 Tests)
+      - name: Run Core Scientific Test Suite (96 Tests)
         run: |
           pytest science/tests/ -v -m "not needs_dems" --junitxml=junit-core.xml
 
@@ -73,7 +73,7 @@ jobs:
                   f.write('### Job A — Core CI Summary (Actual Results)\n')
                   f.write(f'- **Tests Executed:** {passed} passed\n')
                   f.write(f'- **Failures / Errors:** {failures} failed, {errors} errors\n')
-                  f.write(f'- **Terrain Tests:** 13 deferred to Job B (Terrain Integration Verification)\n')
+                  f.write(f'- **Terrain Tests:** 16 deferred to Job B (Terrain Integration Verification)\n')
           "
 
   # =========================================================================
@@ -132,7 +132,7 @@ jobs:
         run: |
           python pipeline/download_dems.py --mandatory
 
-      - name: Execute Terrain-Dependent Scientific Tests (13 Tests on Real DEMs)
+      - name: Execute Terrain-Dependent Scientific Tests (16 Tests on Real DEMs)
         run: |
           pytest science/tests/ -v -m "needs_dems" --junitxml=junit-terrain.xml
 

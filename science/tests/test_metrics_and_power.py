@@ -210,6 +210,7 @@ def test_raised_margin_never_increases_availability():
         prev_earth_vis_count = curr_count
 
 
+@pytest.mark.needs_dems
 def test_psr_crater_sanity_assertion():
     """
     Permanently Shadowed Region (PSR) check:

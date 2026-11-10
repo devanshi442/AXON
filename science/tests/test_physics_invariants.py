@@ -91,9 +91,38 @@ def test_longitude_180_seam_symmetry():
         np.testing.assert_allclose(ts_pos["earth_azimuth_deg"], ts_neg["earth_azimuth_deg"], atol=1e-5)
 
 
+def test_s1_seam_flat_near_50_percent():
+    """
+    S1 Physics Invariant: Verify that equatorial and mid-latitude seam coordinates (lon=180, -180)
+    produce ~50% flat illumination over a full lunation and exact symmetry on a spherical lunar surface.
+    """
+    from api.services.analysis_service import analysis_service
+    analysis_service.load_kernels()
+
+    for test_lat in [0.0, 30.0, -30.0]:
+        res_pos = analysis_service.analyze_site(
+            lat=test_lat, lon=180.0,
+            start_utc="2026-03-01T00:00:00Z", stop_utc="2026-03-31T00:00:00Z",
+            step_seconds=3600, mast_height_m=1.5, horizon_mode="flat"
+        )
+        res_neg = analysis_service.analyze_site(
+            lat=test_lat, lon=-180.0,
+            start_utc="2026-03-01T00:00:00Z", stop_utc="2026-03-31T00:00:00Z",
+            step_seconds=3600, mast_height_m=1.5, horizon_mode="flat"
+        )
+        flat_sun_pos = res_pos["flat"]["sun"]["percentage"]
+        flat_sun_neg = res_neg["flat"]["sun"]["percentage"]
+
+        # Flat sun must be ~50% (diurnal cycle over 30 days)
+        assert abs(flat_sun_pos - 49.2) < 1.0, f"Lat {test_lat} flat sun {flat_sun_pos} deviates from ~50%"
+        # Flat sun must be symmetric across the seam
+        assert abs(flat_sun_pos - flat_sun_neg) < 0.05, f"Seam mismatch: +180={flat_sun_pos}% vs -180={flat_sun_neg}%"
+
+
+@pytest.mark.needs_dems
 def test_s1_seam_terrain_and_flat_near_50_percent():
     """
-    S1 Regression Test: Verify that equatorial and mid-latitude seam coordinates (lon=180, -180)
+    S1 Terrain Regression Test: Verify that equatorial and mid-latitude seam coordinates (lon=180, -180)
     produce ~50% flat illumination over a full lunation and exact terrain symmetry without underground clipping.
     """
     from api.services.analysis_service import analysis_service
@@ -110,6 +139,9 @@ def test_s1_seam_terrain_and_flat_near_50_percent():
             start_utc="2026-03-01T00:00:00Z", stop_utc="2026-03-31T00:00:00Z",
             step_seconds=3600, mast_height_m=1.5, horizon_mode="terrain"
         )
+        assert res_pos.get("terrain") is not None, f"Global DEM (LDEM_64) required for terrain test at lat {test_lat}"
+        assert res_neg.get("terrain") is not None, f"Global DEM (LDEM_64) required for terrain test at lat {test_lat}"
+
         flat_sun = res_pos["flat"]["sun"]["percentage"]
         t_sun_pos = res_pos["terrain"]["sun"]["percentage"]
         t_sun_neg = res_neg["terrain"]["sun"]["percentage"]
