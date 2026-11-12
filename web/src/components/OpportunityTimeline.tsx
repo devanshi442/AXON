@@ -56,7 +56,28 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
   })
 
   const mastHeights = [0.0, 1.5, 3.0, 5.0, 10.0]
+const timelineHours = oppData?.total_period_hours ?? 0
 
+const getWindowStyle = (start: string, end: string) => {
+  if (!oppData || timelineHours <= 0) {
+    return { left: '0%', width: '0%' }
+  }
+
+  const timelineStart = new Date(oppData.start_utc).getTime()
+  const windowStart = new Date(start).getTime()
+  const windowEnd = new Date(end).getTime()
+
+  const startOffsetHours = (windowStart - timelineStart) / 3600000
+  const durationHours = (windowEnd - windowStart) / 3600000
+
+  const left = Math.max(0, Math.min(100, (startOffsetHours / timelineHours) * 100))
+  const right = Math.max(left, Math.min(100, ((startOffsetHours + durationHours) / timelineHours) * 100))
+
+  return {
+    left: `${left}%`,
+    width: `${right - left}%`,
+  }
+}
   return (
     <div className="relative bg-[#0D1014] border border-[#2A2D31] rounded p-4 flex flex-col gap-4">
       <PanelCornerBrackets />
@@ -66,7 +87,7 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
             <span>⚡</span> 30-Day Opportunity Timelines &amp; Science Windows
           </h2>
           <p className="text-2xs text-[#8A8A88] mt-0.5">
-            Solar power generation potential and Direct-to-Earth (DTE) communication availability calculated over 720 hours.
+            Solar power generation potential and Direct-to-Earth (DTE) communication availability over up to 30 days of available coverage.
           </p>
         </div>
 
@@ -339,7 +360,7 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
           <div className="p-3 bg-[#050608] rounded border border-[#2A2D31] flex flex-col gap-3 font-mono">
             <div className="flex items-center justify-between">
               <span className="text-2xs font-semibold text-[#E4E4E2]">
-                30-Day Opportunity Visualizer (720 Hours Timeline from {formatUtcDisplay(utc)})
+                30-Day Opportunity Visualizer ({oppData.total_period_hours} Timeline from {formatUtcDisplay(utc)})
               </span>
               <span className="text-3xs text-[#8A8A88]">
                 {horizonMode === 'terrain' ? `Topography: ${horizon?.dem_id || 'LOLA DEM'}` : 'Idealized Horizon'}
@@ -350,15 +371,15 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
             <div>
               <div className="flex justify-between text-3xs text-[#8A8A88] mb-1">
                 <span className="text-[#E0A04A] font-medium">Solar Power Generation Potential</span>
-                <span>{oppData.sun.total_hours} / 720 hrs ({oppData.sun.percentage}%)</span>
+                <span>{oppData.sun.total_hours} / {oppData.total_period_hours} hrs ({oppData.sun.percentage}%)</span>
               </div>
-              <div className="w-full h-5 bg-[#0D1014] rounded overflow-hidden flex border border-[#2A2D31]">
+              <div className="relative w-full h-5 bg-[#0D1014] rounded overflow-hidden border border-[#2A2D31]">
                 {oppData.sun.windows.length > 0 ? (
                   oppData.sun.windows.map((w, idx) => (
                     <div
                       key={idx}
-                      style={{ width: `${(w.duration_hours / 720) * 100}%` }}
-                      className="h-full bg-[#E0A04A] hover:brightness-110 transition-all border-r border-[#050608]"
+                     style={getWindowStyle(w.start, w.end)}
+                      className="absolute top-0 h-full bg-[#E0A04A] hover:brightness-110 transition-all border-r border-[#050608]"
                       title={`Sun window: ${w.start} to ${w.end} (${w.duration_hours} hrs)`}
                     />
                   ))
@@ -374,15 +395,15 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
             <div>
               <div className="flex justify-between text-3xs text-[#8A8A88] mb-1">
                 <span className="text-[#6FA8C9] font-medium">Direct-to-Earth (DTE) Line-of-Sight Window</span>
-                <span>{oppData.earth.total_hours} / 720 hrs ({oppData.earth.percentage}%)</span>
+                <span>{oppData.earth.total_hours} / {oppData.total_period_hours} hrs ({oppData.earth.percentage}%)</span>
               </div>
-              <div className="w-full h-5 bg-[#0D1014] rounded overflow-hidden flex border border-[#2A2D31]">
+              <div className="relative w-full h-5 bg-[#0D1014] rounded overflow-hidden border border-[#2A2D31]">
                 {oppData.earth.windows.length > 0 ? (
                   oppData.earth.windows.map((w, idx) => (
                     <div
                       key={idx}
-                      style={{ width: `${(w.duration_hours / 720) * 100}%` }}
-                      className="h-full bg-[#6FA8C9] hover:brightness-110 transition-all border-r border-[#050608]"
+                      style={getWindowStyle(w.start, w.end)}
+                      className="absolute top-0 h-full bg-[#6FA8C9] hover:brightness-110 transition-all border-r border-[#050608]"
                       title={`Earth window: ${w.start} to ${w.end} (${w.duration_hours} hrs)`}
                     />
                   ))
@@ -398,15 +419,15 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
             <div>
               <div className="flex justify-between text-3xs text-[#8A8A88] mb-1">
                 <span className="text-[#6DBF8B] font-medium">Joint Solar Power &amp; DTE Comm Windows</span>
-                <span>{oppData.joint.total_hours} / 720 hrs ({oppData.joint.percentage}%)</span>
+                <span>{oppData.joint.total_hours} / {oppData.total_period_hours} hrs ({oppData.joint.percentage}%)</span>
               </div>
-              <div className="w-full h-5 bg-[#0D1014] rounded overflow-hidden flex border border-[#2A2D31]">
+              <div className="relative w-full h-5 bg-[#0D1014] rounded overflow-hidden border border-[#2A2D31]">
                 {oppData.joint.windows.length > 0 ? (
                   oppData.joint.windows.map((w, idx) => (
                     <div
                       key={idx}
-                      style={{ width: `${(w.duration_hours / 720) * 100}%` }}
-                      className="h-full bg-[#6DBF8B] hover:brightness-110 transition-all border-r border-[#050608]"
+                      style={getWindowStyle(w.start, w.end)}
+                      className="absolute top-0 h-full bg-[#6DBF8B] hover:brightness-110 transition-all border-r border-[#050608]"
                       title={`Joint window: ${w.start} to ${w.end} (${w.duration_hours} hrs)`}
                     />
                   ))
