@@ -5,6 +5,13 @@ on:
     branches: [ main, develop ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      run_dem_tests:
+        description: "Download LOLA DEMs and run DEM-dependent tests"
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   scientific-test:
@@ -14,6 +21,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          lfs: true
 
       - name: Set up Python 3.12
         uses: actions/setup-python@v5
@@ -30,6 +39,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r api/requirements.txt
+          pip install -e ./science/
           pip install pytest pytest-asyncio httpx
 
       - name: Fetch NAIF SPICE Kernels
@@ -40,13 +50,24 @@ jobs:
         run: |
           python pipeline/step2_kernels.py
 
+      - name: Download LOLA DEMs (manual dispatch only)
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.run_dem_tests }}
+        run: |
+          python pipeline/download_dems.py --download
+
       - name: Verify LOLA DEM Checksums (terrain.lock)
         run: |
-          python pipeline/download_dems.py
+          # DEMs are large (~1.5 GB) and are not required for the default CI
+          # suite; DEM-dependent tests are skipped when the assets are absent.
+          if [ -d terrain ] && find terrain -name '*.JP2' -print -quit | grep -q .; then
+            python pipeline/download_dems.py
+          else
+            echo "No LOLA DEM assets present; skipping checksum verification."
+          fi
 
       - name: Run Full Pytest Suite
         run: |
-          pytest science/tests/ -v
+          python -m pytest science/tests/ -v
 
   container-build-smoke:
     name: Docker Build & Smoke Test
@@ -56,6 +77,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          lfs: true
 
       - name: Build Docker Image
         run: |
@@ -64,11 +87,20 @@ jobs:
       - name: Run Docker Container
         run: |
           docker run -d --name axon-api -p 8000:8000 -e AXON_ENV=production axon-lunarsight-backend:ci
-          sleep 5
 
-      - name: Container Health Check
+      - name: Container Readiness Check
         run: |
-          curl --fail --retry 5 --retry-delay 2 http://localhost:8000/api/health
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://localhost:8000/api/ready | grep -q '"ready":true'; then
+              echo "Container is scientifically ready."
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Container did not become ready. Final readiness response:"
+          curl -fsS http://localhost:8000/api/ready || true
+          docker logs axon-api || true
+          exit 1
 
       - name: Container Stop & Cleanup
         if: always()

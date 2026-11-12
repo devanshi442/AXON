@@ -56,6 +56,8 @@ Thumbs.db
 # ── Secrets ──
 .env
 .env.local
+.env.*
+!.env.example
 *.pem
 
 # ── Logs ──

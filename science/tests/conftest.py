@@ -41,7 +41,14 @@ def pytest_collection_modifyitems(config, items):
         for item in items:
             if item.get_closest_marker("needs_dems") or "needs_dems" in item.keywords:
                 item.add_marker(skip_dems)
-            elif item.name in ("test_dem_selection_coverage_rules", "test_cross_check_real_polar_sites", "test_observer_mast_height_monotone"):
+            elif item.name in (
+                "test_dem_selection_coverage_rules",
+                "test_cross_check_real_polar_sites",
+                "test_observer_mast_height_monotone",
+                "test_psr_crater_sanity_assertion",
+                "test_s1_seam_terrain_and_flat_near_50_percent",
+                "test_48_hour_strict_equality_window_accounting",
+            ):
                 item.add_marker(skip_dems)
 
 

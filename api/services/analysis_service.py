@@ -312,7 +312,17 @@ class AnalysisService:
         Compute or retrieve cached 360-degree terrain horizon mask.
         Returns horizon mask dict.
         """
-        cache_key = f"h:{round(lat, 4)}:{round(lon, 4)}:{round(mast_height_m, 2)}:{round(max_range_km, 1)}:{round(az_step_deg, 2)}"
+        cache_key = horizon_cache.make_key(
+            "horizon",
+            {
+                "lat": float(lat),
+                "lon": float(lon),
+                "mast_height_m": float(mast_height_m),
+                "max_range_km": float(max_range_km),
+                "az_step_deg": float(az_step_deg),
+                "preferred_dem_id": preferred_dem_id,
+            },
+        )
         cached = horizon_cache.get(cache_key)
         if cached:
             return cached
@@ -429,14 +439,18 @@ class AnalysisService:
         else:
             kernel_hash = "no_kernels"
         cache_params = {
-            "lat": round(r_lat, 4),
-            "lon": round(r_lon, 4),
+            "site_id": r_id,
+            "site_name": r_name,
+            "lat": r_lat,
+            "lon": r_lon,
             "start": start_utc,
             "stop": stop_utc,
             "step": step_seconds,
-            "mast": round(mast_height_m, 2),
+            "mast": mast_height_m,
             "mode": horizon_mode,
             "solar": solar_array_type,
+            "solar_tilt": solar_tilt_deg,
+            "solar_azimuth": solar_azimuth_deg,
             "area": array_area_m2,
             "eff": array_efficiency,
             "margin": antenna_margin_deg,
@@ -446,9 +460,10 @@ class AnalysisService:
         cache_key = analysis_cache.make_key("analyze", cache_params, kernel_hash)
         cached_result = analysis_cache.get(cache_key)
         if cached_result:
-            cached_result["cached"] = True
-            cached_result["elapsed_ms"] = round((time.perf_counter() - t0) * 1000.0, 2)
-            return cached_result
+            cached_copy = dict(cached_result)
+            cached_copy["cached"] = True
+            cached_copy["elapsed_ms"] = round((time.perf_counter() - t0) * 1000.0, 2)
+            return cached_copy
 
         warnings: List[str] = []
 
@@ -1064,9 +1079,10 @@ class AnalysisService:
         # Cache check
         kernel_hash = self._get_kernel_composite_hash()
         cache_params = {
-            "site_id": site_id,
-            "lat": lat,
-            "lon": lon,
+            "site_id": r_id,
+            "site_name": r_name,
+            "lat": r_lat,
+            "lon": r_lon,
             "search_start_utc": search_start_utc,
             "search_stop_utc": search_stop_utc,
             "min_window_hours": min_window_hours,

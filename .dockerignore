@@ -13,5 +13,6 @@ web/node_modules
 web/dist
 web/.vite
 docs/5_6262684812948021825.pdf
+terrain
 *.tmp
 

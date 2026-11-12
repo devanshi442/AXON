@@ -25,8 +25,11 @@ try:
     from api.cache import analysis_cache, horizon_cache
     from api.config import ADMIN_API_KEY, API_VERSION, ROOT
     from api.schemas import (
+        CacheClearResponse,
         CacheStatsResponse,
+        ErrorEnvelope,
         EventsRequest,
+        EventsResponse,
         HealthResponse,
         HorizonRequest,
         HorizonResponse,
@@ -36,20 +39,26 @@ try:
         ReadinessResponse,
         SiteAnalyzeRequest,
         SiteAnalyzeResponse,
+        SiteDetailResponse,
+        SiteListResponse,
         TimeseriesRequest,
         TimeseriesResponse,
         VerifyRequest,
+        VerifyResponse,
         WindowSearchRequest,
         WindowSearchResponse,
     )
     from api.services.analysis_service import _SPICE_LOCK, analysis_service
-    from api.validation import validate_coordinates, validate_date_range
+    from api.validation import validate_coordinates, validate_date_range, validate_sample_count
 except ImportError:
     from cache import analysis_cache, horizon_cache
     from config import ADMIN_API_KEY, API_VERSION, ROOT
     from schemas import (
+        CacheClearResponse,
         CacheStatsResponse,
+        ErrorEnvelope,
         EventsRequest,
+        EventsResponse,
         HealthResponse,
         HorizonRequest,
         HorizonResponse,
@@ -59,29 +68,89 @@ except ImportError:
         ReadinessResponse,
         SiteAnalyzeRequest,
         SiteAnalyzeResponse,
+        SiteDetailResponse,
+        SiteListResponse,
         TimeseriesRequest,
         TimeseriesResponse,
         VerifyRequest,
+        VerifyResponse,
         WindowSearchRequest,
         WindowSearchResponse,
     )
     from services.analysis_service import _SPICE_LOCK, analysis_service
-    from validation import validate_coordinates, validate_date_range
+    from validation import validate_coordinates, validate_date_range, validate_sample_count
 from lunarsight_core import constants as C
 from lunarsight_core import geometry as G
 from lunarsight_core import horizon as H
 from lunarsight_core import metrics as M
 from lunarsight_core import sites as S
+from lunarsight_core import terrain as T
 from lunarsight_core import visibility as V
 
 router = APIRouter(prefix="/api", tags=["LunarSight Science API"])
 
 
 # ---------------------------------------------------------------------------
+# Shared OpenAPI error documentation
+# ---------------------------------------------------------------------------
+
+# Every error body is the framework-level ErrorEnvelope produced by the
+# exception handlers in api/main.py. 405 Method Not Allowed is emitted by
+# Starlette before route handlers run, so it is covered by contract tests
+# rather than by per-route ``responses`` declarations.
+_SERVER_ERRORS: Dict[int, Dict[str, Any]] = {
+    500: {"model": ErrorEnvelope, "description": "Internal scientific computation error."},
+    504: {"model": ErrorEnvelope, "description": "Calculation exceeded the configured request timeout."},
+}
+
+_READ_ERRORS: Dict[int, Dict[str, Any]] = {
+    429: {"model": ErrorEnvelope, "description": "Per-IP rate limit exceeded."},
+    500: {"model": ErrorEnvelope, "description": "Internal scientific computation error."},
+    504: {"model": ErrorEnvelope, "description": "Calculation exceeded the configured request timeout."},
+}
+
+_WRITE_ERRORS: Dict[int, Dict[str, Any]] = {
+    400: {"model": ErrorEnvelope, "description": "Invalid coordinates, date range, or request parameters."},
+    413: {"model": ErrorEnvelope, "description": "Request payload exceeds the configured size limit."},
+    422: {"model": ErrorEnvelope, "description": "Request schema validation failure."},
+    429: {"model": ErrorEnvelope, "description": "Per-IP rate limit exceeded."},
+    500: {"model": ErrorEnvelope, "description": "Internal scientific computation error."},
+    503: {"model": ErrorEnvelope, "description": "SPICE kernels or requested DEM assets are unavailable."},
+    504: {"model": ErrorEnvelope, "description": "Calculation exceeded the configured request timeout."},
+}
+
+_CACHE_CLEAR_ERRORS: Dict[int, Dict[str, Any]] = {
+    401: {"model": ErrorEnvelope, "description": "Valid X-Admin-Key header required."},
+    403: {"model": ErrorEnvelope, "description": "Cache clearing is disabled in production without AXON_ADMIN_KEY."},
+    413: {"model": ErrorEnvelope, "description": "Request payload exceeds the configured size limit."},
+    422: {"model": ErrorEnvelope, "description": "Request schema validation failure."},
+    429: {"model": ErrorEnvelope, "description": "Per-IP rate limit exceeded."},
+    500: {"model": ErrorEnvelope, "description": "Internal server error."},
+    504: {"model": ErrorEnvelope, "description": "Calculation exceeded the configured request timeout."},
+}
+
+_SITE_DETAIL_ERRORS: Dict[int, Dict[str, Any]] = {
+    **_READ_ERRORS,
+    404: {"model": ErrorEnvelope, "description": "Site ID not found in the registry."},
+    422: {"model": ErrorEnvelope, "description": "Request schema validation failure."},
+}
+
+_SITE_ANALYSIS_ERRORS: Dict[int, Dict[str, Any]] = {
+    **_WRITE_ERRORS,
+    404: {"model": ErrorEnvelope, "description": "Site ID not found in the registry and coordinates not provided."},
+}
+
+
+# ---------------------------------------------------------------------------
 # Health, Readiness, Provenance
 # ---------------------------------------------------------------------------
 
-@router.get("/health", response_model=HealthResponse, summary="Service Health Check")
+@router.get(
+    "/health",
+    response_model=HealthResponse,
+    summary="Service Health Check",
+    responses=_SERVER_ERRORS,
+)
 def health():
     """Basic service liveness check returning version and kernel availability."""
     return {
@@ -92,13 +161,23 @@ def health():
     }
 
 
-@router.get("/ready", response_model=ReadinessResponse, summary="Scientific Service Readiness Check")
+@router.get(
+    "/ready",
+    response_model=ReadinessResponse,
+    summary="Scientific Service Readiness Check",
+    responses=_SERVER_ERRORS,
+)
 def readiness():
     """Distinguishes running HTTP server from fully operational scientific engine (kernels, DEMs)."""
     return analysis_service.get_readiness()
 
 
-@router.get("/provenance", summary="Scientific Provenance & Audit Benchmark")
+@router.get(
+    "/provenance",
+    response_model=ProvenanceResponse,
+    summary="Scientific Provenance & Audit Benchmark",
+    responses=_READ_ERRORS,
+)
 def provenance():
     """Returns planetary reference frames, constants, SPICE kernel hashes, and benchmark audit results."""
     return analysis_service.get_provenance_data()
@@ -108,7 +187,12 @@ def provenance():
 # Site Registry Endpoints
 # ---------------------------------------------------------------------------
 
-@router.get("/sites", summary="List All Normalized Lunar Sites")
+@router.get(
+    "/sites",
+    response_model=SiteListResponse,
+    summary="List All Normalized Lunar Sites",
+    responses=_READ_ERRORS,
+)
 def list_sites():
     """Returns normalized site registry containing missions, reference sites, and candidate regions."""
     valid_sites = S.get_valid_sites()
@@ -120,7 +204,12 @@ def list_sites():
     }
 
 
-@router.get("/sites/{site_id}", summary="Get Site Details & Precomputed Assets")
+@router.get(
+    "/sites/{site_id}",
+    response_model=SiteDetailResponse,
+    summary="Get Site Details & Precomputed Assets",
+    responses=_SITE_DETAIL_ERRORS,
+)
 def get_site(site_id: str):
     """Retrieve detailed metadata, coordinates, and precomputed asset availability for a site."""
     site = S.get_site_by_id(site_id)
@@ -146,14 +235,20 @@ def get_site(site_id: str):
 # Core Ephemerides & Geometry
 # ---------------------------------------------------------------------------
 
-@router.post("/geometry/timeseries", response_model=TimeseriesResponse, summary="Topocentric Geometry Timeseries")
+@router.post(
+    "/geometry/timeseries",
+    response_model=TimeseriesResponse,
+    summary="Topocentric Geometry Timeseries",
+    responses=_WRITE_ERRORS,
+)
 def get_timeseries(req: TimeseriesRequest):
     """
     Generate hourly topocentric Sun and Earth azimuth/elevation timeseries in MOON_ME.
     Supports both idealized flat sphere (Tier 3) and 3D terrain-aware ray-marching.
     """
     analysis_service.require_kernels()
-    validate_date_range(req.start_utc, req.stop_utc)
+    dt_start, dt_stop = validate_date_range(req.start_utc, req.stop_utc)
+    validate_sample_count(dt_start, dt_stop, req.step_seconds)
 
     with _SPICE_LOCK:
         try:
@@ -202,13 +297,19 @@ def get_timeseries(req: TimeseriesRequest):
     return ts
 
 
-@router.post("/geometry/events", summary="Visibility Opportunity Events")
+@router.post(
+    "/geometry/events",
+    response_model=EventsResponse,
+    summary="Visibility Opportunity Events",
+    responses=_WRITE_ERRORS,
+)
 def get_events(req: EventsRequest):
     """
     Extract contiguous illumination and communication windows with optional 1-minute SPICE refinement.
     """
     analysis_service.require_kernels()
-    validate_date_range(req.start_utc, req.stop_utc)
+    dt_start, dt_stop = validate_date_range(req.start_utc, req.stop_utc)
+    validate_sample_count(dt_start, dt_stop, req.step_seconds)
 
     with _SPICE_LOCK:
         try:
@@ -251,7 +352,12 @@ def get_events(req: EventsRequest):
 # Terrain Horizon
 # ---------------------------------------------------------------------------
 
-@router.post("/horizon", response_model=HorizonResponse, summary="360-degree Topographic Horizon Mask")
+@router.post(
+    "/horizon",
+    response_model=HorizonResponse,
+    summary="360-degree Topographic Horizon Mask",
+    responses=_WRITE_ERRORS,
+)
 def get_horizon(req: HorizonRequest):
     """
     Compute 360° topographic skyline elevation angles via 3D ray-marching through LOLA DEMs.
@@ -290,7 +396,12 @@ def get_horizon(req: HorizonRequest):
 # Custom Lunar Coordinate & Site Analysis
 # ---------------------------------------------------------------------------
 
-@router.post("/site/analyze", summary="Comprehensive Site / Custom Coordinate Analysis")
+@router.post(
+    "/site/analyze",
+    response_model=SiteAnalyzeResponse,
+    summary="Comprehensive Site / Custom Coordinate Analysis",
+    responses=_SITE_ANALYSIS_ERRORS,
+)
 def analyze_site(req: SiteAnalyzeRequest):
     """
     Comprehensive illumination, direct-to-Earth communication, and solar power analysis.
@@ -321,7 +432,12 @@ def analyze_site(req: SiteAnalyzeRequest):
 # Multi-Site Comparison
 # ---------------------------------------------------------------------------
 
-@router.post("/compare", response_model=MultiCompareResponse, summary="2 to 4 Site Comparative Analysis")
+@router.post(
+    "/compare",
+    response_model=MultiCompareResponse,
+    summary="2 to 4 Site Comparative Analysis",
+    responses=_WRITE_ERRORS,
+)
 def compare_sites(req: MultiCompareRequest):
     """
     Fair, synchronized comparative evaluation between 2 and 4 lunar locations.
@@ -347,7 +463,12 @@ def compare_sites(req: MultiCompareRequest):
 # Best Operating Window Search
 # ---------------------------------------------------------------------------
 
-@router.post("/site/best-windows", response_model=WindowSearchResponse, summary="Best Operating Window Search")
+@router.post(
+    "/site/best-windows",
+    response_model=WindowSearchResponse,
+    summary="Best Operating Window Search",
+    responses=_SITE_ANALYSIS_ERRORS,
+)
 def search_best_windows(req: WindowSearchRequest):
     """
     Search across an extended interval for candidate operating windows meeting duration
@@ -375,7 +496,12 @@ def search_best_windows(req: WindowSearchRequest):
 # Live Independent JPL Horizons Verification
 # ---------------------------------------------------------------------------
 
-@router.post("/verify", summary="Live JPL Horizons Independent Verification")
+@router.post(
+    "/verify",
+    response_model=VerifyResponse,
+    summary="Live JPL Horizons Independent Verification",
+    responses=_WRITE_ERRORS,
+)
 def verify_site_live(req: VerifyRequest):
     """
     Live verification of SPICE topocentric coordinates against NASA JPL Horizons API with 15s timeout.
@@ -453,10 +579,17 @@ def verify_site_live(req: VerifyRequest):
             h_sun_az, h_sun_el = _query_target("10")
             h_earth_az, h_earth_el = _query_target("399")
         except requests.RequestException as req_err:
-            raise HTTPException(
-                status_code=status.HTTP_502_BAD_GATEWAY,
-                detail=f"NASA JPL Horizons API communication failed ({type(req_err).__name__}). Live external service unavailable or timed out.",
-            )
+            # Preserve the documented graceful-degradation contract: the verification
+            # endpoint is diagnostic, so an unreachable external service returns a
+            # structured error payload rather than breaking clients with a 5xx.
+            return {
+                "status": "error",
+                "detail": (
+                    "NASA JPL Horizons API communication failed "
+                    f"({type(req_err).__name__}). Live external service unavailable or timed out."
+                ),
+                "note": "JPL Horizons API unreachable or timeout. Offline benchmark passes (see /api/provenance).",
+            }
 
         sun_diff_deg = None
         earth_diff_deg = None
@@ -487,6 +620,8 @@ def verify_site_live(req: VerifyRequest):
                 and (earth_diff_deg is None or earth_diff_deg < 0.01)
             ),
         }
+    except HTTPException:
+        raise
     except Exception as exc:
         return {
             "status": "error",
@@ -499,7 +634,12 @@ def verify_site_live(req: VerifyRequest):
 # Cache Management
 # ---------------------------------------------------------------------------
 
-@router.get("/cache/stats", response_model=CacheStatsResponse, summary="Scientific Cache Statistics")
+@router.get(
+    "/cache/stats",
+    response_model=CacheStatsResponse,
+    summary="Scientific Cache Statistics",
+    responses=_READ_ERRORS,
+)
 def get_cache_stats():
     """Return memory and hit/miss statistics for scientific calculation caches."""
     return {
@@ -508,7 +648,12 @@ def get_cache_stats():
     }
 
 
-@router.post("/cache/clear", summary="Clear Scientific Calculation Caches")
+@router.post(
+    "/cache/clear",
+    response_model=CacheClearResponse,
+    summary="Clear Scientific Calculation Caches",
+    responses=_CACHE_CLEAR_ERRORS,
+)
 def clear_caches(x_admin_key: Optional[str] = Header(None, alias="X-Admin-Key")):
     """Invalidate all cached results in memory.
     

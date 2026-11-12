@@ -29,15 +29,20 @@ RUN pip install --no-cache-dir -e ./science/
 COPY data/ ./data/
 COPY kernels/ ./kernels/
 COPY kernels.lock ./
-COPY terrain/ ./terrain/
 COPY pipeline/ ./pipeline/
 COPY api/ ./api/
 
+# Terrain DEMs are deliberately not baked into the image. They are ~1.5 GB and
+# should be supplied through a read-only volume or downloaded at deploy time:
+#   docker run -v /host/terrain:/app/terrain:ro ...
+# Create the mount point so the application and readiness endpoint can inspect it.
+RUN mkdir -p /app/terrain
+
 EXPOSE 8000
 
-# Health check verifies that the API is running and kernels are loaded
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8000/api/health || exit 1
+# Readiness (not just liveness) must confirm the scientific engine is usable.
+HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=5 \
+    CMD curl -fsS http://localhost:8000/api/ready | grep -q '"ready":true' || exit 1
 
 # Note on concurrency: SpiceyPy C library is process-global.
 # Run with single Uvicorn process (threads inside process are serialized by _SPICE_LOCK).

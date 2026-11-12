@@ -24,6 +24,26 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Internal scientific computation error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Calculation exceeded the configured request timeout.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
           }
         }
       }
@@ -46,6 +66,26 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Internal scientific computation error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Calculation exceeded the configured request timeout.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
           }
         }
       }
@@ -63,7 +103,39 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/ProvenanceResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Per-IP rate limit exceeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal scientific computation error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Calculation exceeded the configured request timeout.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
               }
             }
           }
@@ -83,7 +155,39 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/SiteListResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Per-IP rate limit exceeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal scientific computation error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Calculation exceeded the configured request timeout.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
               }
             }
           }
@@ -114,16 +218,58 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/SiteDetailResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Per-IP rate limit exceeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal scientific computation error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Calculation exceeded the configured request timeout.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Site ID not found in the registry.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
               }
             }
           },
           "422": {
-            "description": "Validation Error",
+            "description": "Request schema validation failure.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "$ref": "#/components/schemas/ErrorEnvelope"
                 }
               }
             }
@@ -160,12 +306,72 @@
               }
             }
           },
-          "422": {
-            "description": "Validation Error",
+          "400": {
+            "description": "Invalid coordinates, date range, or request parameters.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Request payload exceeds the configured size limit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Request schema validation failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Per-IP rate limit exceeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal scientific computation error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "SPICE kernels or requested DEM assets are unavailable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Calculation exceeded the configured request timeout.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
                 }
               }
             }
@@ -196,16 +402,78 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/EventsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid coordinates, date range, or request parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Request payload exceeds the configured size limit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
               }
             }
           },
           "422": {
-            "description": "Validation Error",
+            "description": "Request schema validation failure.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Per-IP rate limit exceeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal scientific computation error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "SPICE kernels or requested DEM assets are unavailable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Calculation exceeded the configured request timeout.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
                 }
               }
             }
@@ -242,12 +510,72 @@
               }
             }
           },
-          "422": {
-            "description": "Validation Error",
+          "400": {
+            "description": "Invalid coordinates, date range, or request parameters.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Request payload exceeds the configured size limit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Request schema validation failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Per-IP rate limit exceeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal scientific computation error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "SPICE kernels or requested DEM assets are unavailable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Calculation exceeded the configured request timeout.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
                 }
               }
             }
@@ -278,16 +606,88 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/SiteAnalyzeResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid coordinates, date range, or request parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Request payload exceeds the configured size limit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
               }
             }
           },
           "422": {
-            "description": "Validation Error",
+            "description": "Request schema validation failure.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Per-IP rate limit exceeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal scientific computation error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "SPICE kernels or requested DEM assets are unavailable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Calculation exceeded the configured request timeout.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Site ID not found in the registry and coordinates not provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
                 }
               }
             }
@@ -324,12 +724,72 @@
               }
             }
           },
-          "422": {
-            "description": "Validation Error",
+          "400": {
+            "description": "Invalid coordinates, date range, or request parameters.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Request payload exceeds the configured size limit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Request schema validation failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Per-IP rate limit exceeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal scientific computation error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "SPICE kernels or requested DEM assets are unavailable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Calculation exceeded the configured request timeout.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
                 }
               }
             }
@@ -366,12 +826,82 @@
               }
             }
           },
-          "422": {
-            "description": "Validation Error",
+          "400": {
+            "description": "Invalid coordinates, date range, or request parameters.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Request payload exceeds the configured size limit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Request schema validation failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Per-IP rate limit exceeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal scientific computation error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "SPICE kernels or requested DEM assets are unavailable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Calculation exceeded the configured request timeout.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Site ID not found in the registry and coordinates not provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
                 }
               }
             }
@@ -402,16 +932,86 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/VerifySuccessResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/VerifyErrorResponse"
+                    }
+                  ],
+                  "title": "Response Verify Site Live Api Verify Post"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid coordinates, date range, or request parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Request payload exceeds the configured size limit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
               }
             }
           },
           "422": {
-            "description": "Validation Error",
+            "description": "Request schema validation failure.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Per-IP rate limit exceeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal scientific computation error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "SPICE kernels or requested DEM assets are unavailable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Calculation exceeded the configured request timeout.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
                 }
               }
             }
@@ -434,6 +1034,36 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CacheStatsResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Per-IP rate limit exceeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal scientific computation error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Calculation exceeded the configured request timeout.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
                 }
               }
             }
@@ -472,16 +1102,78 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/CacheClearResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Valid X-Admin-Key header required.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Cache clearing is disabled in production without AXON_ADMIN_KEY.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Request payload exceeds the configured size limit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
               }
             }
           },
           "422": {
-            "description": "Validation Error",
+            "description": "Request schema validation failure.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Per-IP rate limit exceeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Calculation exceeded the configured request timeout.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
                 }
               }
             }
@@ -492,17 +1184,128 @@
   },
   "components": {
     "schemas": {
+      "BodyOpportunitySchema": {
+        "properties": {
+          "total_hours": {
+            "type": "number",
+            "title": "Total Hours"
+          },
+          "percentage": {
+            "type": "number",
+            "title": "Percentage"
+          },
+          "window_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Window Count"
+          },
+          "windows_count": {
+            "type": "integer",
+            "title": "Windows Count"
+          },
+          "longest_window_hours": {
+            "type": "number",
+            "title": "Longest Window Hours"
+          },
+          "longest_dark_gap_hours": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Longest Dark Gap Hours"
+          },
+          "longest_joint_gap_hours": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Longest Joint Gap Hours"
+          },
+          "windows": {
+            "items": {
+              "$ref": "#/components/schemas/OpportunityWindowSchema"
+            },
+            "type": "array",
+            "title": "Windows"
+          },
+          "criterion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Criterion"
+          },
+          "margin_deg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Margin Deg"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total_hours",
+          "percentage",
+          "windows_count",
+          "longest_window_hours",
+          "windows"
+        ],
+        "title": "BodyOpportunitySchema",
+        "description": "Visibility summary for the Sun, Earth, or their joint intersection.\n\n``sun`` and ``earth`` report ``longest_dark_gap_hours``; ``joint`` reports\n``longest_joint_gap_hours``. Both keys are optional so neither body summary\nis rejected or silently stripped. Both ``window_count`` and ``windows_count``\nare retained for backwards compatibility."
+      },
+      "CacheClearResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "cleared_analysis_entries": {
+            "type": "integer",
+            "title": "Cleared Analysis Entries"
+          },
+          "cleared_horizon_entries": {
+            "type": "integer",
+            "title": "Cleared Horizon Entries"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "cleared_analysis_entries",
+          "cleared_horizon_entries"
+        ],
+        "title": "CacheClearResponse"
+      },
       "CacheStatsResponse": {
         "properties": {
           "analysis_cache": {
-            "additionalProperties": true,
-            "type": "object",
-            "title": "Analysis Cache"
+            "$ref": "#/components/schemas/CacheStatsSchema"
           },
           "horizon_cache": {
-            "additionalProperties": true,
-            "type": "object",
-            "title": "Horizon Cache"
+            "$ref": "#/components/schemas/CacheStatsSchema"
           }
         },
         "type": "object",
@@ -511,6 +1314,54 @@
           "horizon_cache"
         ],
         "title": "CacheStatsResponse"
+      },
+      "CacheStatsSchema": {
+        "properties": {
+          "size": {
+            "type": "integer",
+            "title": "Size"
+          },
+          "maxsize": {
+            "type": "integer",
+            "title": "Maxsize"
+          },
+          "ttl_seconds": {
+            "type": "integer",
+            "title": "Ttl Seconds"
+          },
+          "hits": {
+            "type": "integer",
+            "title": "Hits"
+          },
+          "misses": {
+            "type": "integer",
+            "title": "Misses"
+          },
+          "total_lookups": {
+            "type": "integer",
+            "title": "Total Lookups"
+          },
+          "hit_ratio": {
+            "type": "number",
+            "title": "Hit Ratio"
+          },
+          "evictions": {
+            "type": "integer",
+            "title": "Evictions"
+          }
+        },
+        "type": "object",
+        "required": [
+          "size",
+          "maxsize",
+          "ttl_seconds",
+          "hits",
+          "misses",
+          "total_lookups",
+          "hit_ratio",
+          "evictions"
+        ],
+        "title": "CacheStatsSchema"
       },
       "CompareSiteSpec": {
         "properties": {
@@ -778,6 +1629,102 @@
         ],
         "title": "ComparedSiteResult"
       },
+      "ErrorEnvelope": {
+        "properties": {
+          "detail": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "items": {},
+                "type": "array"
+              },
+              {
+                "additionalProperties": true,
+                "type": "object"
+              }
+            ],
+            "title": "Detail",
+            "description": "Standard FastAPI detail payload"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorInfo"
+          }
+        },
+        "type": "object",
+        "required": [
+          "detail",
+          "error"
+        ],
+        "title": "ErrorEnvelope"
+      },
+      "ErrorInfo": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code",
+            "description": "Machine-readable error code"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "Human-readable error description"
+          },
+          "request_id": {
+            "type": "string",
+            "title": "Request Id",
+            "description": "Correlation ID for the request"
+          },
+          "path": {
+            "type": "string",
+            "title": "Path",
+            "description": "Request path where the error occurred"
+          },
+          "field": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Field",
+            "description": "Request field that caused the error, if applicable"
+          },
+          "details": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Details",
+            "description": "Additional context or validation details"
+          },
+          "timestamp": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Timestamp",
+            "description": "UTC timestamp of error occurrence"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "message",
+          "request_id",
+          "path"
+        ],
+        "title": "ErrorInfo"
+      },
       "EventsRequest": {
         "properties": {
           "lat": {
@@ -855,18 +1802,88 @@
         ],
         "title": "EventsRequest"
       },
-      "HTTPValidationError": {
+      "EventsResponse": {
         "properties": {
-          "detail": {
+          "mode": {
+            "type": "string",
+            "title": "Mode",
+            "description": "Computed horizon mode: flat | terrain"
+          },
+          "horizon_mode": {
+            "type": "string",
+            "title": "Horizon Mode"
+          },
+          "coverage_status": {
+            "type": "string",
+            "title": "Coverage Status"
+          },
+          "dem_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dem Id"
+          },
+          "total_period_hours": {
+            "type": "number",
+            "title": "Total Period Hours"
+          },
+          "sun": {
+            "$ref": "#/components/schemas/BodyOpportunitySchema"
+          },
+          "earth": {
+            "$ref": "#/components/schemas/BodyOpportunitySchema"
+          },
+          "joint": {
+            "$ref": "#/components/schemas/BodyOpportunitySchema"
+          },
+          "power": {
+            "$ref": "#/components/schemas/SolarPowerSummarySchema"
+          },
+          "lunations": {
             "items": {
-              "$ref": "#/components/schemas/ValidationError"
+              "$ref": "#/components/schemas/LunationSchema"
             },
             "type": "array",
-            "title": "Detail"
+            "title": "Lunations"
+          },
+          "best_lunation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LunationSchema"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "worst_lunation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LunationSchema"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "type": "object",
-        "title": "HTTPValidationError"
+        "required": [
+          "mode",
+          "horizon_mode",
+          "coverage_status",
+          "total_period_hours",
+          "sun",
+          "earth",
+          "joint",
+          "power"
+        ],
+        "title": "EventsResponse"
       },
       "HealthResponse": {
         "properties": {
@@ -1068,6 +2085,113 @@
         ],
         "title": "HorizonResponse"
       },
+      "InstantaneousGeometrySchema": {
+        "properties": {
+          "utc": {
+            "type": "string",
+            "title": "Utc"
+          },
+          "sun_azimuth_deg": {
+            "type": "number",
+            "title": "Sun Azimuth Deg"
+          },
+          "sun_elevation_deg": {
+            "type": "number",
+            "title": "Sun Elevation Deg"
+          },
+          "terrain_elevation_at_sun_deg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Terrain Elevation At Sun Deg"
+          },
+          "earth_azimuth_deg": {
+            "type": "number",
+            "title": "Earth Azimuth Deg"
+          },
+          "earth_elevation_deg": {
+            "type": "number",
+            "title": "Earth Elevation Deg"
+          },
+          "sun_visible": {
+            "type": "boolean",
+            "title": "Sun Visible"
+          },
+          "earth_visible": {
+            "type": "boolean",
+            "title": "Earth Visible"
+          }
+        },
+        "type": "object",
+        "required": [
+          "utc",
+          "sun_azimuth_deg",
+          "sun_elevation_deg",
+          "earth_azimuth_deg",
+          "earth_elevation_deg",
+          "sun_visible",
+          "earth_visible"
+        ],
+        "title": "InstantaneousGeometrySchema"
+      },
+      "LunationSchema": {
+        "properties": {
+          "lunation_index": {
+            "type": "integer",
+            "title": "Lunation Index"
+          },
+          "start_utc": {
+            "type": "string",
+            "title": "Start Utc"
+          },
+          "end_utc": {
+            "type": "string",
+            "title": "End Utc"
+          },
+          "total_hours": {
+            "type": "number",
+            "title": "Total Hours"
+          },
+          "sun_hours": {
+            "type": "number",
+            "title": "Sun Hours"
+          },
+          "sun_percentage": {
+            "type": "number",
+            "title": "Sun Percentage"
+          },
+          "earth_hours": {
+            "type": "number",
+            "title": "Earth Hours"
+          },
+          "joint_hours": {
+            "type": "number",
+            "title": "Joint Hours"
+          },
+          "longest_dark_gap_hours": {
+            "type": "number",
+            "title": "Longest Dark Gap Hours"
+          }
+        },
+        "type": "object",
+        "required": [
+          "lunation_index",
+          "start_utc",
+          "end_utc",
+          "total_hours",
+          "sun_hours",
+          "sun_percentage",
+          "earth_hours",
+          "joint_hours",
+          "longest_dark_gap_hours"
+        ],
+        "title": "LunationSchema"
+      },
       "MultiCompareRequest": {
         "properties": {
           "sites": {
@@ -1264,6 +2388,20 @@
             "type": "array",
             "title": "Warnings"
           },
+          "limitations": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Limitations"
+          },
+          "caveats": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Caveats"
+          },
           "elapsed_ms": {
             "type": "number",
             "title": "Elapsed Ms"
@@ -1305,6 +2443,183 @@
           "elapsed_ms"
         ],
         "title": "MultiCompareResponse"
+      },
+      "OpportunityWindowSchema": {
+        "properties": {
+          "start": {
+            "type": "string",
+            "title": "Start"
+          },
+          "end": {
+            "type": "string",
+            "title": "End"
+          },
+          "start_utc": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start Utc"
+          },
+          "end_utc": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Utc"
+          },
+          "duration_hours": {
+            "type": "number",
+            "title": "Duration Hours"
+          },
+          "precision": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Precision",
+            "default": "hourly"
+          }
+        },
+        "type": "object",
+        "required": [
+          "start",
+          "end",
+          "duration_hours"
+        ],
+        "title": "OpportunityWindowSchema"
+      },
+      "PrecomputedAssetsSchema": {
+        "properties": {
+          "horizon": {
+            "type": "boolean",
+            "title": "Horizon"
+          },
+          "timeseries": {
+            "type": "boolean",
+            "title": "Timeseries"
+          },
+          "summary": {
+            "type": "boolean",
+            "title": "Summary"
+          },
+          "events": {
+            "type": "boolean",
+            "title": "Events"
+          }
+        },
+        "type": "object",
+        "required": [
+          "horizon",
+          "timeseries",
+          "summary",
+          "events"
+        ],
+        "title": "PrecomputedAssetsSchema"
+      },
+      "ProvenanceResponse": {
+        "properties": {
+          "service": {
+            "type": "string",
+            "title": "Service"
+          },
+          "version": {
+            "type": "string",
+            "title": "Version"
+          },
+          "frame": {
+            "type": "string",
+            "title": "Frame",
+            "description": "Lunar reference frame",
+            "default": "MOON_ME"
+          },
+          "time_scale": {
+            "type": "string",
+            "title": "Time Scale"
+          },
+          "abcorr": {
+            "type": "string",
+            "title": "Abcorr"
+          },
+          "moon_radius_km": {
+            "type": "number",
+            "title": "Moon Radius Km"
+          },
+          "sun_angular_radius_deg": {
+            "type": "number",
+            "title": "Sun Angular Radius Deg"
+          },
+          "earth_angular_radius_deg": {
+            "type": "number",
+            "title": "Earth Angular Radius Deg"
+          },
+          "horizon_modes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Horizon Modes"
+          },
+          "terrain_tiers": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Terrain Tiers"
+          },
+          "kernels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Kernels"
+          },
+          "kernels_loaded": {
+            "type": "boolean",
+            "title": "Kernels Loaded"
+          },
+          "benchmark": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Benchmark"
+          },
+          "caveats": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Caveats"
+          }
+        },
+        "type": "object",
+        "required": [
+          "service",
+          "version",
+          "time_scale",
+          "abcorr",
+          "moon_radius_km",
+          "sun_angular_radius_deg",
+          "earth_angular_radius_deg",
+          "horizon_modes",
+          "terrain_tiers",
+          "kernels",
+          "kernels_loaded",
+          "benchmark",
+          "caveats"
+        ],
+        "title": "ProvenanceResponse"
       },
       "RankedWindow": {
         "properties": {
@@ -1590,6 +2905,548 @@
           "stop_utc"
         ],
         "title": "SiteAnalyzeRequest"
+      },
+      "SiteAnalyzeResponse": {
+        "properties": {
+          "analysis_id": {
+            "type": "string",
+            "title": "Analysis Id",
+            "description": "Deterministic analysis scenario identifier"
+          },
+          "site_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Site Id"
+          },
+          "site_name": {
+            "type": "string",
+            "title": "Site Name"
+          },
+          "lat": {
+            "type": "number",
+            "title": "Lat"
+          },
+          "lon": {
+            "type": "number",
+            "title": "Lon"
+          },
+          "mast_height_m": {
+            "type": "number",
+            "title": "Mast Height M"
+          },
+          "start_utc": {
+            "type": "string",
+            "title": "Start Utc"
+          },
+          "stop_utc": {
+            "type": "string",
+            "title": "Stop Utc"
+          },
+          "total_period_hours": {
+            "type": "number",
+            "title": "Total Period Hours"
+          },
+          "horizon_mode": {
+            "type": "string",
+            "title": "Horizon Mode"
+          },
+          "dem_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dem Id"
+          },
+          "coverage_status": {
+            "type": "string",
+            "title": "Coverage Status"
+          },
+          "coverage_tier": {
+            "type": "string",
+            "title": "Coverage Tier"
+          },
+          "tier": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tier",
+            "description": "Convenience alias for coverage_tier: T1 | T2 | T3"
+          },
+          "site_origin": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Site Origin",
+            "description": "Site origin classification: official_mission | published_candidate | user_defined | dem_derived"
+          },
+          "site_elevation_m": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Site Elevation M"
+          },
+          "instantaneous": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/InstantaneousGeometrySchema"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "sun": {
+            "$ref": "#/components/schemas/BodyOpportunitySchema"
+          },
+          "earth": {
+            "$ref": "#/components/schemas/BodyOpportunitySchema"
+          },
+          "joint": {
+            "$ref": "#/components/schemas/BodyOpportunitySchema"
+          },
+          "power": {
+            "$ref": "#/components/schemas/SolarPowerSummarySchema"
+          },
+          "flat": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Flat"
+          },
+          "terrain": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Terrain"
+          },
+          "delta_terrain_minus_flat": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delta Terrain Minus Flat"
+          },
+          "lunations": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/LunationSchema"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lunations"
+          },
+          "best_lunation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LunationSchema"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "worst_lunation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LunationSchema"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "provenance": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Provenance"
+          },
+          "api_version": {
+            "type": "string",
+            "title": "Api Version",
+            "description": "AXON API version",
+            "default": "0.3.0"
+          },
+          "reproducibility": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reproducibility",
+            "description": "Request echo, resolved coordinates, kernel/DEM provenance, and reproducibility metadata"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Warnings"
+          },
+          "limitations": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Limitations"
+          },
+          "caveats": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Caveats"
+          },
+          "elapsed_ms": {
+            "type": "number",
+            "title": "Elapsed Ms"
+          },
+          "cached": {
+            "type": "boolean",
+            "title": "Cached"
+          }
+        },
+        "type": "object",
+        "required": [
+          "analysis_id",
+          "site_name",
+          "lat",
+          "lon",
+          "mast_height_m",
+          "start_utc",
+          "stop_utc",
+          "total_period_hours",
+          "horizon_mode",
+          "coverage_status",
+          "coverage_tier",
+          "sun",
+          "earth",
+          "joint",
+          "power",
+          "provenance",
+          "elapsed_ms",
+          "cached"
+        ],
+        "title": "SiteAnalyzeResponse"
+      },
+      "SiteDetailResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "kind": {
+            "type": "string",
+            "title": "Kind",
+            "description": "mission | reference | candidate | custom"
+          },
+          "lat": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lat",
+            "description": "Planetocentric latitude in degrees [-90, +90]"
+          },
+          "lon": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lon",
+            "description": "East-positive longitude in degrees [-180, +180]"
+          },
+          "coord_status": {
+            "type": "string",
+            "title": "Coord Status",
+            "description": "ok | null_coordinates | out_of_bounds"
+          },
+          "coord_kind": {
+            "type": "string",
+            "title": "Coord Kind"
+          },
+          "uncertainty_km": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Uncertainty Km"
+          },
+          "verified": {
+            "type": "boolean",
+            "title": "Verified"
+          },
+          "source_urls": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Source Urls"
+          },
+          "terrain_tier": {
+            "type": "string",
+            "title": "Terrain Tier",
+            "description": "T1 | T2 | T3",
+            "default": "T3"
+          },
+          "metadata": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Metadata",
+            "description": "Dynamic site annotations; preserved verbatim"
+          },
+          "precomputed_assets": {
+            "$ref": "#/components/schemas/PrecomputedAssetsSchema"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "kind",
+          "coord_status",
+          "coord_kind",
+          "verified",
+          "precomputed_assets"
+        ],
+        "title": "SiteDetailResponse"
+      },
+      "SiteListResponse": {
+        "properties": {
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          },
+          "sites": {
+            "items": {
+              "$ref": "#/components/schemas/SiteRecordSchema"
+            },
+            "type": "array",
+            "title": "Sites"
+          },
+          "skipped_sites": {
+            "items": {
+              "$ref": "#/components/schemas/SiteRecordSchema"
+            },
+            "type": "array",
+            "title": "Skipped Sites",
+            "description": "Registry records skipped because coordinates are null or out of bounds"
+          }
+        },
+        "type": "object",
+        "required": [
+          "count",
+          "sites"
+        ],
+        "title": "SiteListResponse"
+      },
+      "SiteRecordSchema": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "kind": {
+            "type": "string",
+            "title": "Kind",
+            "description": "mission | reference | candidate | custom"
+          },
+          "lat": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lat",
+            "description": "Planetocentric latitude in degrees [-90, +90]"
+          },
+          "lon": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lon",
+            "description": "East-positive longitude in degrees [-180, +180]"
+          },
+          "coord_status": {
+            "type": "string",
+            "title": "Coord Status",
+            "description": "ok | null_coordinates | out_of_bounds"
+          },
+          "coord_kind": {
+            "type": "string",
+            "title": "Coord Kind"
+          },
+          "uncertainty_km": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Uncertainty Km"
+          },
+          "verified": {
+            "type": "boolean",
+            "title": "Verified"
+          },
+          "source_urls": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Source Urls"
+          },
+          "terrain_tier": {
+            "type": "string",
+            "title": "Terrain Tier",
+            "description": "T1 | T2 | T3",
+            "default": "T3"
+          },
+          "metadata": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Metadata",
+            "description": "Dynamic site annotations; preserved verbatim"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "kind",
+          "coord_status",
+          "coord_kind",
+          "verified"
+        ],
+        "title": "SiteRecordSchema"
+      },
+      "SolarPowerSummarySchema": {
+        "properties": {
+          "area_m2": {
+            "type": "number",
+            "title": "Area M2"
+          },
+          "efficiency": {
+            "type": "number",
+            "title": "Efficiency"
+          },
+          "orientation": {
+            "type": "string",
+            "title": "Orientation"
+          },
+          "total_energy_kwh": {
+            "type": "number",
+            "title": "Total Energy Kwh"
+          },
+          "specific_energy_kwh_m2": {
+            "type": "number",
+            "title": "Specific Energy Kwh M2"
+          },
+          "peak_power_watts": {
+            "type": "number",
+            "title": "Peak Power Watts"
+          },
+          "mean_power_watts": {
+            "type": "number",
+            "title": "Mean Power Watts"
+          },
+          "caveat": {
+            "type": "string",
+            "title": "Caveat"
+          }
+        },
+        "type": "object",
+        "required": [
+          "area_m2",
+          "efficiency",
+          "orientation",
+          "total_energy_kwh",
+          "specific_energy_kwh_m2",
+          "peak_power_watts",
+          "mean_power_watts",
+          "caveat"
+        ],
+        "title": "SolarPowerSummarySchema"
       },
       "TimeseriesRequest": {
         "properties": {
@@ -1908,45 +3765,85 @@
         ],
         "title": "TransparentRankings"
       },
-      "ValidationError": {
+      "VerifyAzElSchema": {
         "properties": {
-          "loc": {
-            "items": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "integer"
-                }
-              ]
-            },
-            "type": "array",
-            "title": "Location"
+          "azimuth_deg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Azimuth Deg"
           },
-          "msg": {
+          "elevation_deg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Elevation Deg"
+          }
+        },
+        "type": "object",
+        "title": "VerifyAzElSchema"
+      },
+      "VerifyErrorResponse": {
+        "properties": {
+          "status": {
             "type": "string",
-            "title": "Message"
+            "const": "error",
+            "title": "Status",
+            "default": "error"
           },
-          "type": {
+          "detail": {
             "type": "string",
-            "title": "Error Type"
+            "title": "Detail"
           },
-          "input": {
-            "title": "Input"
-          },
-          "ctx": {
-            "type": "object",
-            "title": "Context"
+          "note": {
+            "type": "string",
+            "title": "Note"
           }
         },
         "type": "object",
         "required": [
-          "loc",
-          "msg",
-          "type"
+          "detail",
+          "note"
         ],
-        "title": "ValidationError"
+        "title": "VerifyErrorResponse"
+      },
+      "VerifyMaxDifferenceSchema": {
+        "properties": {
+          "sun": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sun"
+          },
+          "earth": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Earth"
+          }
+        },
+        "type": "object",
+        "title": "VerifyMaxDifferenceSchema"
       },
       "VerifyRequest": {
         "properties": {
@@ -1978,6 +3875,68 @@
           "utc"
         ],
         "title": "VerifyRequest"
+      },
+      "VerifySuccessResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "const": "success",
+            "title": "Status",
+            "default": "success"
+          },
+          "lat": {
+            "type": "number",
+            "title": "Lat"
+          },
+          "lon": {
+            "type": "number",
+            "title": "Lon"
+          },
+          "utc": {
+            "type": "string",
+            "title": "Utc"
+          },
+          "spice": {
+            "$ref": "#/components/schemas/VerifyTargetPairSchema"
+          },
+          "horizons": {
+            "$ref": "#/components/schemas/VerifyTargetPairSchema"
+          },
+          "max_difference_deg": {
+            "$ref": "#/components/schemas/VerifyMaxDifferenceSchema"
+          },
+          "pass_tolerance_0_01_deg": {
+            "type": "boolean",
+            "title": "Pass Tolerance 0 01 Deg"
+          }
+        },
+        "type": "object",
+        "required": [
+          "lat",
+          "lon",
+          "utc",
+          "spice",
+          "horizons",
+          "max_difference_deg",
+          "pass_tolerance_0_01_deg"
+        ],
+        "title": "VerifySuccessResponse"
+      },
+      "VerifyTargetPairSchema": {
+        "properties": {
+          "sun": {
+            "$ref": "#/components/schemas/VerifyAzElSchema"
+          },
+          "earth": {
+            "$ref": "#/components/schemas/VerifyAzElSchema"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sun",
+          "earth"
+        ],
+        "title": "VerifyTargetPairSchema"
       },
       "WindowSearchRequest": {
         "properties": {
@@ -2109,6 +4068,12 @@
       },
       "WindowSearchResponse": {
         "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "'success' for a completed search",
+            "default": "success"
+          },
           "site_id": {
             "anyOf": [
               {
@@ -2196,12 +4161,24 @@
             "type": "integer",
             "title": "Candidate Windows Count"
           },
+          "total_candidates_found": {
+            "type": "integer",
+            "title": "Total Candidates Found"
+          },
           "ranked_windows": {
             "items": {
               "$ref": "#/components/schemas/RankedWindow"
             },
             "type": "array",
             "title": "Ranked Windows"
+          },
+          "windows": {
+            "items": {
+              "$ref": "#/components/schemas/RankedWindow"
+            },
+            "type": "array",
+            "title": "Windows",
+            "description": "Backwards-compatible alias for ranked_windows; preserved verbatim"
           },
           "ranking_criterion": {
             "type": "string",
@@ -2245,6 +4222,11 @@
           "elapsed_ms": {
             "type": "number",
             "title": "Elapsed Ms"
+          },
+          "cached": {
+            "type": "boolean",
+            "title": "Cached",
+            "default": false
           }
         },
         "type": "object",
@@ -2257,6 +4239,7 @@
           "min_window_hours",
           "horizon_mode",
           "candidate_windows_count",
+          "total_candidates_found",
           "ranked_windows",
           "elapsed_ms"
         ],
