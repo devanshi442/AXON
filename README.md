@@ -104,6 +104,11 @@ pytest science/tests/ -v
 # 6. Start the production backend API service
 uvicorn api.main:app --host 0.0.0.0 --port 8000 --workers 1
 
+# 6b. Optional: build and run the backend container.
+# DEMs are not baked into the image; mount a verified terrain/ directory.
+# docker build -t axon-lunarsight-backend .
+# docker run -p 8000:8000 -v /absolute/path/to/terrain:/app/terrain:ro axon-lunarsight-backend
+
 # 7. In a separate terminal: Install web dependencies, run tests, build and launch the application
 cd web
 npm install
@@ -206,7 +211,7 @@ Every calculation in AXON LunarSight is verified against independent NASA ground
   - Tolerance Gate: $< 0.050^\circ$
 - **Permanently Shadowed Region (PSR) Ground Truth:** Asserted that points deep within the floors of Shackleton, Faustini, and Haworth craters receive $0.00\%$ direct sunlight year-round ($f_{\text{sun}} = 0.00$).
 - **Test Suite Results:**
-  - **Python Suite (`pytest science/tests/`):** **52 passed**, 0 failed
+  - **Python Suite (`pytest science/tests/`):** **134 passed, 16 skipped, 0 failed** on the current backend branch without local LOLA DEM assets. DEM-dependent tests skip with an explicit reason; they run when `terrain/` is populated.
   - **Web Suite (`npm test`):** **11 passed**, 0 failed
   - **TypeScript Build (`npm run build`):** Clean build (108 modules transformed, 0 errors)
 

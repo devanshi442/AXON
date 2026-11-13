@@ -35,7 +35,9 @@ for _p in [str(_ROOT_DIR), str(_API_DIR)]:
 from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 try:
     from api.config import (
@@ -80,6 +82,9 @@ except ImportError:
     )
     from services.analysis_service import _SPICE_LOCK, analysis_service
 
+# Logging is plain text, not structured JSON. Request IDs are included in
+# unhandled-error logs for correlation; normal access logging remains uvicorn's
+# default format unless a JSON formatter is introduced later.
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
@@ -129,6 +134,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Compress large JSON responses (site registries, timeseries, comparisons) when
+# clients advertise gzip support. Small payloads remain uncompressed.
+app.add_middleware(GZipMiddleware, minimum_size=1024)
 
 _RATE_LIMIT_BUCKETS: Dict[str, List[float]] = collections.defaultdict(list)
 
@@ -255,14 +264,22 @@ async def http_exception_handler(request: Request, exc: HTTPException):
         "request_id": req_id,
         "path": request.url.path,
     }
+    headers = dict(exc.headers or {})
+    headers["X-Request-ID"] = req_id
     return JSONResponse(
         status_code=exc.status_code,
         content={
             "detail": exc.detail,
             "error": error_obj,
         },
-        headers={"X-Request-ID": req_id},
+        headers=headers,
     )
+
+
+@app.exception_handler(StarletteHTTPException)
+async def starlette_http_exception_handler(request: Request, exc: StarletteHTTPException):
+    """Structured response for router-level 404/405 and other Starlette exceptions."""
+    return await http_exception_handler(request, exc)
 
 
 @app.exception_handler(RequestValidationError)
@@ -293,7 +310,14 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 async def unhandled_exception_handler(request: Request, exc: Exception):
     """Sanitized handler for unexpected errors preventing system traceback leakage."""
     req_id = getattr(request.state, "request_id", None) or uuid.uuid4().hex[:12]
-    logger.error(f"Internal calculation error during {request.method} {request.url.path}: {exc}", exc_info=True)
+    logger.error(
+        "Internal calculation error method=%s path=%s request_id=%s error=%s",
+        request.method,
+        request.url.path,
+        req_id,
+        exc,
+        exc_info=True,
+    )
     error_obj = {
         "code": "INTERNAL_SERVER_ERROR",
         "message": "An internal scientific computation error occurred. Please verify ephemeris date ranges and coordinates.",

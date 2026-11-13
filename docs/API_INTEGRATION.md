@@ -147,6 +147,10 @@ Returns details for a single site, including availability flags for precomputed 
 | `earth_criterion` | string | No | `"center"` | `"center"`, `"full_disk"`, or `"any_limb"`. |
 | `refine_precision`| boolean | No | false | Refines rising/setting window edges to ~1-minute via SPICE root-finding. |
 
+The analysis cache is keyed by resolved site identity (`site_id`, `site_name`), full-precision resolved coordinates, the time window and step, mast height, horizon mode, solar array type/tilt/azimuth, array area/efficiency, antenna margin, Earth criterion, and refinement flag. Repeating an identical request returns `"cached": true`; changing any of those inputs produces a separate cache entry.
+
+`analysis_id` currently identifies the resolved location, time window and step, mast height, and horizon mode. Solar/power configuration is not part of the identifier in this patch.
+
 **Response (200 OK):**
 ```json
 {
@@ -384,6 +388,8 @@ Scans an extended search interval (e.g. 30–90 days) to identify and rank candi
 }
 ```
 
+Cache identity uses the resolved site ID, resolved site name, and full-precision resolved latitude/longitude, together with the search window and visibility parameters. Coordinates are not rounded to four decimal places for cache identity.
+
 ---
 
 ### 3.6 Terrain Horizons & Ephemeris Geometry
@@ -393,8 +399,15 @@ Generates hourly Sun/Earth ephemerides.
 - `horizon_mode: "flat"`: Idealized 0° sphere.
 - `horizon_mode: "terrain"`: Evaluates upper limb above local 360° ray-marched horizon.
 
+#### `POST /api/geometry/events`
+Extracts contiguous Sun/Earth/joint visibility windows with optional ~1-minute edge refinement.
+
+Both geometry endpoints enforce a maximum of **8,784 samples per request**. The 90-day maximum range and 60-second minimum step can exceed this cap; requests that do are rejected with HTTP 400 before SPICE computation. Choose `step_seconds` such that `floor((stop_utc - start_utc) / step_seconds) + 1 <= 8784`.
+
 #### `POST /api/horizon`
 Ray-marches the complete 360° terrain skyline mask for a given coordinate.
+
+Horizon cache identity uses the full-precision latitude, longitude, observer height, maximum range, azimuth step, and preferred DEM ID. Distinct locations and numeric parameter values are not merged by rounded cache keys.
 
 ---
 
@@ -409,23 +422,92 @@ Clears in-memory scientific caches.
 #### `POST /api/verify`
 Performs live comparison of SPICE coordinates against NASA JPL Horizons web service with a 15-second timeout.
 
+This diagnostic endpoint always returns **HTTP 200**. The `status` field discriminates the two response shapes:
+
+**Success (200 OK):**
+```json
+{
+  "status": "success",
+  "lat": -80.13,
+  "lon": 1.44,
+  "utc": "2026-02-15T00:00:00Z",
+  "spice": {
+    "sun": { "azimuth_deg": 182.4, "elevation_deg": -0.85 },
+    "earth": { "azimuth_deg": 28.1, "elevation_deg": 4.12 }
+  },
+  "horizons": {
+    "sun": { "azimuth_deg": 182.41, "elevation_deg": -0.84 },
+    "earth": { "azimuth_deg": 28.09, "elevation_deg": 4.13 }
+  },
+  "max_difference_deg": { "sun": 0.01, "earth": 0.01 },
+  "pass_tolerance_0_01_deg": true
+}
+```
+
+**Diagnostic failure (also 200 OK):**
+```json
+{
+  "status": "error",
+  "detail": "NASA JPL Horizons API communication failed (ConnectionError). Live external service unavailable or timed out.",
+  "note": "JPL Horizons API unreachable or timeout. Offline benchmark passes (see /api/provenance)."
+}
+```
+
 ---
 
-## 4. Error Responses & Handling
+## 4. Error Responses, Limits & Request Correlation
 
 The API returns standard HTTP status codes with structured JSON error details:
 
-- **400 Bad Request:** Chronological error, coordinate out of range, or invalid parameters.
+- **400 Bad Request:** Chronological error, coordinate out of range, invalid parameters, or a geometry request exceeding the 8,784-sample guard-rail.
+- **401 Unauthorized:** `POST /api/cache/clear` requires a valid `X-Admin-Key` when `AXON_ADMIN_KEY` is configured.
+- **403 Forbidden:** Cache clearing is disabled in production when `AXON_ADMIN_KEY` is unset.
 - **404 Not Found:** Specified `site_id` does not exist in registry.
+- **405 Method Not Allowed:** The path exists but the HTTP method is not supported.
+- **413 Content Too Large:** Request body exceeds the configured limit (default 2 MB).
 - **422 Unprocessable Content:** Pydantic schema validation failure.
-- **503 Service Unavailable:** SPICE kernels uninitialized.
+- **429 Too Many Requests:** Per-IP rate limit exceeded (default 120 requests/minute).
+- **503 Service Unavailable:** SPICE kernels or the requested DEM asset are unavailable.
+- **504 Gateway Timeout:** Calculation exceeded the configured request timeout (default 60 seconds).
+
+Every response carries an `X-Request-ID` header. Clients may supply their own value; otherwise the API generates one. The same ID appears in the structured `error.request_id` field and in server logs.
+
+Responses larger than 1 KB are gzip-compressed when the client sends `Accept-Encoding: gzip`.
+
+`POST /api/verify` is a diagnostic endpoint. If the external NASA JPL Horizons service is unreachable or times out, it returns HTTP 200 with `status: "error"` and an explanatory `detail`, so clients can fall back to the offline `/api/provenance` benchmark without treating the API itself as failed.
 
 **Example 400 Response:**
 ```json
 {
-  "detail": "stop_utc must be strictly after start_utc"
+  "detail": "stop_utc must be strictly after start_utc",
+  "error": {
+    "code": "HTTP_400",
+    "message": "stop_utc must be strictly after start_utc",
+    "request_id": "8f14e45fceea",
+    "path": "/api/geometry/timeseries"
+  }
 }
 ```
+
+### Response Models & OpenAPI Contract
+
+Every endpoint declares a typed `response_model`. `openapi.json` is a generated artifact and must be regenerated whenever a schema changes:
+
+```bash
+python -c "import json; from pathlib import Path; from api.main import app; Path('openapi.json').write_text(json.dumps(app.openapi(), indent=2), encoding='utf-8')"
+```
+
+Contract guarantees enforced by `science/tests/test_api_response_contracts.py`:
+
+- All 14 paths document a `200` response schema and the shared `ErrorEnvelope`.
+- No `HTTPValidationError` component is emitted; validation failures use `ErrorEnvelope` with `error.code = "VALIDATION_ERROR"`.
+- `POST /api/verify` documents both HTTP 200 shapes (`VerifySuccessResponse` and `VerifyErrorResponse`).
+- Compatibility fields are never filtered: `windows` and `ranked_windows`, `window_count` and `windows_count`, `candidate_windows_count` and `total_candidates_found`, plus `limitations`, `caveats`, `status`, and `cached`.
+- Dynamic maps (`metadata`, `provenance`, `reproducibility`, `deltas_vs_baseline`, `rankings`) remain dictionaries so their contents are preserved verbatim.
+
+### Container & DEM Deployment
+
+The Docker image deliberately excludes the ~1.5 GB LOLA DEM rasters. Mount a verified `terrain/` directory read-only at `/app/terrain`, or download the assets at deploy time with `python pipeline/download_dems.py --download`. The image health check queries `/api/ready` and requires `"ready": true`, so a container without usable SPICE kernels is reported unhealthy rather than merely "running".
 
 ---
 

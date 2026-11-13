@@ -9,7 +9,7 @@ All models strictly conform to project science conventions:
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Literal, Optional, Union
 from pydantic import BaseModel, Field
 
 from lunarsight_core import constants as C
@@ -22,11 +22,15 @@ from lunarsight_core import constants as C
 class ErrorInfo(BaseModel):
     code: str = Field(..., description="Machine-readable error code")
     message: str = Field(..., description="Human-readable error description")
+    request_id: str = Field(..., description="Correlation ID for the request")
+    path: str = Field(..., description="Request path where the error occurred")
+    field: Optional[str] = Field(default=None, description="Request field that caused the error, if applicable")
     details: Optional[Any] = Field(default=None, description="Additional context or validation details")
-    timestamp: str = Field(..., description="UTC timestamp of error occurrence")
+    timestamp: Optional[str] = Field(default=None, description="UTC timestamp of error occurrence")
 
 
 class ErrorEnvelope(BaseModel):
+    detail: Union[str, List[Any], Dict[str, Any]] = Field(..., description="Standard FastAPI detail payload")
     error: ErrorInfo
 
 
@@ -68,6 +72,41 @@ class ProvenanceResponse(BaseModel):
     caveats: List[str]
 
 
+class SiteRecordSchema(BaseModel):
+    id: str
+    name: str
+    kind: str = Field(..., description="mission | reference | candidate | custom")
+    lat: Optional[float] = Field(default=None, description="Planetocentric latitude in degrees [-90, +90]")
+    lon: Optional[float] = Field(default=None, description="East-positive longitude in degrees [-180, +180]")
+    coord_status: str = Field(..., description="ok | null_coordinates | out_of_bounds")
+    coord_kind: str
+    uncertainty_km: Optional[float] = None
+    verified: bool
+    source_urls: List[str] = Field(default_factory=list)
+    terrain_tier: str = Field(default="T3", description="T1 | T2 | T3")
+    metadata: Dict[str, Any] = Field(default_factory=dict, description="Dynamic site annotations; preserved verbatim")
+
+
+class SiteListResponse(BaseModel):
+    count: int
+    sites: List[SiteRecordSchema]
+    skipped_sites: List[SiteRecordSchema] = Field(
+        default_factory=list,
+        description="Registry records skipped because coordinates are null or out of bounds",
+    )
+
+
+class PrecomputedAssetsSchema(BaseModel):
+    horizon: bool
+    timeseries: bool
+    summary: bool
+    events: bool
+
+
+class SiteDetailResponse(SiteRecordSchema):
+    precomputed_assets: PrecomputedAssetsSchema
+
+
 # ---------------------------------------------------------------------------
 # Timeseries Schemas
 # ---------------------------------------------------------------------------
@@ -107,6 +146,74 @@ class TimeseriesResponse(BaseModel):
 
 
 # ---------------------------------------------------------------------------
+# Shared Analysis Nested Schemas
+# ---------------------------------------------------------------------------
+
+class OpportunityWindowSchema(BaseModel):
+    start: str
+    end: str
+    start_utc: Optional[str] = None
+    end_utc: Optional[str] = None
+    duration_hours: float
+    precision: Optional[str] = "hourly"
+
+
+class BodyOpportunitySchema(BaseModel):
+    """Visibility summary for the Sun, Earth, or their joint intersection.
+
+    ``sun`` and ``earth`` report ``longest_dark_gap_hours``; ``joint`` reports
+    ``longest_joint_gap_hours``. Both keys are optional so neither body summary
+    is rejected or silently stripped. Both ``window_count`` and ``windows_count``
+    are retained for backwards compatibility.
+    """
+
+    total_hours: float
+    percentage: float
+    window_count: Optional[int] = None
+    windows_count: int
+    longest_window_hours: float
+    longest_dark_gap_hours: Optional[float] = None
+    longest_joint_gap_hours: Optional[float] = None
+    windows: List[OpportunityWindowSchema]
+    criterion: Optional[str] = None
+    margin_deg: Optional[float] = None
+
+
+class SolarPowerSummarySchema(BaseModel):
+    area_m2: float
+    efficiency: float
+    orientation: str
+    total_energy_kwh: float
+    specific_energy_kwh_m2: float
+    peak_power_watts: float
+    mean_power_watts: float
+    caveat: str
+
+
+class InstantaneousGeometrySchema(BaseModel):
+    utc: str
+    sun_azimuth_deg: float
+    sun_elevation_deg: float
+    terrain_elevation_at_sun_deg: Optional[float] = None
+    earth_azimuth_deg: float
+    earth_elevation_deg: float
+    sun_visible: bool
+    earth_visible: bool
+
+
+class LunationSchema(BaseModel):
+    lunation_index: int
+    start_utc: str
+    end_utc: str
+    total_hours: float
+    sun_hours: float
+    sun_percentage: float
+    earth_hours: float
+    joint_hours: float
+    longest_dark_gap_hours: float
+
+
+# ---------------------------------------------------------------------------
 # Events Schemas
 # ---------------------------------------------------------------------------
 
@@ -122,6 +229,21 @@ class EventsRequest(BaseModel):
     mast_height_m: float = Field(default=0.0, ge=0.0, le=100.0)
     horizon_mode: str = Field(default="flat", pattern="^(flat|terrain)$")
     refine_precision: bool = Field(default=True, description="Refine event edges to ~1-minute via SPICE bisection")
+
+
+class EventsResponse(BaseModel):
+    mode: str = Field(..., description="Computed horizon mode: flat | terrain")
+    horizon_mode: str
+    coverage_status: str
+    dem_id: Optional[str] = None
+    total_period_hours: float
+    sun: BodyOpportunitySchema
+    earth: BodyOpportunitySchema
+    joint: BodyOpportunitySchema
+    power: SolarPowerSummarySchema
+    lunations: List[LunationSchema] = Field(default_factory=list)
+    best_lunation: Optional[LunationSchema] = None
+    worst_lunation: Optional[LunationSchema] = None
 
 
 # ---------------------------------------------------------------------------
@@ -183,48 +305,6 @@ class SiteAnalyzeRequest(BaseModel):
     refine_precision: bool = Field(default=False, description="Refine event window transition edges via SPICE bisection")
 
 
-class OpportunityWindowSchema(BaseModel):
-    start: str
-    end: str
-    start_utc: Optional[str] = None
-    end_utc: Optional[str] = None
-    duration_hours: float
-    precision: Optional[str] = "hourly"
-
-
-class BodyOpportunitySchema(BaseModel):
-    total_hours: float
-    percentage: float
-    windows_count: int
-    longest_window_hours: float
-    longest_dark_gap_hours: float
-    windows: List[OpportunityWindowSchema]
-    criterion: Optional[str] = None
-    margin_deg: Optional[float] = None
-
-
-class SolarPowerSummarySchema(BaseModel):
-    area_m2: float
-    efficiency: float
-    orientation: str
-    total_energy_kwh: float
-    specific_energy_kwh_m2: float
-    peak_power_watts: float
-    mean_power_watts: float
-    caveat: str
-
-
-class InstantaneousGeometrySchema(BaseModel):
-    utc: str
-    sun_azimuth_deg: float
-    sun_elevation_deg: float
-    terrain_elevation_at_sun_deg: Optional[float] = None
-    earth_azimuth_deg: float
-    earth_elevation_deg: float
-    sun_visible: bool
-    earth_visible: bool
-
-
 class SiteAnalyzeResponse(BaseModel):
     analysis_id: str = Field(..., description="Deterministic analysis scenario identifier")
     site_id: Optional[str] = None
@@ -250,11 +330,17 @@ class SiteAnalyzeResponse(BaseModel):
     flat: Optional[Dict[str, Any]] = None
     terrain: Optional[Dict[str, Any]] = None
     delta_terrain_minus_flat: Optional[Dict[str, Any]] = None
-    lunations: Optional[List[Dict[str, Any]]] = None
-    best_lunation: Optional[Dict[str, Any]] = None
-    worst_lunation: Optional[Dict[str, Any]] = None
+    lunations: Optional[List[LunationSchema]] = None
+    best_lunation: Optional[LunationSchema] = None
+    worst_lunation: Optional[LunationSchema] = None
     provenance: Dict[str, Any]
+    api_version: str = Field(default="0.3.0", description="AXON API version")
+    reproducibility: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="Request echo, resolved coordinates, kernel/DEM provenance, and reproducibility metadata",
+    )
     warnings: List[str] = Field(default_factory=list)
+    limitations: List[str] = Field(default_factory=list)
     caveats: List[str] = Field(default_factory=list)
     elapsed_ms: float
     cached: bool
@@ -331,6 +417,8 @@ class MultiCompareResponse(BaseModel):
     antenna_margin_deg: float
     solar_array_type: str
     warnings: List[str] = Field(default_factory=list)
+    limitations: List[str] = Field(default_factory=list)
+    caveats: List[str] = Field(default_factory=list)
     elapsed_ms: float
     reproducibility: Optional[Dict[str, Any]] = None
     api_version: str = Field(default="0.3.0", description="AXON API version")
@@ -372,6 +460,7 @@ class RankedWindow(BaseModel):
 
 
 class WindowSearchResponse(BaseModel):
+    status: str = Field(default="success", description="'success' for a completed search")
     site_id: Optional[str] = None
     site_name: str
     site_origin: Optional[str] = None
@@ -385,7 +474,12 @@ class WindowSearchResponse(BaseModel):
     coverage_tier: Optional[str] = None
     tier: Optional[str] = None
     candidate_windows_count: int
+    total_candidates_found: int
     ranked_windows: List[RankedWindow]
+    windows: List[RankedWindow] = Field(
+        default_factory=list,
+        description="Backwards-compatible alias for ranked_windows; preserved verbatim",
+    )
     ranking_criterion: str = Field(
         default="Sorted by continuous joint operating window duration, then lowest dark gap",
         description="Explanation of transparent sorting logic (no arbitrary magic score)",
@@ -399,6 +493,7 @@ class WindowSearchResponse(BaseModel):
         description="Tie handling specification",
     )
     elapsed_ms: float
+    cached: bool = False
 
 
 # ---------------------------------------------------------------------------
@@ -411,6 +506,59 @@ class VerifyRequest(BaseModel):
     utc: str = Field(..., description="UTC ISO date-time string", examples=["2026-03-01T00:00:00Z"])
 
 
+class VerifyAzElSchema(BaseModel):
+    azimuth_deg: Optional[float] = None
+    elevation_deg: Optional[float] = None
+
+
+class VerifyTargetPairSchema(BaseModel):
+    sun: VerifyAzElSchema
+    earth: VerifyAzElSchema
+
+
+class VerifyMaxDifferenceSchema(BaseModel):
+    sun: Optional[float] = None
+    earth: Optional[float] = None
+
+
+class VerifySuccessResponse(BaseModel):
+    status: Literal["success"] = "success"
+    lat: float
+    lon: float
+    utc: str
+    spice: VerifyTargetPairSchema
+    horizons: VerifyTargetPairSchema
+    max_difference_deg: VerifyMaxDifferenceSchema
+    pass_tolerance_0_01_deg: bool
+
+
+class VerifyErrorResponse(BaseModel):
+    status: Literal["error"] = "error"
+    detail: str
+    note: str
+
+
+#: ``POST /api/verify`` returns HTTP 200 for both shapes; ``status`` discriminates.
+VerifyResponse = Union[VerifySuccessResponse, VerifyErrorResponse]
+
+
+class CacheStatsSchema(BaseModel):
+    size: int
+    maxsize: int
+    ttl_seconds: int
+    hits: int
+    misses: int
+    total_lookups: int
+    hit_ratio: float
+    evictions: int
+
+
 class CacheStatsResponse(BaseModel):
-    analysis_cache: Dict[str, Any]
-    horizon_cache: Dict[str, Any]
+    analysis_cache: CacheStatsSchema
+    horizon_cache: CacheStatsSchema
+
+
+class CacheClearResponse(BaseModel):
+    status: str
+    cleared_analysis_entries: int
+    cleared_horizon_entries: int

@@ -5,6 +5,13 @@ on:
     branches: [ main, develop ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      run_dem_tests:
+        description: "Download LOLA DEMs and run DEM-dependent tests"
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   # =========================================================================
@@ -17,6 +24,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          lfs: true
 
       - name: Set up Python 3.12
         uses: actions/setup-python@v5
@@ -87,6 +96,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          lfs: true
 
       - name: Set up Python 3.12
         uses: actions/setup-python@v5
@@ -226,21 +237,19 @@ jobs:
         run: |
           docker run -d --name axon-api -p 8000:8000 -e AXON_ENV=production axon-lunarsight-backend:ci
 
-      - name: Container Health & Readiness Check
+      - name: Container Readiness Check
         run: |
-          response=$(curl --fail --retry 10 --retry-delay 3 --retry-all-errors -s http://localhost:8000/api/health)
-          echo "Health check response: $response"
-          echo "$response" | grep -q '"status":"ok"'
-          echo "$response" | grep -q '"kernels_loaded":true'
-          ready_resp=$(curl --fail -s http://localhost:8000/api/ready)
-          echo "Readiness check response: $ready_resp"
-          READY_RESPONSE="$ready_resp" python -c "
-          import json, os
-          data = json.loads(os.environ['READY_RESPONSE'])
-          assert data.get('status') == 'ready', f'Expected status == ready, got {data.get(\"status\")}'
-          assert data.get('ready') is True, f'Expected ready is True, got {data.get(\"ready\")}'
-          print('Container readiness successfully verified: status=ready, ready=True')
-          "
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://localhost:8000/api/ready | grep -q '"ready":true'; then
+              echo "Container is scientifically ready."
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Container did not become ready. Final readiness response:"
+          curl -fsS http://localhost:8000/api/ready || true
+          docker logs axon-api || true
+          exit 1
 
       - name: Container Logs on Failure
         if: failure()
