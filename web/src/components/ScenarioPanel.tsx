@@ -1,4 +1,4 @@
-import { useMemo, type ChangeEvent } from 'react'
+import { useMemo, useState, type ChangeEvent } from 'react'
 import type { SelectableSite } from '../types/mission'
 import {
   useScenarioStore,
@@ -14,6 +14,7 @@ import {
   computeSolarPowerWatts,
   formatUtcDisplay,
 } from '../utils/scienceMath'
+import { analyzeSite } from '../api/client'
 import PanelCornerBrackets from './PanelCornerBrackets'
 
 interface ScenarioPanelProps {
@@ -22,6 +23,11 @@ interface ScenarioPanelProps {
 }
 
 export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
+    const [customLat, setCustomLat] = useState('')
+  const [customLon, setCustomLon] = useState('')
+  const [apiResult, setApiResult] = useState<Record<string, unknown> | null>(null)
+  const [apiError, setApiError] = useState('')
+  const [apiLoading, setApiLoading] = useState(false)
   const {
     scenarioAId,
     scenarioBId,
@@ -71,6 +77,55 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
   const handleDateChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.value) return
     setUtc(new Date(e.target.value + ':00Z').toISOString())
+  } 
+   const handleCustomAnalyze = async () => {
+    const lat = Number(customLat)
+    const lon = Number(customLon)
+
+    if (
+      customLat.trim() === '' ||
+      customLon.trim() === '' ||
+      !Number.isFinite(lat) ||
+      !Number.isFinite(lon) ||
+      lat < -90 ||
+      lat > 90 ||
+      lon < -180 ||
+      lon > 180
+    ) {
+      setApiError('Enter valid coordinates. Latitude: -90 to 90; longitude: -180 to 180.')
+      return
+    }
+
+    setApiLoading(true)
+    setApiError('')
+    setApiResult(null)
+
+    try {
+      const start = new Date(utc)
+      const stop = new Date(start.getTime() + 30 * 24 * 60 * 60 * 1000)
+
+      const result = await analyzeSite({
+        site_name: 'Custom Lunar Site',
+        lat,
+        lon,
+        start_utc: start.toISOString(),
+        stop_utc: stop.toISOString(),
+        step_seconds: 3600,
+        horizon_mode: horizonMode,
+        mast_height_m: mastHeightM,
+        solar_array_type: solarArrayType,
+        array_area_m2: arrayAreaM2,
+        array_efficiency: arrayEfficiency,
+        antenna_margin_deg: dteMarginDeg,
+        earth_criterion: earthCriterion,
+      })
+
+      setApiResult(result)
+    } catch (err) {
+      setApiError(err instanceof Error ? err.message : 'Analysis request failed.')
+    } finally {
+      setApiLoading(false)
+    }
   }
 
   // Terrain mask for selected mast height
@@ -144,8 +199,7 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
 
   const sunlightPct = opp?.sun.percentage ?? 0
   const sunlightHours = opp ? Math.round(opp.sun.total_hours) : 0
-  const totalPeriodHours = opp ? Math.round(opp.total_period_hours) : 720
-
+  const totalPeriodHours = opp ? Math.round(opp.total_period_hours) : 720 
   const isScenarioA = type === 'A'
   const accentBorder = isScenarioA ? 'border-[#E0A04A]' : 'border-[#6FA8C9]'
   const badgeBg = isScenarioA ? 'bg-[#E0A04A] text-[#050608]' : 'bg-[#6FA8C9] text-[#050608]'
@@ -280,6 +334,75 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
         </div>
       </div>
 
+            {/* Custom Coordinate Analysis */}
+      <div className="p-3 rounded bg-[#050608] border border-[#2A2D31] space-y-3">
+        <div>
+          <h3 className="text-xs font-semibold text-[#6DBF8B] uppercase tracking-wider">
+            Custom Lunar Site Analysis
+          </h3>
+          <p className="text-3xs text-[#8A8A88] mt-1">
+            Analyse a custom location using latitude and longitude.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="block text-3xs text-[#8A8A88] mb-1">
+              Latitude (°)
+            </label>
+            <input
+              type="number"
+              step="any"
+              min="-90"
+              max="90"
+              value={customLat}
+              onChange={(e) => setCustomLat(e.target.value)}
+              placeholder="e.g. -89.5"
+              className="w-full px-3 py-2 bg-[#0D1014] border border-[#2A2D31] rounded text-xs text-[#E4E4E2]"
+            />
+          </div>
+
+          <div>
+            <label className="block text-3xs text-[#8A8A88] mb-1">
+              Longitude (°)
+            </label>
+            <input
+              type="number"
+              step="any"
+              min="-180"
+              max="180"
+              value={customLon}
+              onChange={(e) => setCustomLon(e.target.value)}
+              placeholder="e.g. 45.2"
+              className="w-full px-3 py-2 bg-[#0D1014] border border-[#2A2D31] rounded text-xs text-[#E4E4E2]"
+            />
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={handleCustomAnalyze}
+          disabled={apiLoading}
+          className="px-4 py-2 rounded bg-[#6DBF8B] text-[#050608] text-xs font-semibold disabled:opacity-50"
+        >
+          {apiLoading ? 'Analysing...' : 'Analyse Custom Site'}
+        </button>
+
+        {apiError && (
+          <p className="text-xs text-[#E5604A]">{apiError}</p>
+        )}
+
+        {apiResult && (
+          <div className="p-3 rounded bg-[#0D1014] border border-[#2A2D31]">
+            <p className="text-xs text-[#6DBF8B] font-semibold mb-2">
+              API Analysis Response
+            </p>
+            <pre className="text-3xs text-[#E4E4E2] whitespace-pre-wrap break-all overflow-auto max-h-64">
+              {JSON.stringify(apiResult, null, 2)}
+            </pre>
+          </div>
+        )}
+      </div>
       {/* Geometry Status & Readouts */}
       {isLoading ? (
         <div className="py-6 text-center text-xs text-[#8A8A88] animate-pulse font-mono">

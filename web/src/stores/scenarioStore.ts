@@ -28,6 +28,8 @@ export interface ComputeWindowsOptions {
 }
 
 export interface ExtendedOpportunityData extends OpportunityData {
+  start_utc: string
+  end_utc: string
   horizon_mode: 'flat' | 'terrain'
   mast_height_m: number
   dem_id?: string
@@ -308,7 +310,7 @@ export function compute30DayWindows(
     0,
     Math.round((startMs - firstMs) / (ts.step_seconds * 1000))
   )
-  const windowSamples = 30 * 24 // 30 days of hourly samples
+  const windowSamples = Math.ceil((30 * 24 * 60 * 60) / ts.step_seconds)// 30 days of hourly samples
   const endIndex = Math.min(ts.times.length, startIndex + windowSamples)
 
   const sliceTimes = ts.times.slice(startIndex, endIndex)
@@ -379,6 +381,8 @@ export function compute30DayWindows(
   const totalPeriodHours = Math.round(sliceTimes.length * (ts.step_seconds / 3600) * 10) / 10
 
   return {
+    start_utc: sliceTimes[0],
+    end_utc: sliceTimes[sliceTimes.length - 1],
     threshold_deg: thresholdDeg,
     total_period_hours: totalPeriodHours,
     horizon_mode: mode,
