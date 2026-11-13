@@ -23,20 +23,23 @@ interface ScenarioPanelProps {
 }
 
 export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
-    const [customLat, setCustomLat] = useState('')
+  const [customLat, setCustomLat] = useState('')
   const [customLon, setCustomLon] = useState('')
   const [apiResult, setApiResult] = useState<Record<string, unknown> | null>(null)
   const [apiError, setApiError] = useState('')
   const [apiLoading, setApiLoading] = useState(false)
+  const [showCustomForm, setShowCustomForm] = useState(false)
   const {
     scenarioAId,
     scenarioBId,
     utcA,
     utcB,
+    syncBToA,
     setScenarioA,
     setScenarioB,
     setUtcA,
     setUtcB,
+    setSyncBToA,
     thresholdDeg,
     horizonMode,
     mastHeightM,
@@ -53,10 +56,13 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
     pickedCoords,
   } = useScenarioStore()
 
+  // Auto-expand the custom coordinate form only when the user actually picked
+  // a custom point on the map/globe, so it doesn't sit open by default.
   useEffect(() => {
     if (pickedCoords) {
       setCustomLat(pickedCoords.lat)
       setCustomLon(pickedCoords.lon)
+      setShowCustomForm(true)
     }
   }, [pickedCoords])
 
@@ -64,6 +70,8 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
   const utc = type === 'A' ? utcA : utcB
   const setSite = type === 'A' ? setScenarioA : setScenarioB
   const setUtc = type === 'A' ? setUtcA : setUtcB
+  const isScenarioA = type === 'A'
+  const utcLocked = !isScenarioA && syncBToA
 
   const selectedSite = sites.find((s) => s.id === siteId)
   const ts = timeseriesCache[siteId]
@@ -86,8 +94,9 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
   const handleDateChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.value) return
     setUtc(new Date(e.target.value + ':00Z').toISOString())
-  } 
-   const handleCustomAnalyze = async () => {
+  }
+
+  const handleCustomAnalyze = async () => {
     const lat = Number(customLat)
     const lon = Number(customLon)
 
@@ -246,8 +255,7 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
 
   const sunlightPct = opp?.sun.percentage ?? 0
   const sunlightHours = opp ? Math.round(opp.sun.total_hours) : 0
-  const totalPeriodHours = opp ? Math.round(opp.total_period_hours) : 720 
-  const isScenarioA = type === 'A'
+  const totalPeriodHours = opp ? Math.round(opp.total_period_hours) : 720
   const accentBorder = isScenarioA ? 'border-[#E0A04A]' : 'border-[#6FA8C9]'
   const badgeBg = isScenarioA ? 'bg-[#E0A04A] text-[#050608]' : 'bg-[#6FA8C9] text-[#050608]'
 
@@ -335,6 +343,13 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
                 ))}
             </optgroup>
           </select>
+          <button
+            type="button"
+            onClick={() => setShowCustomForm((v) => !v)}
+            className="mt-1.5 text-3xs font-mono text-[#6DBF8B] hover:text-[#8BDBA5] underline decoration-dotted"
+          >
+            {showCustomForm ? '− Hide custom coordinates' : '+ Custom Coordinates'}
+          </button>
         </div>
 
         {/* UTC Time input */}
@@ -352,114 +367,142 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
               type="datetime-local"
               value={dtLocalValue}
               onChange={handleDateChange}
-              className="flex-1 min-w-0 px-2.5 py-1.5 bg-[#050608] border border-[#2A2D31] rounded text-xs text-[#E4E4E2] font-mono focus:outline-none focus:border-[#B9A58C]"
+              disabled={utcLocked}
+              className="flex-1 min-w-0 px-2.5 py-1.5 bg-[#050608] border border-[#2A2D31] rounded text-xs text-[#E4E4E2] font-mono focus:outline-none focus:border-[#B9A58C] disabled:opacity-50 disabled:cursor-not-allowed"
             />
             <div className="flex gap-1 text-3xs font-mono shrink-0">
               <button
                 onClick={() => stepHours(-24)}
-                className="px-1.5 py-1 bg-[#171B22] hover:bg-[#2A2D31] text-[#E4E4E2] rounded"
+                disabled={utcLocked}
+                className="px-1.5 py-1 bg-[#171B22] hover:bg-[#2A2D31] text-[#E4E4E2] rounded disabled:opacity-40 disabled:cursor-not-allowed"
                 title="Back 1 day"
               >
                 -1d
               </button>
               <button
                 onClick={() => stepHours(-1)}
-                className="px-1.5 py-1 bg-[#171B22] hover:bg-[#2A2D31] text-[#E4E4E2] rounded"
+                disabled={utcLocked}
+                className="px-1.5 py-1 bg-[#171B22] hover:bg-[#2A2D31] text-[#E4E4E2] rounded disabled:opacity-40 disabled:cursor-not-allowed"
                 title="Back 1 hour"
               >
                 -1h
               </button>
               <button
                 onClick={() => stepHours(1)}
-                className="px-1.5 py-1 bg-[#171B22] hover:bg-[#2A2D31] text-[#E4E4E2] rounded"
+                disabled={utcLocked}
+                className="px-1.5 py-1 bg-[#171B22] hover:bg-[#2A2D31] text-[#E4E4E2] rounded disabled:opacity-40 disabled:cursor-not-allowed"
                 title="Forward 1 hour"
               >
                 +1h
               </button>
               <button
                 onClick={() => stepHours(24)}
-                className="px-1.5 py-1 bg-[#171B22] hover:bg-[#2A2D31] text-[#E4E4E2] rounded"
+                disabled={utcLocked}
+                className="px-1.5 py-1 bg-[#171B22] hover:bg-[#2A2D31] text-[#E4E4E2] rounded disabled:opacity-40 disabled:cursor-not-allowed"
                 title="Forward 1 day"
               >
                 +1d
               </button>
             </div>
           </div>
+          {!isScenarioA && (
+            <label className="mt-1.5 flex items-center gap-1.5 text-3xs font-mono text-[#8A8A88] cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={syncBToA}
+                onChange={(e) => setSyncBToA(e.target.checked)}
+                className="accent-[#6FA8C9]"
+              />
+              Sync time with Scenario A
+            </label>
+          )}
         </div>
       </div>
 
-            {/* Custom Coordinate Analysis */}
-      <div className="p-3 rounded bg-[#050608] border border-[#2A2D31] space-y-3">
-        <div>
-          <h3 className="text-xs font-semibold text-[#6DBF8B] uppercase tracking-wider">
-            Custom Lunar Site Analysis
-          </h3>
-          <p className="text-3xs text-[#8A8A88] mt-1">
-            Analyse a custom location using latitude and longitude.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label className="block text-3xs text-[#8A8A88] mb-1">
-              Latitude (°)
-            </label>
-            <input
-              type="number"
-              step="any"
-              min="-90"
-              max="90"
-              value={customLat}
-              onChange={(e) => setCustomLat(e.target.value)}
-              placeholder="e.g. -89.5"
-              className="w-full px-3 py-2 bg-[#0D1014] border border-[#2A2D31] rounded text-xs text-[#E4E4E2]"
-            />
-          </div>
-
-          <div>
-            <label className="block text-3xs text-[#8A8A88] mb-1">
-              Longitude (°)
-            </label>
-            <input
-              type="number"
-              step="any"
-              min="-180"
-              max="180"
-              value={customLon}
-              onChange={(e) => setCustomLon(e.target.value)}
-              placeholder="e.g. 45.2"
-              className="w-full px-3 py-2 bg-[#0D1014] border border-[#2A2D31] rounded text-xs text-[#E4E4E2]"
-            />
-          </div>
-        </div>
-
-        <button
-          type="button"
-          onClick={handleCustomAnalyze}
-          disabled={apiLoading}
-          className="px-4 py-2 rounded bg-[#6DBF8B] text-[#050608] text-xs font-semibold disabled:opacity-50"
-        >
-          {apiLoading ? 'Analysing...' : 'Analyse Custom Site'}
-        </button>
-
-        {apiError && (
-          <p className="text-xs text-[#E5604A]">{apiError}</p>
-        )}
-
-        {apiResult && (
-          <div className="p-3 rounded bg-[#132A1C] border border-[#2A5C3D] flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="text-[#6DBF8B] font-bold text-xs">✓</span>
-              <p className="text-xs text-[#6DBF8B] font-medium font-mono">
-                {typeof apiResult.__banner === 'string'
-                  ? apiResult.__banner
-                  : `Custom site (${customLat}°, ${customLon}°) analyzed and loaded into Scenario ${type}.`}
+      {/* Custom Coordinate Analysis - collapsed by default, expands on toggle or map pick */}
+      {showCustomForm && (
+        <div className="p-3 rounded bg-[#050608] border border-[#2A2D31] space-y-3 animate-fade-in">
+          <div className="flex items-start justify-between gap-2">
+            <div>
+              <h3 className="text-xs font-semibold text-[#6DBF8B] uppercase tracking-wider">
+                Custom Lunar Site Analysis
+              </h3>
+              <p className="text-3xs text-[#8A8A88] mt-1">
+                Analyse a custom location using latitude and longitude.
               </p>
             </div>
-            <span className="text-3xs text-[#8A8A88] font-mono">Horizon &amp; Ephemeris Active</span>
+            <button
+              type="button"
+              onClick={() => setShowCustomForm(false)}
+              className="text-3xs font-mono text-[#8A8A88] hover:text-[#E4E4E2]"
+            >
+              ✕
+            </button>
           </div>
-        )}
-      </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-3xs text-[#8A8A88] mb-1">
+                Latitude (°)
+              </label>
+              <input
+                type="number"
+                step="any"
+                min="-90"
+                max="90"
+                value={customLat}
+                onChange={(e) => setCustomLat(e.target.value)}
+                placeholder="e.g. -89.5"
+                className="w-full px-3 py-2 bg-[#0D1014] border border-[#2A2D31] rounded text-xs text-[#E4E4E2]"
+              />
+            </div>
+
+            <div>
+              <label className="block text-3xs text-[#8A8A88] mb-1">
+                Longitude (°)
+              </label>
+              <input
+                type="number"
+                step="any"
+                min="-180"
+                max="180"
+                value={customLon}
+                onChange={(e) => setCustomLon(e.target.value)}
+                placeholder="e.g. 45.2"
+                className="w-full px-3 py-2 bg-[#0D1014] border border-[#2A2D31] rounded text-xs text-[#E4E4E2]"
+              />
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleCustomAnalyze}
+            disabled={apiLoading}
+            className="px-4 py-2 rounded bg-[#6DBF8B] text-[#050608] text-xs font-semibold disabled:opacity-50"
+          >
+            {apiLoading ? 'Analysing...' : 'Analyse Custom Site'}
+          </button>
+
+          {apiError && (
+            <p className="text-xs text-[#E5604A]">{apiError}</p>
+          )}
+
+          {apiResult && (
+            <div className="p-3 rounded bg-[#132A1C] border border-[#2A5C3D] flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-[#6DBF8B] font-bold text-xs">✓</span>
+                <p className="text-xs text-[#6DBF8B] font-medium font-mono">
+                  {typeof apiResult.__banner === 'string'
+                    ? apiResult.__banner
+                    : `Custom site (${customLat}°, ${customLon}°) analyzed and loaded into Scenario ${type}.`}
+                </p>
+              </div>
+              <span className="text-3xs text-[#8A8A88] font-mono">Horizon &amp; Ephemeris Active</span>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Geometry Status & Readouts */}
       {isLoading ? (
         <div className="py-6 text-center text-xs text-[#8A8A88] animate-pulse font-mono">
@@ -617,7 +660,14 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
             />
           )}
         </div>
-        <div className="mt-2 text-3xs text-[#8A8A88] flex items-center justify-between font-mono">
+        {/* Explicit axis labels for the elevation gauge */}
+        <div className="mt-1 flex justify-between text-[9px] font-mono text-[#6B6F75]">
+          <span>-90° Nadir</span>
+          <span>0° Flat Horizon</span>
+          <span>Local Skyline</span>
+          <span>+90° Zenith</span>
+        </div>
+        <div className="mt-1.5 text-3xs text-[#8A8A88] flex items-center justify-between font-mono">
           <span>* Mode: {horizonMode === 'terrain' ? `LOLA DEM (${horizon?.dem_id || 'DEM'}, mast: ${mastHeightM}m)` : 'Flat sphere, 0 deg horizon'}</span>
           <span className="text-[#E4E4E2]">Array: {solarArrayType}</span>
         </div>

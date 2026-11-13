@@ -146,6 +146,29 @@ export default function ComparisonPanel({ sites }: ComparisonPanelProps) {
     siteB?.coord_kind === 'region_centre' || siteB?.coord_kind === 'planned_region_center'
   const hasRegionCentre = isRegionCentreA || isRegionCentreB
 
+  // Winner pill: "good" means higher-is-better unless invert=true (lower-is-better, e.g. dark gaps)
+  const WinnerPill = ({ value, invert = false, unit = '' }: { value: number | null; invert?: boolean; unit?: string }) => {
+    if (value === null) return <span className="text-[#8A8A88] font-sans">N/A</span>
+    const bGood = invert ? value <= 0 : value >= 0
+    return (
+      <span
+        className={`inline-flex items-center px-1.5 py-0.5 rounded font-bold ${
+          bGood ? 'bg-[#132A1C] text-[#6DBF8B] border border-[#2A5C3D]' : 'bg-[#2A1210] text-[#E5604A] border border-[#7F2318]'
+        }`}
+      >
+        {fmtDiff(value, unit)}
+      </span>
+    )
+  }
+
+  const SectionHeader = ({ icon, label }: { icon: string; label: string }) => (
+    <tr className="bg-[#050608]">
+      <td colSpan={4} className="py-1.5 px-3 text-3xs uppercase tracking-wider font-mono font-semibold text-[#B9A58C] border-y border-[#2A2D31]">
+        <span className="mr-1.5">{icon}</span>{label}
+      </td>
+    </tr>
+  )
+
   return (
     <div className="relative bg-[#0D1014] border border-[#2A2D31] rounded p-4 flex flex-col gap-4">
       <PanelCornerBrackets />
@@ -165,216 +188,7 @@ export default function ComparisonPanel({ sites }: ComparisonPanelProps) {
         </div>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="w-full text-left text-xs" role="table">
-          <thead>
-            <tr className="border-b border-[#2A2D31] text-3xs font-semibold text-[#8A8A88] uppercase tracking-wider bg-[#050608]">
-              <th className="py-2.5 px-3">Metric</th>
-              <th className="py-2.5 px-3 text-[#E0A04A]">
-                Scenario A: {siteA?.name || 'A'}
-              </th>
-              <th className="py-2.5 px-3 text-[#6FA8C9]">
-                Scenario B: {siteB?.name || 'B'}
-              </th>
-              <th className="py-2.5 px-3 text-right">Delta (Scenario B − A)</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-[#2A2D31] text-2xs font-mono">
-            {/* Coordinates & Region */}
-            <tr>
-              <td className="py-2.5 px-3 text-[#8A8A88] font-sans font-medium">Landing Site Coordinates</td>
-              <td className="py-2.5 px-3 text-[#E4E4E2]">
-                {siteA?.lat != null ? `${siteA.lat}° Lat, ${siteA.lon}° Lon` : 'Not published'}
-              </td>
-              <td className="py-2.5 px-3 text-[#E4E4E2]">
-                {siteB?.lat != null ? `${siteB.lat}° Lat, ${siteB.lon}° Lon` : 'Not published'}
-              </td>
-              <td className="py-2.5 px-3 text-right text-[#8A8A88] font-sans">
-                {siteB?.lat != null && siteA?.lat != null
-                  ? `${Math.abs(siteB.lat - siteA.lat).toFixed(2)}° ΔLat`
-                  : 'N/A'}
-              </td>
-            </tr>
-
-            {/* Coordinate Kind Notice */}
-            {(siteA?.coord_kind === 'region_centre' || siteA?.coord_kind === 'planned_region_center' ||
-              siteB?.coord_kind === 'region_centre' || siteB?.coord_kind === 'planned_region_center') && (
-              <tr className="bg-[#E0A04A]/5">
-                <td className="py-2 px-3 text-[#E0A04A] font-sans font-medium text-3xs">Coordinate Notice</td>
-                <td className="py-2 px-3 text-[#E0A04A]/90 font-sans text-3xs">
-                  {siteA?.coord_kind === 'region_centre' || siteA?.coord_kind === 'planned_region_center'
-                    ? 'Region centre; results can differ strongly from the crest or evaluated site.'
-                    : 'Specific site'}
-                </td>
-                <td className="py-2 px-3 text-[#E0A04A]/90 font-sans text-3xs">
-                  {siteB?.coord_kind === 'region_centre' || siteB?.coord_kind === 'planned_region_center'
-                    ? 'Region centre; results can differ strongly from the crest or evaluated site.'
-                    : 'Specific site'}
-                </td>
-                <td className="py-2 px-3 text-right text-[#8A8A88] font-sans text-3xs">
-                  —
-                </td>
-              </tr>
-            )}
-
-            {/* DEM Tier / Source */}
-            <tr>
-              <td className="py-2.5 px-3 text-[#8A8A88] font-sans font-medium">Topographic DEM Source</td>
-              <td className="py-2.5 px-3 text-[#6FA8C9]">
-                {hA?.dem_id || 'LDEM_64'} ({hA?.coverage_status || 'ok'})
-              </td>
-              <td className="py-2.5 px-3 text-[#6FA8C9]">
-                {hB?.dem_id || 'LDEM_64'} ({hB?.coverage_status || 'ok'})
-              </td>
-              <td className="py-2.5 px-3 text-right text-[#8A8A88] font-sans">
-                {hA?.dem_id === hB?.dem_id ? 'Identical DEM' : 'Different DEM'}
-              </td>
-            </tr>
-
-            {/* Target UTC Date */}
-            <tr>
-              <td className="py-2.5 px-3 text-[#8A8A88] font-sans font-medium">Evaluation Date (UTC)</td>
-              <td className="py-2.5 px-3 text-[#E4E4E2] font-mono">{formatUtcDisplay(utcA)}</td>
-              <td className="py-2.5 px-3 text-[#E4E4E2] font-mono">{formatUtcDisplay(utcB)}</td>
-              <td className="py-2.5 px-3 text-right text-[#8A8A88] font-sans">
-                {utcA === utcB ? 'Synchronous' : 'Asynchronous dates'}
-              </td>
-            </tr>
-
-            {/* Sun Elevation & Horizon */}
-            <tr>
-              <td className="py-2.5 px-3 text-[#8A8A88] font-sans font-medium">Sun Elevation (at UTC)</td>
-              <td className="py-2.5 px-3 text-[#E0A04A]">
-                {elA.sunElevation != null ? `${elA.sunElevation.toFixed(2)}° (Skyline: ${sunHorizonA.toFixed(1)}°)` : 'N/A'}
-              </td>
-              <td className="py-2.5 px-3 text-[#E0A04A]">
-                {elB.sunElevation != null ? `${elB.sunElevation.toFixed(2)}° (Skyline: ${sunHorizonB.toFixed(1)}°)` : 'N/A'}
-              </td>
-              <td className={`py-2.5 px-3 text-right font-bold ${diffSunEl != null && diffSunEl > 0 ? 'text-[#6DBF8B]' : 'text-[#E0A04A]'}`}>
-                {fmtDiff(diffSunEl, '°', 2)}
-              </td>
-            </tr>
-
-            {/* Earth Elevation & Horizon */}
-            <tr>
-              <td className="py-2.5 px-3 text-[#8A8A88] font-sans font-medium">Earth Elevation (at UTC)</td>
-              <td className="py-2.5 px-3 text-[#6FA8C9]">
-                {elA.earthElevation != null ? `${elA.earthElevation.toFixed(2)}° (Skyline: ${earthHorizonA.toFixed(1)}°)` : 'N/A'}
-              </td>
-              <td className="py-2.5 px-3 text-[#6FA8C9]">
-                {elB.earthElevation != null ? `${elB.earthElevation.toFixed(2)}° (Skyline: ${earthHorizonB.toFixed(1)}°)` : 'N/A'}
-              </td>
-              <td className={`py-2.5 px-3 text-right font-bold ${diffEarthEl != null && diffEarthEl > 0 ? 'text-[#6DBF8B]' : 'text-[#E0A04A]'}`}>
-                {fmtDiff(diffEarthEl, '°', 2)}
-              </td>
-            </tr>
-
-            {/* Instantaneous Power */}
-            <tr>
-              <td className="py-2.5 px-3 text-[#8A8A88] font-sans font-medium">Solar Array Power (1 m² array)</td>
-              <td className="py-2.5 px-3 text-[#E0A04A]">{pWattsA.toFixed(1)} W</td>
-              <td className="py-2.5 px-3 text-[#E0A04A]">{pWattsB.toFixed(1)} W</td>
-              <td className={`py-2.5 px-3 text-right font-bold ${diffPowerW >= 0 ? 'text-[#6DBF8B]' : 'text-[#E5604A]'}`}>
-                {fmtDiff(diffPowerW, ' W', 1)}
-              </td>
-            </tr>
-
-            {/* 30-Day Illumination Hours */}
-            <tr>
-              <td className="py-2.5 px-3 text-[#8A8A88] font-sans font-medium">30-Day Illumination Availability</td>
-              <td className="py-2.5 px-3 text-[#E0A04A]">
-                {fmtHrs(oppA?.sun.total_hours)} ({oppA?.sun.percentage ?? 0}%)
-              </td>
-              <td className="py-2.5 px-3 text-[#E0A04A]">
-                {fmtHrs(oppB?.sun.total_hours)} ({oppB?.sun.percentage ?? 0}%)
-              </td>
-              <td className={`py-2.5 px-3 text-right font-bold ${diffSunHours != null && diffSunHours >= 0 ? 'text-[#6DBF8B]' : 'text-[#E5604A]'}`}>
-                {fmtDiff(diffSunHours, ' h')}
-              </td>
-            </tr>
-
-            {/* 30-Day Solar Energy Yield */}
-            <tr>
-              <td className="py-2.5 px-3 text-[#8A8A88] font-sans font-medium">30-Day Energy Yield (kWh / m²)</td>
-              <td className="py-2.5 px-3 text-[#E0A04A]">{oppA?.solar_energy_kwh ?? 0} kWh</td>
-              <td className="py-2.5 px-3 text-[#E0A04A]">{oppB?.solar_energy_kwh ?? 0} kWh</td>
-              <td className={`py-2.5 px-3 text-right font-bold ${diffEnergyKwh != null && diffEnergyKwh >= 0 ? 'text-[#6DBF8B]' : 'text-[#E5604A]'}`}>
-                {fmtDiff(diffEnergyKwh, ' kWh', 2)}
-              </td>
-            </tr>
-
-            {/* Max Dark Gap */}
-            <tr>
-              <td className="py-2.5 px-3 text-[#8A8A88] font-sans font-medium">Max Continuous Dark Gap (Battery Sizing)</td>
-              <td className="py-2.5 px-3 text-[#E5604A] font-medium">
-                {fmtHrs(oppA?.sun.longest_dark_gap_hours)}
-              </td>
-              <td className="py-2.5 px-3 text-[#E5604A] font-medium">
-                {fmtHrs(oppB?.sun.longest_dark_gap_hours)}
-              </td>
-              <td className={`py-2.5 px-3 text-right font-bold ${diffDarkGap != null && diffDarkGap <= 0 ? 'text-[#6DBF8B]' : 'text-[#E5604A]'}`}>
-                {fmtDiff(diffDarkGap, ' h')} {diffDarkGap != null && diffDarkGap <= 0 ? '(shorter night)' : '(longer night)'}
-              </td>
-            </tr>
-
-            {/* 30-Day DTE Direct Hours */}
-            <tr>
-              <td className="py-2.5 px-3 text-[#8A8A88] font-sans font-medium">30-Day Direct-to-Earth Comm Windows</td>
-              <td className="py-2.5 px-3 text-[#6FA8C9]">
-                {fmtHrs(oppA?.earth.total_hours)} ({oppA?.earth.percentage ?? 0}%)
-              </td>
-              <td className="py-2.5 px-3 text-[#6FA8C9]">
-                {fmtHrs(oppB?.earth.total_hours)} ({oppB?.earth.percentage ?? 0}%)
-              </td>
-              <td className={`py-2.5 px-3 text-right font-bold ${diffEarthHours != null && diffEarthHours >= 0 ? 'text-[#6DBF8B]' : 'text-[#E5604A]'}`}>
-                {fmtDiff(diffEarthHours, ' h')}
-              </td>
-            </tr>
-
-            {/* Max DTE Blackout */}
-            <tr>
-              <td className="py-2.5 px-3 text-[#8A8A88] font-sans font-medium">Max DTE Comm Blackout Duration</td>
-              <td className="py-2.5 px-3 text-[#E5604A] font-medium">
-                {fmtHrs(oppA?.earth.longest_dark_gap_hours)}
-              </td>
-              <td className="py-2.5 px-3 text-[#E5604A] font-medium">
-                {fmtHrs(oppB?.earth.longest_dark_gap_hours)}
-              </td>
-              <td className={`py-2.5 px-3 text-right font-bold ${diffBlackout != null && diffBlackout <= 0 ? 'text-[#6DBF8B]' : 'text-[#E5604A]'}`}>
-                {fmtDiff(diffBlackout, ' h')}
-              </td>
-            </tr>
-
-            {/* Joint Window Hours */}
-            <tr className="bg-[#050608] font-semibold">
-              <td className="py-3 px-3 text-[#6DBF8B] font-sans">Concurrent Sun + Earth Operations Window</td>
-              <td className="py-3 px-3 text-[#6DBF8B] font-bold">
-                {fmtHrs(oppA?.joint.total_hours)} ({oppA?.joint.percentage ?? 0}%)
-              </td>
-              <td className="py-3 px-3 text-[#6DBF8B] font-bold">
-                {fmtHrs(oppB?.joint.total_hours)} ({oppB?.joint.percentage ?? 0}%)
-              </td>
-              <td className={`py-3 px-3 text-right font-bold text-sm ${diffJointHours != null && diffJointHours >= 0 ? 'text-[#6DBF8B]' : 'text-[#E5604A]'}`}>
-                {fmtDiff(diffJointHours, ' h')}
-              </td>
-            </tr>
-
-            {/* Terrain Shadow Impact Delta */}
-            {horizonMode === 'terrain' && (
-              <tr className="bg-[#E0A04A]/10 text-[#E0A04A]">
-                <td className="py-2.5 px-3 font-sans font-medium">Terrain effect vs flat (+ gain / - loss)</td>
-                <td className="py-2.5 px-3">{oppA?.delta_sun_hours ?? 0} h sun</td>
-                <td className="py-2.5 px-3">{oppB?.delta_sun_hours ?? 0} h sun</td>
-                <td className="py-2.5 px-3 text-right font-medium">
-                  {fmtDiff((oppB?.delta_sun_hours ?? 0) - (oppA?.delta_sun_hours ?? 0), ' h')}
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Synthesis Takeaway Card */}
+      {/* Synthesis Takeaway Card - now at the TOP, read before the raw numbers */}
       <div className="p-3.5 bg-[#050608] rounded border border-[#2A2D31] flex flex-col gap-1 text-2xs text-[#8A8A88] leading-relaxed">
         <span className="font-semibold text-xs text-[#E4E4E2] flex items-center gap-1.5 font-sans">
           <span>💡</span> Mission Trade-off Synthesis:
@@ -402,6 +216,191 @@ export default function ComparisonPanel({ sites }: ComparisonPanelProps) {
             ⚠️ One site is a region centre, so this is not a like-for-like comparison.
           </div>
         )}
+      </div>
+
+      <div className="overflow-x-auto">
+        <table className="w-full text-left text-xs" role="table">
+          <thead>
+            <tr className="border-b border-[#2A2D31] text-3xs font-semibold text-[#8A8A88] uppercase tracking-wider bg-[#050608]">
+              <th className="py-2.5 px-3">Metric</th>
+              <th className="py-2.5 px-3 text-[#E0A04A]">
+                Scenario A: {siteA?.name || 'A'}
+              </th>
+              <th className="py-2.5 px-3 text-[#6FA8C9]">
+                Scenario B: {siteB?.name || 'B'}
+              </th>
+              <th className="py-2.5 px-3 text-right">Delta (Scenario B − A)</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-[#2A2D31] text-2xs font-mono">
+
+            {/* ===== SECTION 1: Site & Topography ===== */}
+            <SectionHeader icon="📍" label="Site & Topography" />
+
+            <tr>
+              <td className="py-2.5 px-3 text-[#8A8A88] font-sans font-medium">Landing Site Coordinates</td>
+              <td className="py-2.5 px-3 text-[#E4E4E2]">
+                {siteA?.lat != null ? `${siteA.lat}° Lat, ${siteA.lon}° Lon` : 'Not published'}
+              </td>
+              <td className="py-2.5 px-3 text-[#E4E4E2]">
+                {siteB?.lat != null ? `${siteB.lat}° Lat, ${siteB.lon}° Lon` : 'Not published'}
+              </td>
+              <td className="py-2.5 px-3 text-right text-[#8A8A88] font-sans">
+                {siteB?.lat != null && siteA?.lat != null
+                  ? `${Math.abs(siteB.lat - siteA.lat).toFixed(2)}° ΔLat`
+                  : 'N/A'}
+              </td>
+            </tr>
+
+            {(isRegionCentreA || isRegionCentreB) && (
+              <tr className="bg-[#E0A04A]/5">
+                <td className="py-2 px-3 text-[#E0A04A] font-sans font-medium text-3xs">Coordinate Notice</td>
+                <td className="py-2 px-3 text-[#E0A04A]/90 font-sans text-3xs">
+                  {isRegionCentreA ? 'Region centre; results can differ strongly from the crest or evaluated site.' : 'Specific site'}
+                </td>
+                <td className="py-2 px-3 text-[#E0A04A]/90 font-sans text-3xs">
+                  {isRegionCentreB ? 'Region centre; results can differ strongly from the crest or evaluated site.' : 'Specific site'}
+                </td>
+                <td className="py-2 px-3 text-right text-[#8A8A88] font-sans text-3xs">—</td>
+              </tr>
+            )}
+
+            <tr>
+              <td className="py-2.5 px-3 text-[#8A8A88] font-sans font-medium">Topographic DEM Source</td>
+              <td className="py-2.5 px-3 text-[#6FA8C9]">
+                {hA?.dem_id || 'LDEM_64'} ({hA?.coverage_status || 'ok'})
+              </td>
+              <td className="py-2.5 px-3 text-[#6FA8C9]">
+                {hB?.dem_id || 'LDEM_64'} ({hB?.coverage_status || 'ok'})
+              </td>
+              <td className="py-2.5 px-3 text-right text-[#8A8A88] font-sans">
+                {hA?.dem_id === hB?.dem_id ? 'Identical DEM' : 'Different DEM'}
+              </td>
+            </tr>
+
+            <tr>
+              <td className="py-2.5 px-3 text-[#8A8A88] font-sans font-medium">Evaluation Date (UTC)</td>
+              <td className="py-2.5 px-3 text-[#E4E4E2] font-mono">{formatUtcDisplay(utcA)}</td>
+              <td className="py-2.5 px-3 text-[#E4E4E2] font-mono">{formatUtcDisplay(utcB)}</td>
+              <td className="py-2.5 px-3 text-right text-[#8A8A88] font-sans">
+                {utcA === utcB ? 'Synchronous' : 'Asynchronous dates'}
+              </td>
+            </tr>
+
+            {/* ===== SECTION 2: Solar Power & Survival Night ===== */}
+            <SectionHeader icon="☀️" label="Solar Power & Survival Night" />
+
+            <tr>
+              <td className="py-2.5 px-3 text-[#8A8A88] font-sans font-medium">Sun Elevation (at UTC)</td>
+              <td className="py-2.5 px-3 text-[#E0A04A]">
+                {elA.sunElevation != null ? `${elA.sunElevation.toFixed(2)}° (Skyline: ${sunHorizonA.toFixed(1)}°)` : 'N/A'}
+              </td>
+              <td className="py-2.5 px-3 text-[#E0A04A]">
+                {elB.sunElevation != null ? `${elB.sunElevation.toFixed(2)}° (Skyline: ${sunHorizonB.toFixed(1)}°)` : 'N/A'}
+              </td>
+              <td className="py-2.5 px-3 text-right"><WinnerPill value={diffSunEl} unit="°" /></td>
+            </tr>
+
+            <tr>
+              <td className="py-2.5 px-3 text-[#8A8A88] font-sans font-medium">Solar Array Power (1 m² array)</td>
+              <td className="py-2.5 px-3 text-[#E0A04A]">{pWattsA.toFixed(1)} W</td>
+              <td className="py-2.5 px-3 text-[#E0A04A]">{pWattsB.toFixed(1)} W</td>
+              <td className="py-2.5 px-3 text-right"><WinnerPill value={diffPowerW} unit=" W" /></td>
+            </tr>
+
+            <tr>
+              <td className="py-2.5 px-3 text-[#8A8A88] font-sans font-medium">30-Day Illumination Availability</td>
+              <td className="py-2.5 px-3 text-[#E0A04A]">
+                {fmtHrs(oppA?.sun.total_hours)} ({oppA?.sun.percentage ?? 0}%)
+              </td>
+              <td className="py-2.5 px-3 text-[#E0A04A]">
+                {fmtHrs(oppB?.sun.total_hours)} ({oppB?.sun.percentage ?? 0}%)
+              </td>
+              <td className="py-2.5 px-3 text-right"><WinnerPill value={diffSunHours} unit=" h" /></td>
+            </tr>
+
+            <tr>
+              <td className="py-2.5 px-3 text-[#8A8A88] font-sans font-medium">30-Day Energy Yield (kWh / m²)</td>
+              <td className="py-2.5 px-3 text-[#E0A04A]">{oppA?.solar_energy_kwh ?? 0} kWh</td>
+              <td className="py-2.5 px-3 text-[#E0A04A]">{oppB?.solar_energy_kwh ?? 0} kWh</td>
+              <td className="py-2.5 px-3 text-right"><WinnerPill value={diffEnergyKwh} unit=" kWh" /></td>
+            </tr>
+
+            <tr>
+              <td className="py-2.5 px-3 text-[#8A8A88] font-sans font-medium">Max Continuous Dark Gap (Battery Sizing)</td>
+              <td className="py-2.5 px-3 text-[#E5604A] font-medium">
+                {fmtHrs(oppA?.sun.longest_dark_gap_hours)}
+              </td>
+              <td className="py-2.5 px-3 text-[#E5604A] font-medium">
+                {fmtHrs(oppB?.sun.longest_dark_gap_hours)}
+              </td>
+              <td className="py-2.5 px-3 text-right">
+                <WinnerPill value={diffDarkGap} invert unit=" h" />
+                <span className="ml-1 text-3xs text-[#8A8A88] font-sans">
+                  {diffDarkGap != null && diffDarkGap <= 0 ? '(shorter night)' : diffDarkGap != null ? '(longer night)' : ''}
+                </span>
+              </td>
+            </tr>
+
+            {horizonMode === 'terrain' && (
+              <tr className="bg-[#E0A04A]/10 text-[#E0A04A]">
+                <td className="py-2.5 px-3 font-sans font-medium">Terrain effect vs flat (+ gain / - loss)</td>
+                <td className="py-2.5 px-3">{oppA?.delta_sun_hours ?? 0} h sun</td>
+                <td className="py-2.5 px-3">{oppB?.delta_sun_hours ?? 0} h sun</td>
+                <td className="py-2.5 px-3 text-right font-medium">
+                  {fmtDiff((oppB?.delta_sun_hours ?? 0) - (oppA?.delta_sun_hours ?? 0), ' h')}
+                </td>
+              </tr>
+            )}
+
+            {/* ===== SECTION 3: Direct-to-Earth Communications ===== */}
+            <SectionHeader icon="📡" label="Direct-to-Earth Communications" />
+
+            <tr>
+              <td className="py-2.5 px-3 text-[#8A8A88] font-sans font-medium">Earth Elevation (at UTC)</td>
+              <td className="py-2.5 px-3 text-[#6FA8C9]">
+                {elA.earthElevation != null ? `${elA.earthElevation.toFixed(2)}° (Skyline: ${earthHorizonA.toFixed(1)}°)` : 'N/A'}
+              </td>
+              <td className="py-2.5 px-3 text-[#6FA8C9]">
+                {elB.earthElevation != null ? `${elB.earthElevation.toFixed(2)}° (Skyline: ${earthHorizonB.toFixed(1)}°)` : 'N/A'}
+              </td>
+              <td className="py-2.5 px-3 text-right"><WinnerPill value={diffEarthEl} unit="°" /></td>
+            </tr>
+
+            <tr>
+              <td className="py-2.5 px-3 text-[#8A8A88] font-sans font-medium">30-Day Direct-to-Earth Comm Windows</td>
+              <td className="py-2.5 px-3 text-[#6FA8C9]">
+                {fmtHrs(oppA?.earth.total_hours)} ({oppA?.earth.percentage ?? 0}%)
+              </td>
+              <td className="py-2.5 px-3 text-[#6FA8C9]">
+                {fmtHrs(oppB?.earth.total_hours)} ({oppB?.earth.percentage ?? 0}%)
+              </td>
+              <td className="py-2.5 px-3 text-right"><WinnerPill value={diffEarthHours} unit=" h" /></td>
+            </tr>
+
+            <tr>
+              <td className="py-2.5 px-3 text-[#8A8A88] font-sans font-medium">Max DTE Comm Blackout Duration</td>
+              <td className="py-2.5 px-3 text-[#E5604A] font-medium">
+                {fmtHrs(oppA?.earth.longest_dark_gap_hours)}
+              </td>
+              <td className="py-2.5 px-3 text-[#E5604A] font-medium">
+                {fmtHrs(oppB?.earth.longest_dark_gap_hours)}
+              </td>
+              <td className="py-2.5 px-3 text-right"><WinnerPill value={diffBlackout} invert unit=" h" /></td>
+            </tr>
+
+            <tr className="bg-[#050608] font-semibold">
+              <td className="py-3 px-3 text-[#6DBF8B] font-sans">Concurrent Sun + Earth Operations Window</td>
+              <td className="py-3 px-3 text-[#6DBF8B] font-bold">
+                {fmtHrs(oppA?.joint.total_hours)} ({oppA?.joint.percentage ?? 0}%)
+              </td>
+              <td className="py-3 px-3 text-[#6DBF8B] font-bold">
+                {fmtHrs(oppB?.joint.total_hours)} ({oppB?.joint.percentage ?? 0}%)
+              </td>
+              <td className="py-3 px-3 text-right text-sm"><WinnerPill value={diffJointHours} unit=" h" /></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   )

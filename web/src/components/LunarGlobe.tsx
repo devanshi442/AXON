@@ -664,46 +664,6 @@ export default function LunarGlobe({
               🌑 Far Side
             </button>
           </div>
-
-          {/* Quick Landmark Targets (Phase A verification) */}
-          {!compact && (
-            <div className="flex items-center gap-1.5 text-3xs font-mono">
-              <span className="text-[#8A8A88]">Landmarks:</span>
-              <button
-                onClick={() => {
-                  focusSite(0.67, 23.47)
-                  const found = sites.find((s) => s.id === 'test-apollo-11')
-                  if (found && onSelectSite) onSelectSite(found)
-                }}
-                className="px-2 py-0.5 rounded bg-[#050608] hover:bg-[#171B22] text-[#8A8A88] hover:text-[#E4E4E2] border border-[#2A2D31]"
-                title="Apollo 11 in Mare Tranquillitatis (0.67°N, 23.47°E)"
-              >
-                Apollo 11
-              </button>
-              <button
-                onClick={() => {
-                  focusSite(-43.3, -11.4)
-                  const found = sites.find((s) => s.id === 'test-tycho')
-                  if (found && onSelectSite) onSelectSite(found)
-                }}
-                className="px-2 py-0.5 rounded bg-[#050608] hover:bg-[#171B22] text-[#8A8A88] hover:text-[#E4E4E2] border border-[#2A2D31]"
-                title="Tycho Crater in Southern Highlands (43.3°S, 11.4°W)"
-              >
-                Tycho
-              </button>
-              <button
-                onClick={() => {
-                  focusSite(-89.9, 0.0)
-                  const found = sites.find((s) => s.id === 'test-shackleton' || s.id.includes('shackleton'))
-                  if (found && onSelectSite) onSelectSite(found)
-                }}
-                className="px-2 py-0.5 rounded bg-[#050608] hover:bg-[#171B22] text-[#8A8A88] hover:text-[#E4E4E2] border border-[#2A2D31]"
-                title="Shackleton Crater at South Pole (89.9°S, 0°E)"
-              >
-                Shackleton
-              </button>
-            </div>
-          )}
         </div>
       )}
 
@@ -741,7 +701,7 @@ export default function LunarGlobe({
               <span>Filled: Site</span>
             </span>
           </div>
-          <div>Drag to rotate · Scroll to zoom · Click globe to pick coordinates · Click pin to inspect</div>
+          <div>Drag to rotate · Scroll to zoom · Click globe or pin to open the selection bar</div>
         </div>
       )}
     </div>

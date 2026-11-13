@@ -51,6 +51,10 @@ interface ScenarioStore {
   utcB: string
   thresholdDeg: number
 
+  // When true, Scenario B's UTC time is kept locked to Scenario A's so comparisons
+  // are always synchronous unless the user explicitly unlocks it.
+  syncBToA: boolean
+
   // Science model parameters
   horizonMode: 'flat' | 'terrain'
   mastHeightM: number
@@ -72,6 +76,7 @@ interface ScenarioStore {
   setScenarioB: (id: string) => void
   setUtcA: (utc: string) => void
   setUtcB: (utc: string) => void
+  setSyncBToA: (sync: boolean) => void
   setThresholdDeg: (deg: number) => void
   setHorizonMode: (mode: 'flat' | 'terrain') => void
   setMastHeightM: (h: number) => void
@@ -121,6 +126,7 @@ export const useScenarioStore = create<ScenarioStore>((set, get) => ({
   utcA: getDefaultUtcDate(),
   utcB: getDefaultUtcDate(),
   thresholdDeg: 0.0,
+  syncBToA: true,
 
   horizonMode: 'terrain',
   mastHeightM: 1.5,
@@ -150,8 +156,23 @@ export const useScenarioStore = create<ScenarioStore>((set, get) => ({
     get().loadHorizon(id)
   },
 
-  setUtcA: (utcA: string) => set({ utcA }),
-  setUtcB: (utcB: string) => set({ utcB }),
+  setUtcA: (utcA: string) => {
+    // When B is locked to A, keep both in lockstep so planners never compare
+    // two sites at different timestamps by accident.
+    if (get().syncBToA) {
+      set({ utcA, utcB: utcA })
+    } else {
+      set({ utcA })
+    }
+  },
+  setUtcB: (utcB: string) => set({ utcB, syncBToA: false }),
+  setSyncBToA: (syncBToA: boolean) => {
+    if (syncBToA) {
+      set({ syncBToA, utcB: get().utcA })
+    } else {
+      set({ syncBToA })
+    }
+  },
   setThresholdDeg: (thresholdDeg: number) => set({ thresholdDeg, sunThresholdDeg: thresholdDeg }),
   setHorizonMode: (horizonMode) => set({ horizonMode }),
   setMastHeightM: (mastHeightM) => set({ mastHeightM }),

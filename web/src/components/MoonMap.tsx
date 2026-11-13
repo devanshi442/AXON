@@ -5,14 +5,14 @@ import { useScenarioStore } from '../stores/scenarioStore'
 interface MoonMapProps {
   sites: SelectableSite[]
   onPickCoords?: (lat: number, lon: number) => void
+  onSelectSite?: (site: SelectableSite) => void
 }
 
 type ProjectionMode = 'equirectangular' | 'polar_stereographic'
 
-export default function MoonMap({ sites, onPickCoords }: MoonMapProps) {
-  const { scenarioAId, scenarioBId, setScenarioA, setScenarioB, setPickedCoords } = useScenarioStore()
+export default function MoonMap({ sites, onPickCoords, onSelectSite }: MoonMapProps) {
+  const { scenarioAId, scenarioBId, setPickedCoords } = useScenarioStore()
   const [hoveredSite, setHoveredSite] = useState<SelectableSite | null>(null)
-  const [selectedPin, setSelectedPin] = useState<SelectableSite | null>(null)
   const [projection, setProjection] = useState<ProjectionMode>('polar_stereographic')
 
   // Global Equirectangular:
@@ -36,8 +36,6 @@ export default function MoonMap({ sites, onPickCoords }: MoonMapProps) {
   // Filter sites with valid coordinates
   const mappableSites = sites.filter((s) => s.lat !== null && s.lon !== null)
   const polarSites = mappableSites.filter((s) => s.lat !== null && s.lat <= -70)
-
-  const activePin = selectedPin || hoveredSite
 
   const handleMapClick = (e: React.MouseEvent<HTMLDivElement>) => {
     // If user clicked on a pin marker or its children, don't trigger coordinate picking
@@ -226,7 +224,7 @@ export default function MoonMap({ sites, onPickCoords }: MoonMapProps) {
               key={site.id}
               style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
               className="site-marker-pin absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer z-10 transition-transform duration-150 hover:scale-125"
-              onClick={() => setSelectedPin(site)}
+              onClick={() => onSelectSite && onSelectSite(site)}
               onMouseEnter={() => setHoveredSite(site)}
               onMouseLeave={() => setHoveredSite(null)}
             >
@@ -249,73 +247,17 @@ export default function MoonMap({ sites, onPickCoords }: MoonMapProps) {
         {/* Legend Overlay corner */}
         <div className="absolute bottom-2 left-2 px-2 py-1 bg-[#050608]/90 border border-[#2A2D31] rounded text-3xs text-[#8A8A88] font-mono">
           {projection === 'polar_stereographic'
-            ? 'South Polar Stereographic · Click map to pick custom coords · Lat ≤ -70°'
-            : 'Planetocentric Lat [-90, +90] | East-Positive Lon [-180, +180] · Click to pick coords'}
+            ? 'South Polar Stereographic · Click a pin or click the map to open the selection bar · Lat ≤ -70°'
+            : 'Planetocentric Lat [-90, +90] | East-Positive Lon [-180, +180] · Click a pin or the map to open the selection bar'}
         </div>
-      </div>
 
-      {/* Pin Details & Quick Actions */}
-      {activePin ? (
-        <div className="p-3 bg-[#050608] border border-[#2A2D31] rounded flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-fade-in text-xs">
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="font-semibold text-[#E4E4E2]">{activePin.name}</span>
-              {activePin.kind === 'candidate' ? (
-                <span className="px-1.5 py-0.5 rounded text-3xs font-medium bg-[#B9A58C]/15 border border-[#B9A58C]/30 text-[#B9A58C] font-mono">
-                  Candidate Site
-                </span>
-              ) : activePin.isMission ? (
-                <span className="px-1.5 py-0.5 rounded text-3xs font-medium bg-[#171B22] text-[#8A8A88] font-mono">
-                  Mission
-                </span>
-              ) : (
-                <span className="px-1.5 py-0.5 rounded text-3xs font-medium bg-[#171B22] text-[#8A8A88] font-mono">
-                  Reference Site
-                </span>
-              )}
-              {activePin.coord_kind === 'specific_site' ? (
-                <span className="px-1.5 py-0.5 rounded text-3xs bg-[#171B22] border border-[#2A2D31] text-[#E4E4E2] font-mono">
-                  Specific Site
-                </span>
-              ) : activePin.coord_kind === 'actual' ? (
-                <span className="px-1.5 py-0.5 rounded text-3xs bg-[#132A1C] border border-[#2A5C3D] text-[#6DBF8B] font-mono">
-                  Actual Touchdown
-                </span>
-              ) : (
-                <span className="px-1.5 py-0.5 rounded text-3xs bg-[#2A1210] border border-[#7F2318] text-[#E0A04A] font-mono">
-                  Region Centre
-                </span>
-              )}
-            </div>
-            <div className="text-[#8A8A88] font-mono text-2xs mt-0.5">
-              Lat: {activePin.lat}° · Lon: {activePin.lon}° · {activePin.region_type ? activePin.region_type.replace(/_/g, ' ') : 'Surface Site'}
-            </div>
-            {(activePin.coord_kind === 'region_centre' || activePin.coord_kind === 'planned_region_center') && (
-              <div className="mt-1 text-3xs text-[#E0A04A] bg-[#E0A04A]/10 px-2 py-0.5 rounded border border-[#E0A04A]/20 font-mono">
-                Region centre; results can differ strongly from the crest or evaluated site.
-              </div>
-            )}
+        {/* Lightweight hover preview (click still drives the shared Selected Location Bar) */}
+        {hoveredSite && (
+          <div className="absolute bottom-2 right-2 px-2 py-1 bg-[#050608]/90 border border-[#2A2D31] rounded text-3xs text-[#E4E4E2] font-mono pointer-events-none">
+            {hoveredSite.name} · {hoveredSite.lat}°, {hoveredSite.lon}°
           </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setScenarioA(activePin.id)}
-              className="px-2.5 py-1 rounded bg-[#E0A04A]/15 hover:bg-[#E0A04A]/30 text-[#E0A04A] border border-[#E0A04A]/40 font-medium font-mono transition-colors"
-            >
-              Set as A
-            </button>
-            <button
-              onClick={() => setScenarioB(activePin.id)}
-              className="px-2.5 py-1 rounded bg-[#6FA8C9]/15 hover:bg-[#6FA8C9]/30 text-[#6FA8C9] border border-[#6FA8C9]/40 font-medium font-mono transition-colors"
-            >
-              Set as B
-            </button>
-          </div>
-        </div>
-      ) : (
-        <div className="p-2.5 text-center text-3xs text-[#8A8A88]">
-          Click or hover on a landing site marker to inspect coordinates or assign to Scenario A or B.
-        </div>
-      )}
+        )}
+      </div>
     </div>
   )
 }

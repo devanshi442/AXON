@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import type { SelectableSite } from '../types/mission'
 import { useScenarioStore } from '../stores/scenarioStore'
-import { formatUtcDisplay } from '../utils/scienceMath'
 import PanelCornerBrackets from './PanelCornerBrackets'
 
 interface MissionExplorerProps {
@@ -9,7 +8,7 @@ interface MissionExplorerProps {
 }
 
 export default function MissionExplorer({ sites }: MissionExplorerProps) {
-  const { scenarioAId, scenarioBId, setScenarioA, setScenarioB, utcA, mastHeightM } = useScenarioStore()
+  const { scenarioAId, scenarioBId, setScenarioA, setScenarioB } = useScenarioStore()
   const [search, setSearch] = useState('')
   const [detailSite, setDetailSite] = useState<SelectableSite | null>(null)
   type FilterType = 'all' | 'south_pole' | 'candidate' | 'mission' | 'landed' | 'planned'
@@ -97,17 +96,18 @@ export default function MissionExplorer({ sites }: MissionExplorerProps) {
         ))}
       </div>
 
-      {/* Site cards scroll list */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[560px] overflow-y-auto pr-1">
+      {/* Site rows - compact, 3-line scannable list */}
+      <div className="flex flex-col gap-1.5 max-h-[560px] overflow-y-auto pr-1">
         {filtered.map((s) => {
           const isA = s.id === scenarioAId
           const isB = s.id === scenarioBId
           const hasCoords = s.lat !== null && s.lon !== null
+          const isRegionCentre = s.coord_kind === 'region_centre' || s.coord_kind === 'planned_region_center'
 
           return (
             <div
               key={s.id}
-              className={`p-3.5 rounded bg-[#050608] border transition-all flex flex-col justify-between ${
+              className={`px-3 py-2 rounded bg-[#050608] border transition-all flex flex-col gap-1 ${
                 isA && isB
                   ? 'border-[#E0A04A] outline outline-1 outline-[#6FA8C9]'
                   : isA
@@ -117,100 +117,57 @@ export default function MissionExplorer({ sites }: MissionExplorerProps) {
                   : 'border-[#2A2D31] hover:border-[#6B6F75]'
               }`}
             >
-              <div>
-                <div className="flex items-start justify-between gap-2">
-                  <div>
-                    <h3 className="text-xs font-semibold text-[#E4E4E2] flex items-center gap-1.5">
-                      {s.name}
-                    </h3>
-                    <div className="text-3xs text-[#8A8A88] mt-0.5 font-mono">
-                      {s.kind === 'candidate' ? (
-                        <span className="text-[#B9A58C] font-medium">Artemis Candidate Region</span>
-                      ) : s.kind === 'reference' ? (
-                        <span className="text-[#6FA8C9] font-medium">Reference Surface Anchor</span>
-                      ) : (
-                        <span>{s.provider} · Lander: {s.lander}</span>
-                      )}
-                    </div>
-                  </div>
+              {/* Line 1: Name + status badge */}
+              <div className="flex items-center justify-between gap-2">
+                <h3 className="text-xs font-semibold text-[#E4E4E2] truncate">{s.name}</h3>
+                <span
+                  className={`shrink-0 px-1.5 py-0.5 rounded text-3xs font-medium font-mono uppercase tracking-wider ${
+                    s.status === 'landed_success'
+                      ? 'bg-[#132A1C] text-[#6DBF8B] border border-[#2A5C3D]'
+                      : s.status === 'landed_partial'
+                      ? 'bg-[#2A1210] text-[#E0A04A] border border-[#7F2318]'
+                      : s.status === 'planned' || s.kind === 'candidate'
+                      ? 'bg-[#171B22] text-[#B9A58C] border border-[#2A2D31]'
+                      : 'bg-[#171B22] text-[#8A8A88] border border-[#2A2D31]'
+                  }`}
+                >
+                  {s.kind === 'candidate' ? 'Candidate' : (s.status?.replace('_', ' ') || 'Reference')}
+                </span>
+              </div>
 
-                  {/* Status tag */}
+              {/* Line 2: Lat/Lon + region-vs-specific pill */}
+              <div className="flex items-center justify-between gap-2 text-3xs font-mono text-[#8A8A88]">
+                <span className="truncate">
+                  {hasCoords ? `${s.lat}°, ${s.lon}°` : 'Coordinates not published'}
+                  {s.region_type ? ` · ${s.region_type.replace(/_/g, ' ')}` : ''}
+                </span>
+                {hasCoords && (
                   <span
-                    className={`px-2 py-0.5 rounded text-3xs font-medium font-mono uppercase tracking-wider ${
-                      s.status === 'landed_success'
-                        ? 'bg-[#132A1C] text-[#6DBF8B] border border-[#2A5C3D]'
-                        : s.status === 'landed_partial'
-                        ? 'bg-[#2A1210] text-[#E0A04A] border border-[#7F2318]'
-                        : s.status === 'planned' || s.kind === 'candidate'
-                        ? 'bg-[#171B22] text-[#B9A58C] border border-[#2A2D31]'
-                        : 'bg-[#171B22] text-[#8A8A88] border border-[#2A2D31]'
+                    className={`shrink-0 px-1.5 py-0.5 rounded ${
+                      isRegionCentre
+                        ? 'text-[#E0A04A] bg-[#E0A04A]/10 border border-[#E0A04A]/20'
+                        : 'text-[#8A8A88] bg-[#171B22] border border-[#2A2D31]'
                     }`}
                   >
-                    {s.kind === 'candidate' ? 'Candidate' : (s.status?.replace('_', ' ') || 'Reference')}
+                    {isRegionCentre ? 'Region centre' : 'Specific site'}
                   </span>
-                </div>
-
-                {/* Site & coordinates */}
-                <div className="mt-2 text-2xs bg-[#0D1014] p-2 rounded border border-[#2A2D31] flex flex-col gap-1">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[#8A8A88] font-medium">{s.region_type ? s.region_type.replace(/_/g, ' ') : 'Lunar Surface'}</span>
-                    {s.kind === 'candidate' && <span className="text-3xs text-[#B9A58C] font-mono">Artemis III</span>}
-                  </div>
-                  <div className="flex items-center justify-between text-3xs font-mono">
-                    <span className="text-[#8A8A88]">
-                      {hasCoords ? `Lat: ${s.lat}° · Lon: ${s.lon}°` : 'Coordinates: Not published (skipped)'}
-                    </span>
-                    {hasCoords && (
-                      <span className="text-[#8A8A88]">
-                        [{s.coord_kind === 'specific_site' || s.coord_kind === 'actual' ? 'Specific site' : 'Region centre'}]
-                      </span>
-                    )}
-                  </div>
-                  {(s.coord_kind === 'region_centre' || s.coord_kind === 'planned_region_center') && (
-                    <div className="mt-1 text-3xs text-[#E0A04A] bg-[#E0A04A]/10 px-2 py-0.5 rounded border border-[#E0A04A]/20 font-mono">
-                      Region centre; results can differ strongly from the crest or evaluated site.
-                    </div>
-                  )}
-                  <div className="text-3xs text-[#8A8A88] font-mono mt-0.5">
-                    Daylight: 30-day window from {formatUtcDisplay(utcA)}, mast {mastHeightM} m
-                  </div>
-                </div>
-
-                {/* Notes if available */}
-                {s.notes && (
-                  <p className="mt-1.5 text-3xs text-[#8A8A88] line-clamp-2">
-                    {s.notes}
-                  </p>
                 )}
               </div>
 
-              {/* Integrity & Verification Badge */}
-              <div className="mt-2.5 pt-2 border-t border-[#2A2D31] flex items-center justify-between">
-                <div className="flex items-center gap-2">
+              {/* Line 3: Set A | Set B | Details */}
+              <div className="flex items-center justify-between gap-2 pt-1 mt-0.5 border-t border-[#2A2D31] font-mono">
+                <div className="flex items-center gap-1 text-3xs">
                   {s.verified ? (
-                    <span className="text-3xs text-[#6DBF8B] flex items-center gap-1 font-medium font-mono">
-                      ✓ Verified
-                    </span>
+                    <span className="text-[#6DBF8B]">✓ Verified</span>
                   ) : (
-                    <span className="text-3xs text-[#E0A04A] flex items-center gap-1 font-mono">
-                      ⚠️ Unverified
-                    </span>
+                    <span className="text-[#E0A04A]">⚠️ Unverified</span>
                   )}
-                  <button
-                    type="button"
-                    onClick={() => setDetailSite(s)}
-                    className="px-1.5 py-0.5 rounded text-3xs font-mono bg-[#171B22] hover:bg-[#2A2D31] text-[#E4E4E2] border border-[#2A2D31] transition-colors"
-                  >
-                    Details ↗
-                  </button>
                 </div>
-
-                {/* Scenario Assign Buttons */}
-                <div className="flex items-center gap-1.5 font-mono">
+                <div className="flex items-center gap-1.5 text-3xs">
                   <button
                     disabled={!hasCoords}
                     onClick={() => setScenarioA(s.id)}
-                    className={`px-2 py-0.5 rounded text-3xs font-medium transition-colors ${
+                    className={`px-2 py-0.5 rounded font-medium transition-colors ${
                       isA
                         ? 'bg-[#E0A04A] text-[#050608] font-bold'
                         : hasCoords
@@ -224,7 +181,7 @@ export default function MissionExplorer({ sites }: MissionExplorerProps) {
                   <button
                     disabled={!hasCoords}
                     onClick={() => setScenarioB(s.id)}
-                    className={`px-2 py-0.5 rounded text-3xs font-medium transition-colors ${
+                    className={`px-2 py-0.5 rounded font-medium transition-colors ${
                       isB
                         ? 'bg-[#6FA8C9] text-[#050608] font-bold'
                         : hasCoords
@@ -234,6 +191,13 @@ export default function MissionExplorer({ sites }: MissionExplorerProps) {
                     title={hasCoords ? 'Set as Scenario B' : 'Cannot compute geometry: coordinates not published'}
                   >
                     Set B
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setDetailSite(s)}
+                    className="px-1.5 py-0.5 rounded bg-[#171B22] hover:bg-[#2A2D31] text-[#E4E4E2] border border-[#2A2D31] transition-colors"
+                  >
+                    Details ↗
                   </button>
                 </div>
               </div>
@@ -320,6 +284,16 @@ export default function MissionExplorer({ sites }: MissionExplorerProps) {
                 </span>
               </div>
             </div>
+
+            {/* Region Centre Caveat (moved here from card list; full detail lives in the modal only) */}
+            {(detailSite.coord_kind === 'region_centre' || detailSite.coord_kind === 'planned_region_center') && (
+              <div className="px-3 py-2 rounded bg-[#2A1210] border border-[#7F2318] text-3xs text-[#E0A04A] flex items-center gap-2 font-mono">
+                <span className="font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-[#E0A04A]/20 text-[#E0A04A] border border-[#E0A04A]/40 shrink-0">
+                  Region Centre
+                </span>
+                <span>Results can differ strongly from the crest or evaluated site.</span>
+              </div>
+            )}
 
             {/* Mission Dates (if available) */}
             {detailSite.dates && (
