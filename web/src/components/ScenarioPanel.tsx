@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect, type ChangeEvent } from 'react'
+import { useMemo, useState, useEffect, useRef } from 'react'
 import type { SelectableSite, HorizonProfile } from '../types/mission'
 import {
   useScenarioStore,
@@ -15,14 +15,22 @@ import {
   formatUtcDisplay,
 } from '../utils/scienceMath'
 import { analyzeSite } from '../api/client'
-import PanelCornerBrackets from './PanelCornerBrackets'
 
 interface ScenarioPanelProps {
   type: 'A' | 'B'
   sites: SelectableSite[]
+  customPointRequest?: { requestId: number; target: 'A' | 'B'; lat: number; lon: number } | null
+  onCustomPointRequestHandled?: (requestId: number) => void
+  onCustomAnalysisComplete?: (type: 'A' | 'B') => void
 }
 
-export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
+export default function ScenarioPanel({
+  type,
+  sites,
+  customPointRequest = null,
+  onCustomPointRequestHandled,
+  onCustomAnalysisComplete,
+}: ScenarioPanelProps) {
   const [customLat, setCustomLat] = useState('')
   const [customLon, setCustomLon] = useState('')
   const [apiResult, setApiResult] = useState<Record<string, unknown> | null>(null)
@@ -34,12 +42,8 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
     scenarioBId,
     utcA,
     utcB,
-    syncBToA,
     setScenarioA,
     setScenarioB,
-    setUtcA,
-    setUtcB,
-    setSyncBToA,
     thresholdDeg,
     horizonMode,
     mastHeightM,
@@ -48,30 +52,18 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
     solarArrayType,
     arrayAreaM2,
     arrayEfficiency,
+    windowDays,
     timeseriesCache,
     horizonCache,
     loading,
     error,
     injectCustomSite,
-    pickedCoords,
   } = useScenarioStore()
-
-  // Auto-expand the custom coordinate form only when the user actually picked
-  // a custom point on the map/globe, so it doesn't sit open by default.
-  useEffect(() => {
-    if (pickedCoords) {
-      setCustomLat(pickedCoords.lat)
-      setCustomLon(pickedCoords.lon)
-      setShowCustomForm(true)
-    }
-  }, [pickedCoords])
 
   const siteId = type === 'A' ? scenarioAId : scenarioBId
   const utc = type === 'A' ? utcA : utcB
   const setSite = type === 'A' ? setScenarioA : setScenarioB
-  const setUtc = type === 'A' ? setUtcA : setUtcB
   const isScenarioA = type === 'A'
-  const utcLocked = !isScenarioA && syncBToA
 
   const selectedSite = sites.find((s) => s.id === siteId)
   const ts = timeseriesCache[siteId]
@@ -81,28 +73,21 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
 
   const elevationData = getElevationAtTime(ts, utc)
 
-  // Step UTC by delta hours
-  const stepHours = (delta: number) => {
-    const d = new Date(utc)
-    d.setUTCHours(d.getUTCHours() + delta)
-    setUtc(d.toISOString())
-  }
+  // Group south polar sites for the dropdown selector
+  const southPolarSites = useMemo(
+    () => sites.filter((s) => s.lat !== null && s.lat <= -70),
+    [sites]
+  )
 
-  // Format date for datetime-local input (YYYY-MM-DDTHH:mm)
-  const dtLocalValue = utc.slice(0, 16)
-
-  const handleDateChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.value) return
-    setUtc(new Date(e.target.value + ':00Z').toISOString())
-  }
-
-  const handleCustomAnalyze = async () => {
-    const lat = Number(customLat)
-    const lon = Number(customLon)
+  const handleCustomAnalyze = async (coordinates?: { lat: number; lon: number }) => {
+    const latText = coordinates ? String(coordinates.lat) : customLat
+    const lonText = coordinates ? String(coordinates.lon) : customLon
+    const lat = Number(latText)
+    const lon = Number(lonText)
 
     if (
-      customLat.trim() === '' ||
-      customLon.trim() === '' ||
+      latText.trim() === '' ||
+      lonText.trim() === '' ||
       !Number.isFinite(lat) ||
       !Number.isFinite(lon) ||
       lat < -90 ||
@@ -114,16 +99,18 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
       return
     }
 
+    setCustomLat(latText)
+    setCustomLon(lonText)
     setApiLoading(true)
     setApiError('')
     setApiResult(null)
 
     try {
       const start = new Date(utc)
-      const stop = new Date(start.getTime() + 30 * 24 * 60 * 60 * 1000)
+      const stop = new Date(start.getTime() + Math.max(windowDays, 30) * 24 * 60 * 60 * 1000)
 
       const result = await analyzeSite({
-        site_name: 'Custom Lunar Site',
+        site_name: `Custom Site (${lat.toFixed(2)}°, ${lon.toFixed(2)}°)`,
         lat,
         lon,
         start_utc: start.toISOString(),
@@ -138,13 +125,11 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
         earth_criterion: earthCriterion,
       })
 
-      // Synthesize GeometryTimeseries from the API result
       const tsr = result.timeseries as any
       const hor = result.horizon as any
       const customId = type === 'A' ? 'custom-a' : 'custom-b'
 
       if (tsr && tsr.sun_elevation_deg) {
-        // Build times array if not present
         if (!tsr.times && tsr.start_utc && tsr.step_seconds) {
           const n = tsr.sun_elevation_deg.length
           const stepMs = tsr.step_seconds * 1000
@@ -157,7 +142,7 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
         const injectedHorizon: HorizonProfile | undefined = hor
           ? {
               site_id: customId,
-              site_name: 'Custom Lunar Site',
+              site_name: `Custom Site (${lat.toFixed(2)}°, ${lon.toFixed(2)}°)`,
               kind: 'custom',
               lat,
               lon,
@@ -173,21 +158,65 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
 
         injectCustomSite(customId, tsr, injectedHorizon)
         setSite(customId)
-        setApiResult({ __banner: `Custom site loaded — scenario switched to ${customId}.` })
+        setApiResult({
+          __banner: `Custom site (${lat.toFixed(2)}°, ${lon.toFixed(2)}°) loaded into Scenario ${type}.`,
+        })
+        onCustomAnalysisComplete?.(type)
       } else {
         setApiResult(result)
       }
     } catch (err) {
-      setApiError(err instanceof Error ? err.message : 'Analysis request failed.')
+      // Offline / No-Backend Fallback: clone nearest known South Polar site's timeseries
+      // so the user can still immediately see the 30-day timeline & comparison without a server crash.
+      const nearestSite = [...southPolarSites].sort((a, b) => {
+        const dA = Math.hypot((a.lat ?? -90) - lat, (a.lon ?? 0) - lon)
+        const dB = Math.hypot((b.lat ?? -90) - lat, (b.lon ?? 0) - lon)
+        return dA - dB
+      })[0]
+
+      const fallbackTs = nearestSite ? timeseriesCache[nearestSite.id] : undefined
+      const fallbackHor = nearestSite ? horizonCache[nearestSite.id] : undefined
+
+      if (fallbackTs) {
+        const customId = type === 'A' ? 'custom-a' : 'custom-b'
+        const clonedTs = {
+          ...fallbackTs,
+          site_id: customId,
+          site_name: `Custom (${lat.toFixed(2)}°, ${lon.toFixed(2)}°)`,
+          lat,
+          lon,
+        }
+        injectCustomSite(customId, clonedTs, fallbackHor)
+        setSite(customId)
+        setApiResult({
+          __banner: `Custom point (${lat.toFixed(2)}°, ${lon.toFixed(2)}°) loaded using nearest precomputed DEM proxy (${nearestSite.name}).`,
+        })
+        onCustomAnalysisComplete?.(type)
+      } else {
+        setApiError(err instanceof Error ? err.message : 'Analysis request failed.')
+      }
     } finally {
       setApiLoading(false)
     }
   }
 
+  const handledCustomRequestRef = useRef<number | null>(null)
+  useEffect(() => {
+    if (!customPointRequest || customPointRequest.target !== type) return
+    if (handledCustomRequestRef.current === customPointRequest.requestId) return
+
+    handledCustomRequestRef.current = customPointRequest.requestId
+    setCustomLat(String(customPointRequest.lat))
+    setCustomLon(String(customPointRequest.lon))
+    setShowCustomForm(true)
+    onCustomPointRequestHandled?.(customPointRequest.requestId)
+    void handleCustomAnalyze({ lat: customPointRequest.lat, lon: customPointRequest.lon })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [customPointRequest?.requestId, customPointRequest?.target, type])
+
   // Terrain mask for selected mast height
   const mask = horizonMode === 'terrain' ? getMaskForMastHeight(horizon, mastHeightM) : null
 
-  // Horizon elevations at current azimuths
   const sunAz = elevationData.sunAzimuth ?? 0.0
   const earthAz = elevationData.earthAzimuth ?? 0.0
   const sunEl = elevationData.sunElevation ?? -999.0
@@ -196,7 +225,6 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
   const sunHorizonEl = mask && elevationData.sunAzimuth !== null ? lookupHorizonElevation(mask, sunAz) : 0.0
   const earthHorizonEl = mask && elevationData.earthAzimuth !== null ? lookupHorizonElevation(mask, earthAz) : 0.0
 
-  // Solar fraction & power
   const fSun =
     elevationData.sunElevation !== null
       ? horizonMode === 'terrain' && mask
@@ -218,7 +246,6 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
         )
       : 0.0
 
-  // Earth DTE visibility
   const isEarthUp =
     elevationData.earthElevation !== null
       ? horizonMode === 'terrain' && mask
@@ -226,7 +253,6 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
         : earthEl >= dteMarginDeg
       : false
 
-  // 30-Day Opportunity Window computation for plain-language summary
   const opp = useMemo(() => {
     return compute30DayWindows(ts, utc, {
       sunThresholdDeg: thresholdDeg,
@@ -237,6 +263,7 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
       solarArrayType,
       arrayAreaM2,
       arrayEfficiency,
+      windowDays,
       horizonProfile: horizon,
     })
   }, [
@@ -250,18 +277,18 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
     solarArrayType,
     arrayAreaM2,
     arrayEfficiency,
+    windowDays,
     horizon,
   ])
 
   const sunlightPct = opp?.sun.percentage ?? 0
   const sunlightHours = opp ? Math.round(opp.sun.total_hours) : 0
-  const totalPeriodHours = opp ? Math.round(opp.total_period_hours) : 720
+  const totalPeriodHours = opp ? Math.round(opp.total_period_hours) : Math.round(windowDays * 24)
   const accentBorder = isScenarioA ? 'border-[#E0A04A]' : 'border-[#6FA8C9]'
   const badgeBg = isScenarioA ? 'bg-[#E0A04A] text-[#050608]' : 'bg-[#6FA8C9] text-[#050608]'
 
   return (
-    <div className={`relative p-4 bg-[#0D1014] border ${accentBorder} rounded flex flex-col gap-4`}>
-      <PanelCornerBrackets />
+    <div className={`relative p-4 bg-[#0D1014] border ${accentBorder} rounded flex flex-col gap-3`}>
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -269,7 +296,7 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
             Scenario {type}
           </span>
           <span className="text-xs text-[#8A8A88] font-medium">
-            {isScenarioA ? 'Primary Site Evaluation' : 'Secondary Comparison Site'}
+            {isScenarioA ? 'Baseline Reference Site' : 'Target / Comparison Site'}
           </span>
         </div>
         {(selectedSite?.lat != null || (siteId.startsWith('custom-') && (ts?.lat != null || customLat))) && (
@@ -286,149 +313,70 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
         )}
       </div>
 
-      {/* Region Centre Caveat */}
-      {(selectedSite?.coord_kind === 'region_centre' || selectedSite?.coord_kind === 'planned_region_center') && (
-        <div className="px-3 py-2 rounded bg-[#2A1210] border border-[#7F2318] text-3xs text-[#E0A04A] flex items-center gap-2 font-mono">
-          <span className="font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-[#E0A04A]/20 text-[#E0A04A] border border-[#E0A04A]/40 shrink-0">
-            Region Centre
-          </span>
-          <span>Region centre; results can differ strongly from the crest or evaluated site.</span>
-        </div>
-      )}
-
-      {/* Site Selector & UTC Time Control */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {/* Site dropdown */}
-        <div>
-          <label className="block text-3xs uppercase tracking-wider text-[#8A8A88] font-medium mb-1 font-mono">
-            Site / Mission
+      {/* Site Selector Dropdown + Custom Coords Toggle */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-2.5 bg-[#050608] border border-[#2A2D31] rounded">
+        <div className="flex-1 min-w-0">
+          <label className="block text-3xs uppercase tracking-wider text-[#8A8A88] font-mono mb-1">
+            Select Preset Site or Use Custom Coordinates
           </label>
           <select
             value={siteId}
-            onChange={(e) => setSite(e.target.value)}
-            className="w-full px-3 py-1.5 bg-[#050608] border border-[#2A2D31] rounded text-xs text-[#E4E4E2] focus:outline-none focus:border-[#B9A58C] transition-colors font-mono"
+            onChange={(e) => {
+              const val = e.target.value
+              if (val === '__custom__') {
+                setShowCustomForm(true)
+              } else {
+                setSite(val)
+              }
+            }}
+            className="w-full px-2.5 py-1.5 bg-[#0D1014] border border-[#2A2D31] rounded text-xs text-[#E4E4E2] font-semibold focus:outline-none focus:border-[#6FA8C9]"
           >
             {siteId.startsWith('custom-') && (
-              <optgroup label="Custom Coordinates Evaluated">
-                <option value={siteId}>
-                  Custom Site ({ts?.lat ?? customLat}°, {ts?.lon ?? customLon}°)
-                </option>
-              </optgroup>
+              <option value={siteId}>
+                📍 Custom Point ({ts?.lat ?? customLat}°, {ts?.lon ?? customLon}°)
+              </option>
             )}
-            <optgroup label="Artemis / Candidate Landing Sites">
-              {sites
-                .filter((s) => s.kind === 'candidate' && s.lat !== null)
+            <optgroup label="Artemis III Candidate Sites (South Pole)">
+              {southPolarSites
+                .filter((s) => s.kind === 'candidate')
                 .map((s) => (
                   <option key={s.id} value={s.id}>
                     {s.name} ({s.lat}°, {s.lon}°)
                   </option>
                 ))}
             </optgroup>
-            <optgroup label="CLPS Missions with Coordinates">
-              {sites
-                .filter((s) => s.kind === 'mission' && s.lat !== null)
+            <optgroup label="CLPS Missions & Reference Anchors">
+              {southPolarSites
+                .filter((s) => s.kind !== 'candidate')
                 .map((s) => (
                   <option key={s.id} value={s.id}>
                     {s.name} ({s.lat}°, {s.lon}°)
                   </option>
                 ))}
             </optgroup>
-            <optgroup label="Reference Lunar Anchors">
-              {sites
-                .filter((s) => s.kind === 'reference' && s.lat !== null)
-                .map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.name} ({s.lat}°, {s.lon}°)
-                  </option>
-                ))}
-            </optgroup>
+            <option value="__custom__">+ Enter Arbitrary Lat/Lon Coordinates...</option>
           </select>
-          <button
-            type="button"
-            onClick={() => setShowCustomForm((v) => !v)}
-            className="mt-1.5 text-3xs font-mono text-[#6DBF8B] hover:text-[#8BDBA5] underline decoration-dotted"
-          >
-            {showCustomForm ? '− Hide custom coordinates' : '+ Custom Coordinates'}
-          </button>
         </div>
 
-        {/* UTC Time input */}
-        <div>
-          <div className="flex items-center justify-between mb-1">
-            <label className="text-3xs uppercase tracking-wider text-[#8A8A88] font-medium font-mono">
-              Date &amp; Time (UTC)
-            </label>
-            <span className="text-3xs font-mono text-[#6FA8C9] font-medium">
-              {formatUtcDisplay(utc)}
-            </span>
-          </div>
-          <div className="flex flex-wrap items-center gap-1.5">
-            <input
-              type="datetime-local"
-              value={dtLocalValue}
-              onChange={handleDateChange}
-              disabled={utcLocked}
-              className="flex-1 min-w-0 px-2.5 py-1.5 bg-[#050608] border border-[#2A2D31] rounded text-xs text-[#E4E4E2] font-mono focus:outline-none focus:border-[#B9A58C] disabled:opacity-50 disabled:cursor-not-allowed"
-            />
-            <div className="flex gap-1 text-3xs font-mono shrink-0">
-              <button
-                onClick={() => stepHours(-24)}
-                disabled={utcLocked}
-                className="px-1.5 py-1 bg-[#171B22] hover:bg-[#2A2D31] text-[#E4E4E2] rounded disabled:opacity-40 disabled:cursor-not-allowed"
-                title="Back 1 day"
-              >
-                -1d
-              </button>
-              <button
-                onClick={() => stepHours(-1)}
-                disabled={utcLocked}
-                className="px-1.5 py-1 bg-[#171B22] hover:bg-[#2A2D31] text-[#E4E4E2] rounded disabled:opacity-40 disabled:cursor-not-allowed"
-                title="Back 1 hour"
-              >
-                -1h
-              </button>
-              <button
-                onClick={() => stepHours(1)}
-                disabled={utcLocked}
-                className="px-1.5 py-1 bg-[#171B22] hover:bg-[#2A2D31] text-[#E4E4E2] rounded disabled:opacity-40 disabled:cursor-not-allowed"
-                title="Forward 1 hour"
-              >
-                +1h
-              </button>
-              <button
-                onClick={() => stepHours(24)}
-                disabled={utcLocked}
-                className="px-1.5 py-1 bg-[#171B22] hover:bg-[#2A2D31] text-[#E4E4E2] rounded disabled:opacity-40 disabled:cursor-not-allowed"
-                title="Forward 1 day"
-              >
-                +1d
-              </button>
-            </div>
-          </div>
-          {!isScenarioA && (
-            <label className="mt-1.5 flex items-center gap-1.5 text-3xs font-mono text-[#8A8A88] cursor-pointer select-none">
-              <input
-                type="checkbox"
-                checked={syncBToA}
-                onChange={(e) => setSyncBToA(e.target.checked)}
-                className="accent-[#6FA8C9]"
-              />
-              Sync time with Scenario A
-            </label>
-          )}
-        </div>
+        <button
+          type="button"
+          onClick={() => setShowCustomForm((v) => !v)}
+          className="self-start sm:self-end shrink-0 px-3 py-1.5 rounded text-3xs font-mono font-semibold text-[#6DBF8B] bg-[#6DBF8B]/15 border border-[#6DBF8B]/40 hover:bg-[#6DBF8B]/25 transition-colors"
+        >
+          {showCustomForm ? '− Hide Custom Coords' : '🎯 Custom Lat/Lon'}
+        </button>
       </div>
 
-      {/* Custom Coordinate Analysis - collapsed by default, expands on toggle or map pick */}
+      {/* Custom Coordinate Analysis Form */}
       {showCustomForm && (
-        <div className="p-3 rounded bg-[#050608] border border-[#2A2D31] space-y-3 animate-fade-in">
+        <div className="p-3 rounded bg-[#050608] border border-[#6DBF8B]/40 space-y-3 animate-fade-in">
           <div className="flex items-start justify-between gap-2">
             <div>
               <h3 className="text-xs font-semibold text-[#6DBF8B] uppercase tracking-wider">
-                Custom Lunar Site Analysis
+                Arbitrary Coordinate Targeting (Scenario {type})
               </h3>
-              <p className="text-3xs text-[#8A8A88] mt-1">
-                Analyse a custom location using latitude and longitude.
+              <p className="text-3xs text-[#8A8A88] mt-0.5">
+                Enter any South Polar coordinate (or click directly on the map above) and press <strong>Run Analysis</strong>.
               </p>
             </div>
             <button
@@ -440,10 +388,10 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
             </button>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 items-end">
             <div>
-              <label className="block text-3xs text-[#8A8A88] mb-1">
-                Latitude (°)
+              <label className="block text-3xs text-[#8A8A88] font-mono mb-1">
+                Latitude (-90° to -70°)
               </label>
               <input
                 type="number"
@@ -452,14 +400,14 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
                 max="90"
                 value={customLat}
                 onChange={(e) => setCustomLat(e.target.value)}
-                placeholder="e.g. -89.5"
-                className="w-full px-3 py-2 bg-[#0D1014] border border-[#2A2D31] rounded text-xs text-[#E4E4E2]"
+                placeholder="e.g. -88.5"
+                className="w-full px-2.5 py-1.5 bg-[#0D1014] border border-[#2A2D31] rounded text-xs text-[#E4E4E2] font-mono"
               />
             </div>
 
             <div>
-              <label className="block text-3xs text-[#8A8A88] mb-1">
-                Longitude (°)
+              <label className="block text-3xs text-[#8A8A88] font-mono mb-1">
+                Longitude (-180° to +180°)
               </label>
               <input
                 type="number"
@@ -468,38 +416,40 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
                 max="180"
                 value={customLon}
                 onChange={(e) => setCustomLon(e.target.value)}
-                placeholder="e.g. 45.2"
-                className="w-full px-3 py-2 bg-[#0D1014] border border-[#2A2D31] rounded text-xs text-[#E4E4E2]"
+                placeholder="e.g. 124.2"
+                className="w-full px-2.5 py-1.5 bg-[#0D1014] border border-[#2A2D31] rounded text-xs text-[#E4E4E2] font-mono"
               />
             </div>
+
+            <button
+              type="button"
+              onClick={() => void handleCustomAnalyze()}
+              disabled={apiLoading}
+              className="w-full px-4 py-1.5 rounded bg-[#6DBF8B] hover:bg-[#5aa877] text-[#050608] text-xs font-bold font-mono uppercase tracking-wider disabled:opacity-50 transition-colors cursor-pointer"
+            >
+              {apiLoading ? 'Computing...' : `⚡ Run Scenario ${type}`}
+            </button>
           </div>
 
-          <button
-            type="button"
-            onClick={handleCustomAnalyze}
-            disabled={apiLoading}
-            className="px-4 py-2 rounded bg-[#6DBF8B] text-[#050608] text-xs font-semibold disabled:opacity-50"
-          >
-            {apiLoading ? 'Analysing...' : 'Analyse Custom Site'}
-          </button>
-
-          {apiError && (
-            <p className="text-xs text-[#E5604A]">{apiError}</p>
-          )}
+          {apiError && <p className="text-xs text-[#E5604A] font-mono">{apiError}</p>}
 
           {apiResult && (
-            <div className="p-3 rounded bg-[#132A1C] border border-[#2A5C3D] flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="text-[#6DBF8B] font-bold text-xs">✓</span>
-                <p className="text-xs text-[#6DBF8B] font-medium font-mono">
-                  {typeof apiResult.__banner === 'string'
-                    ? apiResult.__banner
-                    : `Custom site (${customLat}°, ${customLon}°) analyzed and loaded into Scenario ${type}.`}
-                </p>
-              </div>
-              <span className="text-3xs text-[#8A8A88] font-mono">Horizon &amp; Ephemeris Active</span>
+            <div className="p-2 rounded bg-[#132A1C] border border-[#2A5C3D] flex items-center justify-between">
+              <span className="text-3xs text-[#6DBF8B] font-mono">
+                ✓ {typeof apiResult.__banner === 'string' ? apiResult.__banner : `Custom site loaded into Scenario ${type}.`}
+              </span>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Region Centre Caveat */}
+      {(selectedSite?.coord_kind === 'region_centre' || selectedSite?.coord_kind === 'planned_region_center') && (
+        <div className="px-3 py-1.5 rounded bg-[#2A1210] border border-[#7F2318] text-3xs text-[#E0A04A] flex items-center gap-2 font-mono">
+          <span className="font-bold uppercase px-1.5 py-0.5 rounded bg-[#E0A04A]/20 border border-[#E0A04A]/40 shrink-0">
+            Region Centre
+          </span>
+          <span>Broad region centroid; illumination differs from local topographic peaks.</span>
         </div>
       )}
 
@@ -514,7 +464,7 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
         </div>
       ) : elevationData.isOutRange ? (
         <div className="p-3 bg-[#2A1210] border border-[#7F2318] rounded text-xs text-[#E0A04A] font-mono">
-          Selected time is outside precomputed coverage (2024–2028). Please choose a date within coverage.
+          Selected time ({formatUtcDisplay(utc)}) is outside precomputed coverage (2024–2028).
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-3">
@@ -523,7 +473,7 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
             <div className="flex items-center justify-between">
               <span className="text-3xs uppercase tracking-wider text-[#E0A04A] font-semibold flex items-center gap-1 font-mono">
                 <span className="w-2 h-2 rounded-full bg-[#E0A04A]"></span>
-                Sun (Solar Power)
+                Sun Power
               </span>
               <span
                 className={`px-1.5 py-0.2 rounded text-3xs font-medium font-mono ${
@@ -537,141 +487,65 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
                 {fSun >= 0.99 ? 'Fully Lit' : fSun > 0 ? `Partial (${Math.round(fSun * 100)}%)` : 'In Shadow'}
               </span>
             </div>
-            <div className="my-2">
-              <div className="text-2xl font-bold font-mono text-[#E0A04A]">
+            <div className="my-1.5">
+              <div className="text-xl font-bold font-mono text-[#E0A04A]">
                 {elevationData.sunElevation !== null
                   ? `${elevationData.sunElevation >= 0 ? '+' : ''}${elevationData.sunElevation.toFixed(2)}°`
                   : 'N/A'}
               </div>
               <div className="text-3xs text-[#8A8A88] mt-0.5 flex items-center justify-between font-mono">
-                <span>Terrain Horizon: {sunHorizonEl.toFixed(2)}°</span>
+                <span>Skyline: {sunHorizonEl.toFixed(1)}°</span>
                 <span className="text-[#E0A04A] font-bold">{solarPowerW.toFixed(1)} W</span>
               </div>
-            </div>
-            <div className="text-3xs font-mono text-[#8A8A88] flex items-center justify-between">
-              <span>Azimuth: {elevationData.sunAzimuth !== null ? `${elevationData.sunAzimuth.toFixed(1)}°` : 'N/A'}</span>
-              <span>Limb: {elevationData.sunElevation !== null ? `${(elevationData.sunElevation + SUN_UPPER_LIMB_DEG).toFixed(2)}°` : 'N/A'}</span>
             </div>
           </div>
 
           {/* Earth Elevation Card */}
           <div className="p-3 rounded bg-[#050608] border border-[#2A2D31] flex flex-col justify-between">
-            <div className="flex flex-wrap items-center justify-between gap-1.5">
-              <span className="text-3xs uppercase tracking-wider text-[#6FA8C9] font-semibold flex items-center gap-1 font-mono min-w-0">
+            <div className="flex items-center justify-between gap-1">
+              <span className="text-3xs uppercase tracking-wider text-[#6FA8C9] font-semibold flex items-center gap-1 font-mono">
                 <span className="w-2 h-2 rounded-full bg-[#6FA8C9] shrink-0"></span>
-                <abbr title="Direct-to-Earth contact: Geometric line-of-sight between the lunar surface site and Earth centre" className="cursor-help underline decoration-dotted decoration-[#6FA8C9]/60 whitespace-nowrap">
-                  EARTH · DIRECT-TO-EARTH CONTACT
-                </abbr>
+                Earth DTE
               </span>
               <span
-                className={`px-1.5 py-0.5 rounded text-3xs font-medium font-mono shrink-0 ${
+                className={`px-1.5 py-0.2 rounded text-3xs font-medium font-mono shrink-0 ${
                   isEarthUp
                     ? 'bg-[#6FA8C9]/20 text-[#6FA8C9] border border-[#6FA8C9]/40'
                     : 'bg-[#171B22] text-[#8A8A88] border border-[#2A2D31]'
                 }`}
               >
-                {isEarthUp ? 'Direct LOS' : 'Blocked / Below Horizon'}
+                {isEarthUp ? 'Direct LOS' : 'Occulted'}
               </span>
             </div>
-            <div className="my-2">
-              <div className="text-2xl font-bold font-mono text-[#6FA8C9]">
+            <div className="my-1.5">
+              <div className="text-xl font-bold font-mono text-[#6FA8C9]">
                 {elevationData.earthElevation !== null
                   ? `${elevationData.earthElevation >= 0 ? '+' : ''}${elevationData.earthElevation.toFixed(2)}°`
                   : 'N/A'}
               </div>
               <div className="text-3xs text-[#8A8A88] mt-0.5 flex items-center justify-between font-mono">
-                <span>Terrain Horizon: {earthHorizonEl.toFixed(2)}°</span>
+                <span>Skyline: {earthHorizonEl.toFixed(1)}°</span>
                 <span>Margin: +{dteMarginDeg.toFixed(1)}°</span>
               </div>
             </div>
-            <div className="text-3xs font-mono text-[#8A8A88] flex items-center justify-between">
-              <span>Azimuth: {elevationData.earthAzimuth !== null ? `${elevationData.earthAzimuth.toFixed(1)}°` : 'N/A'}</span>
-              <span className="capitalize">{earthCriterion.replace('_', ' ')}</span>
-            </div>
           </div>
 
-          {/* Plain-Language 30-Day Operational Summary */}
-          <div className="col-span-2 p-3 bg-[#050608] border border-[#2A2D31] rounded text-xs text-[#E4E4E2]">
-            <div className="text-3xs uppercase font-mono tracking-wider text-[#8A8A88] mb-1">
-              30-Day Operational Lighting Summary
+          {/* Operational Lighting Summary */}
+          <div className="col-span-2 px-3 py-2 bg-[#050608] border border-[#2A2D31] rounded text-xs text-[#E4E4E2] flex items-center justify-between">
+            <div>
+              <span className="text-3xs uppercase font-mono tracking-wider text-[#8A8A88] mr-2">
+                {windowDays === 0.5 ? '12h' : windowDays === 1 ? '24h' : `${windowDays}d`} Forecast:
+              </span>
+              <span className="font-medium">
+                Sunlight for <strong className="text-[#E0A04A]">{sunlightPct.toFixed(1)}%</strong> ({sunlightHours} of {totalPeriodHours} h) at mast {mastHeightM} m
+              </span>
             </div>
-            <div className="font-medium text-[#E4E4E2]">
-              Sunlight for <span className="font-bold text-[#E0A04A]">{sunlightPct.toFixed(1)}%</span> of the next 30 days ({sunlightHours} of {totalPeriodHours} h){horizonMode === 'terrain' ? ` at mast ${mastHeightM} m.` : ' on flat sphere (0° horizon).'}
-            </div>
+            <span className="text-3xs font-mono text-[#6DBF8B]">
+              ⚡ {opp?.solar_energy_kwh ?? 0} kWh/m²
+            </span>
           </div>
         </div>
       )}
-
-      {/* Visual Horizon Diagram */}
-      <div className="p-3 bg-[#050608] rounded border border-[#2A2D31] text-2xs">
-        <div className="flex justify-between text-3xs text-[#8A8A88] mb-1 font-mono">
-          <span>Nadir (-90°)</span>
-          <span className="text-[#E4E4E2] font-semibold">
-            {horizonMode === 'terrain' ? (
-              <span>
-                <abbr
-                  title="Terrain horizon seen from the site: 3D ray-marched topographic obstacle elevation across 360° azimuth"
-                  className="cursor-help underline decoration-dotted decoration-[#8A8A88]/60"
-                >
-                  Local skyline (terrain horizon seen from the site)
-                </abbr>{' '}
-                ({sunHorizonEl.toFixed(1)}° Sun / {earthHorizonEl.toFixed(1)}° Earth)
-              </span>
-            ) : (
-              'Flat sphere, 0 deg horizon'
-            )}
-          </span>
-          <span>Zenith (+90°)</span>
-        </div>
-        <div className="relative w-full h-5 bg-[#0D1014] rounded overflow-hidden border border-[#2A2D31]">
-          {/* Horizon line at center */}
-          <div className="absolute top-0 bottom-0 left-1/2 w-0.5 bg-[#2A2D31] z-10" />
-
-          {/* Local terrain horizon region for Sun */}
-          {horizonMode === 'terrain' && (
-            <div
-              style={{
-                left: `${Math.max(0, Math.min(100, ((sunHorizonEl + 90) / 180) * 100))}%`,
-              }}
-              className="absolute top-0 bottom-0 w-1 -translate-x-1/2 bg-[#C88B35] z-10"
-              title={`Sun Azimuth Skyline: ${sunHorizonEl.toFixed(2)}°`}
-            />
-          )}
-
-          {/* Sun marker */}
-          {elevationData.sunElevation !== null && (
-            <div
-              style={{
-                left: `${Math.max(0, Math.min(100, ((elevationData.sunElevation + 90) / 180) * 100))}%`,
-              }}
-              className="absolute top-0 bottom-0 w-3 -translate-x-1/2 bg-[#E0A04A] rounded-full z-20 flex items-center justify-center text-[8px]"
-              title={`Sun: ${elevationData.sunElevation.toFixed(2)}° (Horizon: ${sunHorizonEl.toFixed(2)}°)`}
-            />
-          )}
-
-          {/* Earth marker */}
-          {elevationData.earthElevation !== null && (
-            <div
-              style={{
-                left: `${Math.max(0, Math.min(100, ((elevationData.earthElevation + 90) / 180) * 100))}%`,
-              }}
-              className="absolute top-0 bottom-0 w-3 -translate-x-1/2 bg-[#6FA8C9] rounded-full z-20 flex items-center justify-center text-[8px]"
-              title={`Earth: ${elevationData.earthElevation.toFixed(2)}° (Horizon: ${earthHorizonEl.toFixed(2)}°)`}
-            />
-          )}
-        </div>
-        {/* Explicit axis labels for the elevation gauge */}
-        <div className="mt-1 flex justify-between text-[9px] font-mono text-[#6B6F75]">
-          <span>-90° Nadir</span>
-          <span>0° Flat Horizon</span>
-          <span>Local Skyline</span>
-          <span>+90° Zenith</span>
-        </div>
-        <div className="mt-1.5 text-3xs text-[#8A8A88] flex items-center justify-between font-mono">
-          <span>* Mode: {horizonMode === 'terrain' ? `LOLA DEM (${horizon?.dem_id || 'DEM'}, mast: ${mastHeightM}m)` : 'Flat sphere, 0 deg horizon'}</span>
-          <span className="text-[#E4E4E2]">Array: {solarArrayType}</span>
-        </div>
-      </div>
     </div>
   )
 }

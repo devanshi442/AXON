@@ -1,18 +1,28 @@
 import { useState } from 'react'
 import type { SelectableSite } from '../types/mission'
 import { useScenarioStore } from '../stores/scenarioStore'
-import PanelCornerBrackets from './PanelCornerBrackets'
 
 interface MissionExplorerProps {
   sites: SelectableSite[]
+  onAssignScenario?: (site: SelectableSite, type: 'A' | 'B') => void
 }
 
-export default function MissionExplorer({ sites }: MissionExplorerProps) {
+export default function MissionExplorer({ sites, onAssignScenario }: MissionExplorerProps) {
   const { scenarioAId, scenarioBId, setScenarioA, setScenarioB } = useScenarioStore()
   const [search, setSearch] = useState('')
   const [detailSite, setDetailSite] = useState<SelectableSite | null>(null)
   type FilterType = 'all' | 'south_pole' | 'candidate' | 'mission' | 'landed' | 'planned'
   const [statusFilter, setStatusFilter] = useState<FilterType>('all')
+
+  const assignScenario = (site: SelectableSite, type: 'A' | 'B') => {
+    if (onAssignScenario) {
+      onAssignScenario(site, type)
+    } else if (type === 'A') {
+      setScenarioA(site.id)
+    } else {
+      setScenarioB(site.id)
+    }
+  }
 
   const filtered = sites.filter((s) => {
     const query = search.toLowerCase()
@@ -49,7 +59,6 @@ export default function MissionExplorer({ sites }: MissionExplorerProps) {
 
   return (
     <div className="relative bg-[#0D1014] border border-[#2A2D31] rounded p-4 flex flex-col gap-4">
-      <PanelCornerBrackets />
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h2 className="text-sm font-semibold text-[#E4E4E2] uppercase tracking-wider flex items-center gap-1.5">
@@ -166,7 +175,7 @@ export default function MissionExplorer({ sites }: MissionExplorerProps) {
                 <div className="flex items-center gap-1.5 text-3xs">
                   <button
                     disabled={!hasCoords}
-                    onClick={() => setScenarioA(s.id)}
+                    onClick={() => assignScenario(s, 'A')}
                     className={`px-2 py-0.5 rounded font-medium transition-colors ${
                       isA
                         ? 'bg-[#E0A04A] text-[#050608] font-bold'
@@ -180,7 +189,7 @@ export default function MissionExplorer({ sites }: MissionExplorerProps) {
                   </button>
                   <button
                     disabled={!hasCoords}
-                    onClick={() => setScenarioB(s.id)}
+                    onClick={() => assignScenario(s, 'B')}
                     className={`px-2 py-0.5 rounded font-medium transition-colors ${
                       isB
                         ? 'bg-[#6FA8C9] text-[#050608] font-bold'
@@ -216,7 +225,6 @@ export default function MissionExplorer({ sites }: MissionExplorerProps) {
             className="relative bg-[#0D1014] border border-[#2A2D31] rounded-lg max-w-2xl w-full max-h-[85vh] overflow-y-auto p-5 flex flex-col gap-4 text-xs"
             onClick={(e) => e.stopPropagation()}
           >
-            <PanelCornerBrackets />
 
             {/* Header */}
             <div className="flex items-start justify-between gap-3 border-b border-[#2A2D31] pb-3">
@@ -389,7 +397,7 @@ export default function MissionExplorer({ sites }: MissionExplorerProps) {
                 <button
                   disabled={detailSite.lat == null}
                   onClick={() => {
-                    setScenarioA(detailSite.id)
+                    assignScenario(detailSite, 'A')
                     setDetailSite(null)
                   }}
                   className="px-3 py-1.5 rounded bg-[#E0A04A] hover:bg-[#C88B35] text-[#050608] font-bold text-3xs disabled:opacity-40"
@@ -399,7 +407,7 @@ export default function MissionExplorer({ sites }: MissionExplorerProps) {
                 <button
                   disabled={detailSite.lat == null}
                   onClick={() => {
-                    setScenarioB(detailSite.id)
+                    assignScenario(detailSite, 'B')
                     setDetailSite(null)
                   }}
                   className="px-3 py-1.5 rounded bg-[#6FA8C9] hover:bg-[#5A93B4] text-[#050608] font-bold text-3xs disabled:opacity-40"

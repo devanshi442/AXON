@@ -65,7 +65,6 @@ interface ScenarioStore {
   arrayAreaM2: number
   arrayEfficiency: number
   windowDays: number
-  pickedCoords: { lat: string; lon: string } | null
 
   timeseriesCache: Record<string, GeometryTimeseries>
   horizonCache: Record<string, HorizonProfile>
@@ -87,7 +86,6 @@ interface ScenarioStore {
   setArrayAreaM2: (a: number) => void
   setArrayEfficiency: (eff: number) => void
   setWindowDays: (days: number) => void
-  setPickedCoords: (lat: string | number, lon: string | number) => void
 
   loadTimeseries: (siteId: string) => Promise<void>
   loadHorizon: (siteId: string) => Promise<void>
@@ -121,15 +119,15 @@ export function getDefaultUtcDisplay(nowDate?: Date): string {
 }
 
 export const useScenarioStore = create<ScenarioStore>((set, get) => ({
-  scenarioAId: 'im-2',
-  scenarioBId: 'cs-shackleton-rim',
+  scenarioAId: 'cs-shackleton-ridge-site', // Valid Artemis III evaluated summit site
+  scenarioBId: 'im-2',                     // Valid Mons Mouton site for instant comparison
   utcA: getDefaultUtcDate(),
   utcB: getDefaultUtcDate(),
   thresholdDeg: 0.0,
   syncBToA: true,
 
   horizonMode: 'terrain',
-  mastHeightM: 1.5,
+  mastHeightM: 2.5,
   sunThresholdDeg: 0.0,
   dteMarginDeg: 0.0,
   earthCriterion: 'center',
@@ -137,7 +135,6 @@ export const useScenarioStore = create<ScenarioStore>((set, get) => ({
   arrayAreaM2: 1.0,
   arrayEfficiency: 0.28,
   windowDays: 30,
-  pickedCoords: null,
 
   timeseriesCache: {},
   horizonCache: {},
@@ -146,19 +143,21 @@ export const useScenarioStore = create<ScenarioStore>((set, get) => ({
 
   setScenarioA: (id: string) => {
     set({ scenarioAId: id })
-    get().loadTimeseries(id)
-    get().loadHorizon(id)
+    if (!id.startsWith('custom-')) {
+      get().loadTimeseries(id)
+      get().loadHorizon(id)
+    }
   },
 
   setScenarioB: (id: string) => {
     set({ scenarioBId: id })
-    get().loadTimeseries(id)
-    get().loadHorizon(id)
+    if (!id.startsWith('custom-')) {
+      get().loadTimeseries(id)
+      get().loadHorizon(id)
+    }
   },
 
   setUtcA: (utcA: string) => {
-    // When B is locked to A, keep both in lockstep so planners never compare
-    // two sites at different timestamps by accident.
     if (get().syncBToA) {
       set({ utcA, utcB: utcA })
     } else {
@@ -183,7 +182,6 @@ export const useScenarioStore = create<ScenarioStore>((set, get) => ({
   setArrayAreaM2: (arrayAreaM2) => set({ arrayAreaM2 }),
   setArrayEfficiency: (arrayEfficiency) => set({ arrayEfficiency }),
   setWindowDays: (windowDays) => set({ windowDays }),
-  setPickedCoords: (lat, lon) => set({ pickedCoords: { lat: String(lat), lon: String(lon) } }),
 
   injectCustomSite: (id: string, ts: GeometryTimeseries, horizon?: HorizonProfile) => {
     set((state) => ({
@@ -191,11 +189,13 @@ export const useScenarioStore = create<ScenarioStore>((set, get) => ({
       horizonCache: horizon
         ? { ...state.horizonCache, [id]: horizon }
         : state.horizonCache,
+      loading: { ...state.loading, [id]: false },
+      error: { ...state.error, [id]: null },
     }))
   },
 
   loadTimeseries: async (siteId: string) => {
-    if (get().timeseriesCache[siteId] || get().loading[siteId]) {
+    if (siteId.startsWith('custom-') || get().timeseriesCache[siteId] || get().loading[siteId]) {
       return
     }
 
@@ -239,7 +239,7 @@ export const useScenarioStore = create<ScenarioStore>((set, get) => ({
   },
 
   loadHorizon: async (siteId: string) => {
-    if (get().horizonCache[siteId]) {
+    if (siteId.startsWith('custom-') || get().horizonCache[siteId]) {
       return
     }
     try {
@@ -255,9 +255,6 @@ export const useScenarioStore = create<ScenarioStore>((set, get) => ({
   },
 }))
 
-/**
- * Get nearest hourly elevation from timeseries for a given UTC date-time string.
- */
 export function getElevationAtTime(
   ts?: GeometryTimeseries,
   targetUtc?: string
@@ -295,17 +292,14 @@ export function getElevationAtTime(
     }
   }
 
-  // Hourly index calculation
   const stepMs = ts.step_seconds * 1000
   const rawIdx = (targetMs - firstMs) / stepMs
   const idx0 = Math.max(0, Math.min(ts.times.length - 2, Math.floor(rawIdx)))
   const idx1 = idx0 + 1
-  const frac = rawIdx - idx0  // 0.0 to 1.0
+  const frac = rawIdx - idx0
 
-  // Linear interpolation helper
   const lerp = (a: number, b: number, t: number) => a + (b - a) * t
 
-  // Azimuth wraparound: unwrap before lerp
   const lerpAz = (a: number, b: number, t: number): number => {
     let diff = b - a
     if (diff > 180) diff -= 360
@@ -324,10 +318,6 @@ export function getElevationAtTime(
   }
 }
 
-/**
- * Compute N-day opportunities from selected UTC time.
- * Supports dual modes: idealized flat datum (0°) vs terrain-aware horizon skyline.
- */
 export function computeWindowOpportunities(
   ts?: GeometryTimeseries,
   startUtc?: string,
@@ -346,7 +336,7 @@ export function computeWindowOpportunities(
     options.sunThresholdDeg ??
     (typeof thresholdOrOptions === 'number' ? thresholdOrOptions : 0.0)
   const mode = options.horizonMode ?? (options.horizonProfile ? 'terrain' : 'flat')
-  const mastHeightM = options.mastHeightM ?? 1.5
+  const mastHeightM = options.mastHeightM ?? 2.5
   const dteMarginDeg = options.dteMarginDeg ?? 0.0
   const earthCriterion = options.earthCriterion ?? 'center'
   const orientation = options.solarArrayType ?? 'vertical'
@@ -376,12 +366,10 @@ export function computeWindowOpportunities(
 
   const mask = mode === 'terrain' ? getMaskForMastHeight(options.horizonProfile, mastHeightM) : null
 
-  // Flat masks for baseline comparison (Sun: upper limb > threshold; Earth: el >= antenna_margin)
   const flatSunMask = sliceSunEl.map((el) => el + SUN_UPPER_LIMB_DEG > thresholdDeg)
   const flatEarthMask = sliceEarthEl.map((el) => el >= dteMarginDeg)
   const flatJointMask = flatSunMask.map((s, i) => s && flatEarthMask[i])
 
-  // Active masks for requested mode
   const activeSunMask: boolean[] = []
   const activeEarthMask: boolean[] = []
   const activeJointMask: boolean[] = []
@@ -478,5 +466,4 @@ export function computeWindowOpportunities(
   }
 }
 
-// Backwards-compat alias
 export const compute30DayWindows = computeWindowOpportunities

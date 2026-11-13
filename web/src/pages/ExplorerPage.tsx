@@ -3,7 +3,6 @@ import type { MissionsData, SelectableSite, CoordKind, TerrainTier } from '../ty
 import { useScenarioStore } from '../stores/scenarioStore'
 import type { SolarOrientation, EarthCriterion } from '../utils/scienceMath'
 import MoonMap from '../components/MoonMap'
-import MissionExplorer from '../components/MissionExplorer'
 import ScenarioPanel from '../components/ScenarioPanel'
 import OpportunityTimeline from '../components/OpportunityTimeline'
 import ComparisonPanel from '../components/ComparisonPanel'
@@ -11,33 +10,47 @@ import PanelCornerBrackets from '../components/PanelCornerBrackets'
 
 const LunarGlobe = lazy(() => import('../components/LunarGlobe'))
 
-const MAST_HEIGHTS = [0.0, 1.5, 3.0, 5.0, 10.0]
-const WINDOW_DAY_OPTIONS = [7, 14, 30, 60, 90]
+const MAST_HEIGHTS = [0.0, 1.5, 2.5, 5.0, 10.0]
+const WINDOW_DAY_OPTIONS = [0.5, 1, 7, 14, 30]
+
+type CustomPointRequest = {
+  requestId: number
+  target: 'A' | 'B'
+  lat: number
+  lon: number
+}
 
 export default function ExplorerPage() {
   const [missionsData, setMissionsData] = useState<MissionsData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [showEducationalCard, setShowEducationalCard] = useState(false)
-  const [mapViewMode, setMapViewMode] = useState<'globe' | 'flat'>('globe')
+  const [mapViewMode, setMapViewMode] = useState<'both' | 'globe' | 'flat'>('both')
   const [showAdvancedPhysics, setShowAdvancedPhysics] = useState(false)
   const [flashA, setFlashA] = useState(false)
   const [flashB, setFlashB] = useState(false)
-  const [showJumpChip, setShowJumpChip] = useState(false)
+  const [customPointRequest, setCustomPointRequest] = useState<CustomPointRequest | null>(null)
+  const customPointRequestIdRef = useRef(0)
 
-  // Unified Selected Location Bar state: populated whenever the user clicks a
-  // pin or an empty surface point on EITHER the 3D Globe or the flat 2D Map.
+  // Unified Selected Location Bar state
   const [selectedLocation, setSelectedLocation] = useState<
     | { kind: 'site'; site: SelectableSite }
     | { kind: 'coords'; lat: number; lon: number }
     | null
   >(null)
 
+  const timelineRef = useRef<HTMLDivElement>(null)
   const comparisonRef = useRef<HTMLDivElement>(null)
 
   const {
     scenarioAId,
     scenarioBId,
+    utcA,
+    utcB,
+    syncBToA,
+    setUtcA,
+    setUtcB,
+    setSyncBToA,
     setScenarioA,
     setScenarioB,
     loadTimeseries,
@@ -56,7 +69,6 @@ export default function ExplorerPage() {
     setEarthCriterion,
     solarArrayType,
     setSolarArrayType,
-    setPickedCoords,
   } = useScenarioStore()
 
   useEffect(() => {
@@ -76,18 +88,16 @@ export default function ExplorerPage() {
   }, [])
 
   useEffect(() => {
-    if (scenarioAId) {
+    if (scenarioAId && !scenarioAId.startsWith('custom-')) {
       loadTimeseries(scenarioAId)
       loadHorizon(scenarioAId)
     }
-    if (scenarioBId) {
+    if (scenarioBId && !scenarioBId.startsWith('custom-')) {
       loadTimeseries(scenarioBId)
       loadHorizon(scenarioBId)
     }
   }, [scenarioAId, scenarioBId, loadTimeseries, loadHorizon])
 
-  // Flash the sticky-header pill for 1.5s when a scenario assignment happens,
-  // and surface a "Jump to Comparison" chip on small screens.
   const triggerAssignFeedback = (type: 'A' | 'B') => {
     if (type === 'A') {
       setFlashA(true)
@@ -96,8 +106,18 @@ export default function ExplorerPage() {
       setFlashB(true)
       setTimeout(() => setFlashB(false), 1500)
     }
-    setShowJumpChip(true)
-    setTimeout(() => setShowJumpChip(false), 4000)
+  }
+
+  const runComparisonAndScroll = () => {
+    if (scenarioAId && !scenarioAId.startsWith('custom-')) {
+      loadTimeseries(scenarioAId)
+      loadHorizon(scenarioAId)
+    }
+    if (scenarioBId && !scenarioBId.startsWith('custom-')) {
+      loadTimeseries(scenarioBId)
+      loadHorizon(scenarioBId)
+    }
+    timelineRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
   const assignToScenario = (site: SelectableSite, type: 'A' | 'B') => {
@@ -112,8 +132,25 @@ export default function ExplorerPage() {
   }
 
   const handlePickCoordsFromMapOrGlobe = (lat: number, lon: number) => {
-    setPickedCoords(lat, lon)
     setSelectedLocation({ kind: 'coords', lat, lon })
+  }
+
+  const requestCustomPointAnalysis = (target: 'A' | 'B') => {
+    if (selectedLocation?.kind !== 'coords') return
+    const requestId = ++customPointRequestIdRef.current
+    setCustomPointRequest({
+      requestId,
+      target,
+      lat: selectedLocation.lat,
+      lon: selectedLocation.lon,
+    })
+    setSelectedLocation(null)
+  }
+
+  const handleCustomPointRequestHandled = (requestId: number) => {
+    setCustomPointRequest((current) =>
+      current?.requestId === requestId ? null : current
+    )
   }
 
   if (loading) {
@@ -134,7 +171,6 @@ export default function ExplorerPage() {
     )
   }
 
-  // Combine missions, candidate sites, and reference sites into unified selectable list
   const selectableSites: SelectableSite[] = [
     ...missionsData.missions.map((m) => ({
       id: m.id,
@@ -194,23 +230,18 @@ export default function ExplorerPage() {
   const siteB = selectableSites.find((s) => s.id === scenarioBId)
 
   return (
-    <div className="flex flex-col gap-6 animate-fade-in pb-12">
-      {/* ================= STEP 1: Sticky Simulation Bar ================= */}
-      {/* Global physics controls live here, right under the navbar, so it's immediately
-          clear what parameters drive every panel below (Scenario pills, synced UTC date,
-          Terrain/Flat toggle, Mast Height, and Window Duration). Secondary sliders are
-          tucked into the Advanced Physics popover. */}
+    <div className="flex flex-col gap-5 animate-fade-in pb-12">
+      {/* ================= Sticky Simulation & Preset Bar ================= */}
       <div className="sticky top-0 z-30 -mx-4 px-4 py-2.5 bg-[#070A0D]/95 backdrop-blur border-b border-[#2A2D31] flex flex-col gap-2">
         <div className="flex flex-wrap items-center gap-2 justify-between">
           <div className="flex flex-wrap items-center gap-2">
-            {/* Scenario A / B pills */}
             <span
               className={`px-2.5 py-1 rounded text-3xs font-bold font-mono uppercase tracking-wider bg-[#E0A04A] text-[#050608] transition-shadow ${
                 flashA ? 'ring-2 ring-[#E4E4E2] ring-offset-2 ring-offset-[#070A0D]' : ''
               }`}
               title={siteA?.name}
             >
-              A: {siteA?.name ? (siteA.name.length > 22 ? siteA.name.slice(0, 20) + '…' : siteA.name) : '—'}
+              A: {siteA?.name ? (siteA.name.length > 20 ? siteA.name.slice(0, 18) + '…' : siteA.name) : scenarioAId}
             </span>
             <span
               className={`px-2.5 py-1 rounded text-3xs font-bold font-mono uppercase tracking-wider bg-[#6FA8C9] text-[#050608] transition-shadow ${
@@ -218,10 +249,41 @@ export default function ExplorerPage() {
               }`}
               title={siteB?.name}
             >
-              B: {siteB?.name ? (siteB.name.length > 22 ? siteB.name.slice(0, 20) + '…' : siteB.name) : '—'}
+              B: {siteB?.name ? (siteB.name.length > 20 ? siteB.name.slice(0, 18) + '…' : siteB.name) : scenarioBId}
             </span>
 
-            <div className="h-5 w-px bg-[#2A2D31] hidden sm:block" />
+            {/* Date / Forecast UTC Selector */}
+            <div className="flex flex-wrap items-center gap-2 rounded border border-[#2A2D31] bg-[#0D1014] px-2 py-1">
+              <label className="flex items-center gap-1.5 text-3xs font-mono text-[#8A8A88]">
+                Forecast Date (UTC)
+                <input
+                  type="datetime-local"
+                  value={utcA.slice(0, 16)}
+                  onChange={(e) => e.target.value && setUtcA(new Date(e.target.value + ':00Z').toISOString())}
+                  className="w-[154px] bg-[#050608] border border-[#2A2D31] rounded px-1.5 py-0.5 text-[#E4E4E2]"
+                />
+              </label>
+              <label className="flex items-center gap-1 text-3xs font-mono text-[#8A8A88] select-none">
+                <input
+                  type="checkbox"
+                  checked={syncBToA}
+                  onChange={(e) => setSyncBToA(e.target.checked)}
+                  className="accent-[#6FA8C9]"
+                />
+                Sync B
+              </label>
+              {!syncBToA && (
+                <label className="flex items-center gap-1.5 text-3xs font-mono text-[#8A8A88]">
+                  UTC B
+                  <input
+                    type="datetime-local"
+                    value={utcB.slice(0, 16)}
+                    onChange={(e) => e.target.value && setUtcB(new Date(e.target.value + ':00Z').toISOString())}
+                    className="w-[154px] bg-[#050608] border border-[#2A2D31] rounded px-1.5 py-0.5 text-[#E4E4E2]"
+                  />
+                </label>
+              )}
+            </div>
 
             {/* Terrain vs Flat */}
             <div className="flex items-center bg-[#0D1014] p-0.5 rounded border border-[#2A2D31] text-3xs font-mono">
@@ -265,7 +327,7 @@ export default function ExplorerPage() {
               ))}
             </div>
 
-            {/* Window Duration */}
+            {/* Window Duration (12h, 24h, 7d, 14d, 30d) */}
             <div className="flex items-center gap-1 text-3xs font-mono">
               <span className="text-[#8A8A88] hidden md:inline">Window:</span>
               {WINDOW_DAY_OPTIONS.map((d) => (
@@ -278,23 +340,32 @@ export default function ExplorerPage() {
                       : 'bg-[#0D1014] text-[#8A8A88] border-[#2A2D31] hover:text-[#E4E4E2]'
                   }`}
                 >
-                  {d}d
+                  {d === 0.5 ? '12h' : d === 1 ? '24h' : `${d}d`}
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Advanced Physics popover toggle */}
-          <button
-            type="button"
-            onClick={() => setShowAdvancedPhysics((v) => !v)}
-            className="px-2.5 py-1 rounded text-3xs font-mono font-medium bg-[#0D1014] text-[#B9A58C] border border-[#2A2D31] hover:border-[#B9A58C]/50 transition-colors shrink-0"
-          >
-            Advanced Physics {showAdvancedPhysics ? '▲' : '▼'}
-          </button>
+          <div className="flex items-center gap-2">
+            {/* Primary Action Button in Sticky Bar */}
+            <button
+              type="button"
+              onClick={runComparisonAndScroll}
+              className="px-3 py-1 rounded text-3xs font-mono font-bold uppercase tracking-wider bg-[#6DBF8B] hover:bg-[#5aa877] text-[#050608] transition-colors cursor-pointer shadow"
+            >
+              ⚡ Compare &amp; View Forecast ↓
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setShowAdvancedPhysics((v) => !v)}
+              className="px-2.5 py-1 rounded text-3xs font-mono font-medium bg-[#0D1014] text-[#B9A58C] border border-[#2A2D31] hover:border-[#B9A58C]/50 transition-colors shrink-0"
+            >
+              Physics {showAdvancedPhysics ? '▲' : '▼'}
+            </button>
+          </div>
         </div>
 
-        {/* Advanced Physics popover: Sun Threshold, Antenna Margin, Earth Disk Criterion, Solar Array Type */}
         {showAdvancedPhysics && (
           <div className="p-3 bg-[#0D1014] border border-[#2A2D31] rounded grid grid-cols-1 md:grid-cols-4 gap-4 font-mono animate-fade-in">
             <div className="flex flex-col gap-1">
@@ -363,184 +434,101 @@ export default function ExplorerPage() {
         )}
       </div>
 
-      {/* Top Banner / Headline */}
-      <div className="relative bg-[#0D1014] border border-[#2A2D31] p-5 rounded flex flex-col md:flex-row md:items-center justify-between gap-4">
+      {/* ================= Map & Globe Section (Side-by-Side or Full) ================= */}
+      <div className="relative">
         <PanelCornerBrackets />
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="px-2 py-0.5 rounded text-3xs font-semibold uppercase bg-[#6FA8C9]/20 text-[#6FA8C9] border border-[#6FA8C9]/40 font-mono">
-              CLPS Mission Browser
-            </span>
-            <span className="px-2 py-0.5 rounded text-3xs font-semibold uppercase bg-[#E0A04A]/20 text-[#E0A04A] border border-[#E0A04A]/40 font-mono">
-              South Pole Focus
-            </span>
-            <span className="text-3xs text-[#8A8A88] font-mono hidden sm:inline">
-              SPICE Ephemerides · Horizons Validated
-            </span>
-          </div>
-          <h1 className="text-xl sm:text-2xl font-bold text-[#E4E4E2]">
-            Compare Lunar Landing Sites &amp; Visibility Windows
-          </h1>
-          <p className="text-xs text-[#8A8A88] mt-1 max-w-2xl">
-            An intuitive trade-off evaluation tool for mission planners, educators, and the public to compare candidate landing sites, assess solar power generation potential, and direct-to-Earth (DTE) communication windows without complex GIS interfaces.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3 self-start md:self-auto bg-[#050608] px-4 py-2.5 rounded border border-[#2A2D31] text-xs">
-          <div>
-            <div className="text-3xs text-[#8A8A88] font-medium font-mono">CONVENTIONS</div>
-            <div className="text-2xs font-mono text-[#E4E4E2]">MOON_ME Frame · UTC Time</div>
-          </div>
-          <div className="h-6 w-px bg-[#2A2D31]" />
-          <div>
-            <div className="text-3xs text-[#8A8A88] font-medium font-mono">HORIZON MODE</div>
-            <div className="text-2xs font-mono text-[#6DBF8B] font-semibold">
-              {horizonMode === 'terrain' ? `Terrain-Aware (${mastHeightM}m mast)` : 'Flat sphere, 0 deg horizon'}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Educational Guide Card for Mission Planners, Educators & Public */}
-      <div className="bg-[#0D1014] border border-[#2A2D31] rounded p-4">
-        <div className="flex items-center justify-between cursor-pointer" onClick={() => setShowEducationalCard(!showEducationalCard)}>
-          <div className="flex items-center gap-2.5">
-            <span className="text-base">🎓</span>
-            <div>
-              <h2 className="text-xs font-semibold text-[#E4E4E2] uppercase tracking-wider flex items-center gap-2">
-                Why the Moon's South Pole? — Extreme Lighting &amp; Communication Constraints
-              </h2>
-              <p className="text-3xs text-[#8A8A88]">
-                Educational context on polar solar elevation, lunar libration, and direct-to-Earth (DTE) communication physics.
-              </p>
-            </div>
-          </div>
-          <button
-            type="button"
-            className="text-xs text-[#6FA8C9] hover:text-[#B8D9EC] font-mono px-2 py-0.5 rounded bg-[#050608] border border-[#2A2D31]"
-          >
-            {showEducationalCard ? 'Hide Guide ▲' : 'Show Guide ▼'}
-          </button>
-        </div>
-
-        {showEducationalCard && (
-          <div className="mt-3 pt-3 border-t border-[#2A2D31] grid grid-cols-1 md:grid-cols-3 gap-3.5 text-2xs text-[#8A8A88]">
-            <div className="bg-[#050608] p-3 rounded border border-[#2A2D31] flex flex-col gap-1">
-              <span className="text-[#E0A04A] font-semibold text-xs flex items-center gap-1.5 font-sans">
-                <span>☀️</span> Grazing Polar Sunlight (~1.54° Tilt)
+        <div className="flex flex-col gap-2">
+          <div className="flex flex-wrap items-center justify-between gap-2 p-2.5 bg-[#0D1014] border border-[#2A2D31] rounded text-xs">
+            <div className="flex items-center gap-2">
+              <span className="text-3xs uppercase font-mono text-[#E4E4E2] font-semibold">
+                South Polar Targeting Canvas
               </span>
-              <p className="text-[#8A8A88] leading-relaxed text-3xs font-sans">
-                Because the Moon's rotational axis is tilted only 1.54° relative to the ecliptic, the Sun always skims low along the horizon at the south pole. Small elevation changes determine whether solar panels are in bright sunlight or long crater shadows.
-              </p>
-            </div>
-
-            <div className="bg-[#050608] p-3 rounded border border-[#2A2D31] flex flex-col gap-1">
-              <span className="text-[#6FA8C9] font-semibold text-xs flex items-center gap-1.5 font-sans">
-                <span>🌍</span> Lunar Libration &amp; Earth Horizon Wobble
+              <span className="px-2 py-0.5 rounded bg-[#050608] border border-[#2A2D31] text-3xs font-mono text-[#6FA8C9]">
+                Preset Domain: Lat -90° to -70°S · Lon -180° to +180°E
               </span>
-              <p className="text-[#8A8A88] leading-relaxed text-3xs font-sans">
-                The Moon wobbles slightly in its orbit (libration of ~±6.7° latitude over ~27.3 days). At high southern latitudes, Earth hovers right near the horizon, oscillating above and below local line-of-sight for direct communication.
-              </p>
             </div>
-
-            <div className="bg-[#050608] p-3 rounded border border-[#2A2D31] flex flex-col gap-1">
-              <span className="text-[#6DBF8B] font-semibold text-xs flex items-center gap-1.5 font-sans">
-                <span>⚡</span> The Joint Power &amp; Comm Window
-              </span>
-              <p className="text-[#8A8A88] leading-relaxed text-3xs font-sans">
-                Without relay orbiters or nuclear power, landers can only operate when the Sun generates solar power <strong className="text-[#E4E4E2]">and</strong> Earth is visible for telemetry. Our <span className="text-[#6DBF8B] font-mono">Joint Opportunity</span> timeline shows this exact overlap.
-              </p>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* ================= STEP 2: Site Directory + Map/Globe ================= */}
-      <div className="relative grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <PanelCornerBrackets />
-        <div className="lg:col-span-6">
-          <MissionExplorer sites={selectableSites} />
-        </div>
-        <div className="lg:col-span-6 flex flex-col gap-2">
-          {/* Map view switcher: Globe (default) / Flat polar map */}
-          <div className="flex items-center justify-between p-2 bg-[#0D1014] border border-[#2A2D31] rounded text-xs">
-            <span className="text-3xs uppercase font-mono text-[#8A8A88] font-semibold">
-              Map View:
-            </span>
             <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => setMapViewMode('both')}
+                className={`px-2.5 py-1 rounded text-3xs font-mono font-medium transition-colors ${
+                  mapViewMode === 'both'
+                    ? 'bg-[#6DBF8B]/20 text-[#6DBF8B] border border-[#6DBF8B]/50 font-bold'
+                    : 'bg-[#050608] text-[#8A8A88] hover:text-[#E4E4E2] border border-[#2A2D31]'
+                }`}
+              >
+                ⚡ Split View (3D Globe + Flat Polar Map)
+              </button>
               <button
                 type="button"
                 onClick={() => setMapViewMode('globe')}
                 className={`px-2.5 py-1 rounded text-3xs font-mono font-medium transition-colors ${
                   mapViewMode === 'globe'
-                    ? 'bg-[#E0A04A]/20 text-[#E0A04A] border border-[#E0A04A]/50'
+                    ? 'bg-[#E0A04A]/20 text-[#E0A04A] border border-[#E0A04A]/50 font-bold'
                     : 'bg-[#050608] text-[#8A8A88] hover:text-[#E4E4E2] border border-[#2A2D31]'
                 }`}
               >
-                🌐 3D Interactive Globe
+                🌐 3D Globe Only
               </button>
               <button
                 type="button"
                 onClick={() => setMapViewMode('flat')}
                 className={`px-2.5 py-1 rounded text-3xs font-mono font-medium transition-colors ${
                   mapViewMode === 'flat'
-                    ? 'bg-[#6FA8C9]/20 text-[#6FA8C9] border border-[#6FA8C9]/50'
+                    ? 'bg-[#6FA8C9]/20 text-[#6FA8C9] border border-[#6FA8C9]/50 font-bold'
                     : 'bg-[#050608] text-[#8A8A88] hover:text-[#E4E4E2] border border-[#2A2D31]'
                 }`}
               >
-                🗺️ Flat polar map
+                🗺️ Flat Polar Map Only
               </button>
             </div>
           </div>
 
-          {mapViewMode === 'globe' ? (
-            <div className="flex flex-col gap-1.5">
-              <Suspense
-                fallback={
-                  <div className="w-full min-h-[460px] lg:min-h-[490px] bg-[#050608] border border-[#2A2D31] rounded flex items-center justify-center text-3xs font-mono text-[#8A8A88]">
-                    Loading 3D lunar globe...
-                  </div>
-                }
-              >
-                <LunarGlobe
-                  sites={selectableSites}
-                  selectedSiteId={scenarioAId}
-                  onSelectSite={handleSelectSiteFromMapOrGlobe}
-                  onPickCoords={handlePickCoordsFromMapOrGlobe}
-                  scenarioAId={scenarioAId}
-                  scenarioBId={scenarioBId}
-                  heightClass="min-h-[460px] lg:min-h-[490px]"
-                  compact={false}
-                />
-              </Suspense>
-              <div className="text-3xs font-mono text-[#8A8A88] px-1 text-right">
-                Moon surface: NASA SVS CGI Moon Kit (LRO). Visual backdrop only; results use LOLA elevation data.
+          <div className={`grid grid-cols-1 ${mapViewMode === 'both' ? 'lg:grid-cols-12' : ''} gap-4 items-stretch`}>
+            {(mapViewMode === 'both' || mapViewMode === 'globe') && (
+              <div className={`${mapViewMode === 'both' ? 'lg:col-span-6' : ''} flex flex-col gap-1.5`}>
+                <Suspense
+                  fallback={
+                    <div className="w-full min-h-[440px] bg-[#050608] border border-[#2A2D31] rounded flex items-center justify-center text-3xs font-mono text-[#8A8A88]">
+                      Loading 3D lunar globe...
+                    </div>
+                  }
+                >
+                  <LunarGlobe
+                    sites={selectableSites}
+                    selectedSiteId={scenarioAId}
+                    onSelectSite={handleSelectSiteFromMapOrGlobe}
+                    onPickCoords={handlePickCoordsFromMapOrGlobe}
+                    scenarioAId={scenarioAId}
+                    scenarioBId={scenarioBId}
+                    heightClass={mapViewMode === 'both' ? 'min-h-[420px]' : 'min-h-[560px]'}
+                    compact={false}
+                  />
+                </Suspense>
               </div>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-1.5">
-              <MoonMap
-                sites={selectableSites}
-                onPickCoords={handlePickCoordsFromMapOrGlobe}
-                onSelectSite={handleSelectSiteFromMapOrGlobe}
-              />
-              <div className="text-3xs font-mono text-[#8A8A88] px-1 text-right">
-                Flat polar stereographic projection (R=1737.4 km).
-              </div>
-            </div>
-          )}
+            )}
 
-          {/* Unified Selected Location Bar: appears for BOTH Globe pin/surface clicks
-              and Map pin/surface clicks, so the two views behave identically. */}
+            {(mapViewMode === 'both' || mapViewMode === 'flat') && (
+              <div className={`${mapViewMode === 'both' ? 'lg:col-span-6' : ''} flex flex-col gap-1.5`}>
+                <MoonMap
+                  sites={selectableSites}
+                  onPickCoords={handlePickCoordsFromMapOrGlobe}
+                  onSelectSite={handleSelectSiteFromMapOrGlobe}
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Selection Action Bar when clicking a pin or arbitrary surface point */}
           {selectedLocation && (
-            <div className="p-3 bg-[#050608] border border-[#B9A58C]/40 rounded flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-fade-in text-xs">
+            <div className="p-3 bg-[#050608] border-2 border-[#6DBF8B] rounded flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-fade-in text-xs shadow-lg">
               <div>
                 {selectedLocation.kind === 'site' ? (
                   <>
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-semibold text-[#E4E4E2]">{selectedLocation.site.name}</span>
-                      <span className="px-1.5 py-0.5 rounded text-3xs font-medium bg-[#171B22] text-[#8A8A88] font-mono">
-                        {selectedLocation.site.kind === 'candidate' ? 'Candidate Site' : selectedLocation.site.isMission ? 'Mission' : 'Reference Site'}
+                      <span className="font-bold text-[#E4E4E2]">{selectedLocation.site.name}</span>
+                      <span className="px-1.5 py-0.5 rounded text-3xs font-medium bg-[#171B22] text-[#6DBF8B] font-mono">
+                        {selectedLocation.site.kind === 'candidate' ? 'Artemis Candidate' : selectedLocation.site.isMission ? 'CLPS Mission' : 'Reference Site'}
                       </span>
                     </div>
                     <div className="text-[#8A8A88] font-mono text-2xs mt-0.5">
@@ -549,8 +537,8 @@ export default function ExplorerPage() {
                   </>
                 ) : (
                   <>
-                    <span className="font-semibold text-[#E4E4E2]">Custom Surface Point</span>
-                    <div className="text-[#8A8A88] font-mono text-2xs mt-0.5">
+                    <span className="font-bold text-[#6DBF8B]">Arbitrary Surface Point Selected</span>
+                    <div className="text-[#E4E4E2] font-mono text-2xs mt-0.5">
                       Lat: {selectedLocation.lat}° · Lon: {selectedLocation.lon}°
                     </div>
                   </>
@@ -561,27 +549,32 @@ export default function ExplorerPage() {
                   <>
                     <button
                       onClick={() => assignToScenario(selectedLocation.site, 'A')}
-                      className="px-2.5 py-1 rounded bg-[#E0A04A]/15 hover:bg-[#E0A04A]/30 text-[#E0A04A] border border-[#E0A04A]/40 font-medium font-mono transition-colors"
+                      className="px-3 py-1.5 rounded bg-[#E0A04A] text-[#050608] font-bold font-mono transition-colors cursor-pointer"
                     >
-                      Assign to Scenario A
+                      Set as Scenario A
                     </button>
                     <button
                       onClick={() => assignToScenario(selectedLocation.site, 'B')}
-                      className="px-2.5 py-1 rounded bg-[#6FA8C9]/15 hover:bg-[#6FA8C9]/30 text-[#6FA8C9] border border-[#6FA8C9]/40 font-medium font-mono transition-colors"
+                      className="px-3 py-1.5 rounded bg-[#6FA8C9] text-[#050608] font-bold font-mono transition-colors cursor-pointer"
                     >
-                      Assign to Scenario B
+                      Set as Scenario B
                     </button>
                   </>
                 ) : (
-                  <button
-                    onClick={() => {
-                      setPickedCoords(selectedLocation.lat, selectedLocation.lon)
-                      setSelectedLocation(null)
-                    }}
-                    className="px-2.5 py-1 rounded bg-[#6DBF8B]/15 hover:bg-[#6DBF8B]/30 text-[#6DBF8B] border border-[#6DBF8B]/40 font-medium font-mono transition-colors"
-                  >
-                    Analyze Custom Point
-                  </button>
+                  <>
+                    <button
+                      onClick={() => requestCustomPointAnalysis('A')}
+                      className="px-3 py-1.5 rounded bg-[#E0A04A] text-[#050608] font-bold font-mono transition-colors cursor-pointer"
+                    >
+                      ⚡ Analyze in Scenario A
+                    </button>
+                    <button
+                      onClick={() => requestCustomPointAnalysis('B')}
+                      className="px-3 py-1.5 rounded bg-[#6FA8C9] text-[#050608] font-bold font-mono transition-colors cursor-pointer"
+                    >
+                      ⚡ Analyze in Scenario B
+                    </button>
+                  </>
                 )}
                 <button
                   onClick={() => setSelectedLocation(null)}
@@ -595,30 +588,77 @@ export default function ExplorerPage() {
         </div>
       </div>
 
-      {/* ================= STEP 3: Scenario A & B Panels ================= */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <ScenarioPanel type="A" sites={selectableSites} />
-        <ScenarioPanel type="B" sites={selectableSites} />
+      {/* ================= Scenario A & B Configuration + Action Bar ================= */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <ScenarioPanel
+          type="A"
+          sites={selectableSites}
+          customPointRequest={customPointRequest}
+          onCustomPointRequestHandled={handleCustomPointRequestHandled}
+          onCustomAnalysisComplete={triggerAssignFeedback}
+        />
+        <ScenarioPanel
+          type="B"
+          sites={selectableSites}
+          customPointRequest={customPointRequest}
+          onCustomPointRequestHandled={handleCustomPointRequestHandled}
+          onCustomAnalysisComplete={triggerAssignFeedback}
+        />
       </div>
 
-      {/* Stacked A/B Opportunity Timelines */}
-      <OpportunityTimeline sites={selectableSites} />
+      {/* Explicit Action Bar between Scenario Selection and Comparison Results */}
+      <div className="p-3 bg-[#0D1014] border border-[#6DBF8B]/50 rounded flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="text-xs text-[#E4E4E2] font-mono">
+          Ready to evaluate <strong className="text-[#E0A04A]">Scenario A ({siteA?.name || scenarioAId})</strong> vs{' '}
+          <strong className="text-[#6FA8C9]">Scenario B ({siteB?.name || scenarioBId})</strong> over{' '}
+          <strong className="text-[#6DBF8B]">{windowDays === 0.5 ? '12 hours' : windowDays === 1 ? '24 hours' : `${windowDays} days`}</strong>.
+        </div>
+        <button
+          type="button"
+          onClick={runComparisonAndScroll}
+          className="px-5 py-2 rounded bg-[#6DBF8B] hover:bg-[#5aa877] text-[#050608] text-xs font-bold font-mono uppercase tracking-wider transition-colors cursor-pointer shrink-0 shadow-md"
+        >
+          ⚡ Run Comparison &amp; 30-Day Forecast ↓
+        </button>
+      </div>
 
-      {/* Comparison Synthesis */}
+      {/* ================= Opportunity Timelines & Comparison Results ================= */}
+      <div ref={timelineRef}>
+        <OpportunityTimeline sites={selectableSites} />
+      </div>
+
       <div ref={comparisonRef} className="relative">
         <PanelCornerBrackets />
         <ComparisonPanel sites={selectableSites} />
       </div>
 
-      {/* Floating "Jump to Comparison" chip on small screens after an assignment */}
-      {showJumpChip && (
-        <button
-          onClick={() => comparisonRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
-          className="fixed bottom-5 right-5 z-40 sm:hidden px-4 py-2 rounded-full bg-[#B9A58C] text-[#050608] text-xs font-bold font-mono shadow-lg animate-fade-in"
-        >
-          Jump to Comparison ↓
-        </button>
-      )}
+      {/* Educational Guide tucked cleanly at the bottom as a collapsible reference */}
+      <div className="bg-[#0D1014] border border-[#2A2D31] rounded p-3">
+        <div className="flex items-center justify-between cursor-pointer" onClick={() => setShowEducationalCard(!showEducationalCard)}>
+          <span className="text-xs font-semibold text-[#8A8A88] uppercase tracking-wider font-mono">
+            🎓 Reference Guide: Grazing Polar Sunlight (~1.54° Tilt) &amp; Lunar Libration
+          </span>
+          <span className="text-3xs text-[#6FA8C9] font-mono">
+            {showEducationalCard ? 'Hide ▲' : 'Expand ▼'}
+          </span>
+        </div>
+        {showEducationalCard && (
+          <div className="mt-3 pt-3 border-t border-[#2A2D31] grid grid-cols-1 md:grid-cols-3 gap-3 text-3xs text-[#8A8A88]">
+            <div className="bg-[#050608] p-2.5 rounded border border-[#2A2D31]">
+              <strong className="text-[#E0A04A] block mb-1">☀️ Grazing Polar Sunlight</strong>
+              The Moon's axis is tilted only 1.54° to the ecliptic. At the South Pole, the Sun skims the horizon—topographic peaks stay lit while crater floors stay in shadow.
+            </div>
+            <div className="bg-[#050608] p-2.5 rounded border border-[#2A2D31]">
+              <strong className="text-[#6FA8C9] block mb-1">🌍 Lunar Libration &amp; DTE</strong>
+              Orbital libration (~±6.7° latitude over 27.3 days) makes Earth bob above and below local terrain horizons.
+            </div>
+            <div className="bg-[#050608] p-2.5 rounded border border-[#2A2D31]">
+              <strong className="text-[#6DBF8B] block mb-1">⚡ Joint Operations Window</strong>
+              Solar-powered landers without relay satellites require simultaneous sunlight and direct Earth line-of-sight.
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   )
 }
