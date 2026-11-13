@@ -2,11 +2,13 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import type { SelectableSite } from '../types/mission'
+import { useScenarioStore } from '../stores/scenarioStore'
 
 export interface LunarGlobeProps {
   sites?: SelectableSite[]
   selectedSiteId?: string | null
   onSelectSite?: (site: SelectableSite) => void
+  onPickCoords?: (lat: number, lon: number) => void
   scenarioAId?: string
   scenarioBId?: string
   autoRotate?: boolean
@@ -41,6 +43,20 @@ export function latLonToVector3(latDeg: number, lonDeg: number, radius = GLOBE_R
 }
 
 /**
+ * Converts Three.js Cartesian coordinate back to planetocentric latitude and east-positive longitude.
+ */
+export function vector3ToLatLon(v: THREE.Vector3): { lat: number; lon: number } {
+  const norm = v.clone().normalize()
+  const latRad = Math.asin(Math.max(-1, Math.min(1, norm.y)))
+  const latDeg = (latRad * 180.0) / Math.PI
+  const lonRad = Math.atan2(-norm.z, norm.x)
+  let lonDeg = (lonRad * 180.0) / Math.PI
+  while (lonDeg > 180) lonDeg -= 360
+  while (lonDeg < -180) lonDeg += 360
+  return { lat: Number(latDeg.toFixed(2)), lon: Number(lonDeg.toFixed(2)) }
+}
+
+/**
  * Compute camera distance required to fit a sphere of radius R
  * within the camera's FOV and panel aspect ratio with a small margin.
  */
@@ -72,6 +88,7 @@ export default function LunarGlobe({
   sites = [],
   selectedSiteId,
   onSelectSite,
+  onPickCoords,
   scenarioAId,
   scenarioBId,
   autoRotate = false,
@@ -88,6 +105,9 @@ export default function LunarGlobe({
   const markersGroupRef = useRef<THREE.Group | null>(null)
   const onSelectSiteRef = useRef(onSelectSite)
   onSelectSiteRef.current = onSelectSite
+  const onPickCoordsRef = useRef(onPickCoords)
+  onPickCoordsRef.current = onPickCoords
+  const setPickedCoords = useScenarioStore((s) => s.setPickedCoords)
   const [currentView, setCurrentView] = useState<'south_pole' | 'near_side' | 'far_side' | 'custom'>('south_pole')
 
   // Check WebGL availability
@@ -349,6 +369,18 @@ export default function LunarGlobe({
           }
           if (cur && cur.userData.site && onSelectSiteRef.current) {
             onSelectSiteRef.current(cur.userData.site)
+            return
+          }
+        }
+
+        // Raycast against lunar sphere surface to pick custom coordinates
+        const surfaceHits = raycaster.intersectObject(moonMesh)
+        if (surfaceHits.length > 0) {
+          const pt = surfaceHits[0].point
+          const { lat, lon } = vector3ToLatLon(pt)
+          setPickedCoords(lat, lon)
+          if (onPickCoordsRef.current) {
+            onPickCoordsRef.current(lat, lon)
           }
         }
       }
@@ -709,7 +741,7 @@ export default function LunarGlobe({
               <span>Filled: Site</span>
             </span>
           </div>
-          <div>Drag to rotate · Scroll to zoom · Click pin to inspect</div>
+          <div>Drag to rotate · Scroll to zoom · Click globe to pick coordinates · Click pin to inspect</div>
         </div>
       )}
     </div>

@@ -4,12 +4,13 @@ import { useScenarioStore } from '../stores/scenarioStore'
 
 interface MoonMapProps {
   sites: SelectableSite[]
+  onPickCoords?: (lat: number, lon: number) => void
 }
 
 type ProjectionMode = 'equirectangular' | 'polar_stereographic'
 
-export default function MoonMap({ sites }: MoonMapProps) {
-  const { scenarioAId, scenarioBId, setScenarioA, setScenarioB } = useScenarioStore()
+export default function MoonMap({ sites, onPickCoords }: MoonMapProps) {
+  const { scenarioAId, scenarioBId, setScenarioA, setScenarioB, setPickedCoords } = useScenarioStore()
   const [hoveredSite, setHoveredSite] = useState<SelectableSite | null>(null)
   const [selectedPin, setSelectedPin] = useState<SelectableSite | null>(null)
   const [projection, setProjection] = useState<ProjectionMode>('polar_stereographic')
@@ -37,6 +38,42 @@ export default function MoonMap({ sites }: MoonMapProps) {
   const polarSites = mappableSites.filter((s) => s.lat !== null && s.lat <= -70)
 
   const activePin = selectedPin || hoveredSite
+
+  const handleMapClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    // If user clicked on a pin marker or its children, don't trigger coordinate picking
+    if ((e.target as HTMLElement).closest('.site-marker-pin')) {
+      return
+    }
+
+    const rect = e.currentTarget.getBoundingClientRect()
+    const xPct = ((e.clientX - rect.left) / rect.width) * 100
+    const yPct = ((e.clientY - rect.top) / rect.height) * 100
+
+    let lat: number
+    let lon: number
+
+    if (projection === 'polar_stereographic') {
+      const dxPct = xPct - 50.0
+      const dyPct = yPct - 50.0
+      const distPct = Math.sqrt(dxPct * dxPct + dyPct * dyPct)
+      const rFrac = Math.min(1.0, distPct / 42.0)
+      lat = Number((-90.0 + rFrac * 20.0).toFixed(2))
+
+      const thetaRad = Math.atan2(dyPct, dxPct)
+      let lonCalc = (thetaRad * 180.0) / Math.PI + 90.0
+      while (lonCalc > 180) lonCalc -= 360
+      while (lonCalc < -180) lonCalc += 360
+      lon = Number(lonCalc.toFixed(2))
+    } else {
+      lon = Number(((xPct / 100) * 360 - 180).toFixed(2))
+      lat = Number((90 - (yPct / 100) * 180).toFixed(2))
+    }
+
+    setPickedCoords(lat, lon)
+    if (onPickCoords) {
+      onPickCoords(lat, lon)
+    }
+  }
 
   return (
     <div className="bg-[#0D1014] border border-[#2A2D31] rounded p-4 flex flex-col gap-3">
@@ -88,7 +125,10 @@ export default function MoonMap({ sites }: MoonMapProps) {
       </div>
 
       {/* Map viewport */}
-      <div className="relative w-full aspect-[2/1] bg-[#050608] rounded overflow-hidden border border-[#2A2D31] select-none group">
+      <div
+        onClick={handleMapClick}
+        className="relative w-full aspect-[2/1] bg-[#050608] rounded overflow-hidden border border-[#2A2D31] select-none group cursor-crosshair"
+      >
         {projection === 'polar_stereographic' ? (
           /* South Polar Stereographic Canvas */
           <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 200 100">
@@ -185,7 +225,7 @@ export default function MoonMap({ sites }: MoonMapProps) {
             <div
               key={site.id}
               style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
-              className="absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer z-10 transition-transform duration-150 hover:scale-125"
+              className="site-marker-pin absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer z-10 transition-transform duration-150 hover:scale-125"
               onClick={() => setSelectedPin(site)}
               onMouseEnter={() => setHoveredSite(site)}
               onMouseLeave={() => setHoveredSite(null)}
@@ -209,8 +249,8 @@ export default function MoonMap({ sites }: MoonMapProps) {
         {/* Legend Overlay corner */}
         <div className="absolute bottom-2 left-2 px-2 py-1 bg-[#050608]/90 border border-[#2A2D31] rounded text-3xs text-[#8A8A88] font-mono">
           {projection === 'polar_stereographic'
-            ? 'South Polar Stereographic · R=1737.4 km · Lat ≤ -70°'
-            : 'Planetocentric Lat [-90, +90] | East-Positive Lon [-180, +180]'}
+            ? 'South Polar Stereographic · Click map to pick custom coords · Lat ≤ -70°'
+            : 'Planetocentric Lat [-90, +90] | East-Positive Lon [-180, +180] · Click to pick coords'}
         </div>
       </div>
 

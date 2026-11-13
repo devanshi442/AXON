@@ -25,6 +25,7 @@ export interface ComputeWindowsOptions {
   solarArrayType?: SolarOrientation
   arrayAreaM2?: number
   arrayEfficiency?: number
+  windowDays?: number
 }
 
 export interface ExtendedOpportunityData extends OpportunityData {
@@ -59,6 +60,8 @@ interface ScenarioStore {
   solarArrayType: SolarOrientation
   arrayAreaM2: number
   arrayEfficiency: number
+  windowDays: number
+  pickedCoords: { lat: string; lon: string } | null
 
   timeseriesCache: Record<string, GeometryTimeseries>
   horizonCache: Record<string, HorizonProfile>
@@ -78,9 +81,12 @@ interface ScenarioStore {
   setSolarArrayType: (t: SolarOrientation) => void
   setArrayAreaM2: (a: number) => void
   setArrayEfficiency: (eff: number) => void
+  setWindowDays: (days: number) => void
+  setPickedCoords: (lat: string | number, lon: string | number) => void
 
   loadTimeseries: (siteId: string) => Promise<void>
   loadHorizon: (siteId: string) => Promise<void>
+  injectCustomSite: (id: string, ts: GeometryTimeseries, horizon?: HorizonProfile) => void
 }
 
 export function getMaskForMastHeight(profile?: HorizonProfile | null, mastHeightM: number = 1.5): number[] | null {
@@ -124,6 +130,8 @@ export const useScenarioStore = create<ScenarioStore>((set, get) => ({
   solarArrayType: 'vertical',
   arrayAreaM2: 1.0,
   arrayEfficiency: 0.28,
+  windowDays: 30,
+  pickedCoords: null,
 
   timeseriesCache: {},
   horizonCache: {},
@@ -153,6 +161,17 @@ export const useScenarioStore = create<ScenarioStore>((set, get) => ({
   setSolarArrayType: (solarArrayType) => set({ solarArrayType }),
   setArrayAreaM2: (arrayAreaM2) => set({ arrayAreaM2 }),
   setArrayEfficiency: (arrayEfficiency) => set({ arrayEfficiency }),
+  setWindowDays: (windowDays) => set({ windowDays }),
+  setPickedCoords: (lat, lon) => set({ pickedCoords: { lat: String(lat), lon: String(lon) } }),
+
+  injectCustomSite: (id: string, ts: GeometryTimeseries, horizon?: HorizonProfile) => {
+    set((state) => ({
+      timeseriesCache: { ...state.timeseriesCache, [id]: ts },
+      horizonCache: horizon
+        ? { ...state.horizonCache, [id]: horizon }
+        : state.horizonCache,
+    }))
+  },
 
   loadTimeseries: async (siteId: string) => {
     if (get().timeseriesCache[siteId] || get().loading[siteId]) {
@@ -256,24 +275,39 @@ export function getElevationAtTime(
   }
 
   // Hourly index calculation
-  const diffHours = Math.round((targetMs - firstMs) / (ts.step_seconds * 1000))
-  const idx = Math.max(0, Math.min(ts.times.length - 1, diffHours))
+  const stepMs = ts.step_seconds * 1000
+  const rawIdx = (targetMs - firstMs) / stepMs
+  const idx0 = Math.max(0, Math.min(ts.times.length - 2, Math.floor(rawIdx)))
+  const idx1 = idx0 + 1
+  const frac = rawIdx - idx0  // 0.0 to 1.0
 
+  // Linear interpolation helper
+  const lerp = (a: number, b: number, t: number) => a + (b - a) * t
+
+  // Azimuth wraparound: unwrap before lerp
+  const lerpAz = (a: number, b: number, t: number): number => {
+    let diff = b - a
+    if (diff > 180) diff -= 360
+    if (diff < -180) diff += 360
+    return ((a + diff * t) + 360) % 360
+  }
+
+  const idx1Clamped = Math.min(ts.times.length - 1, idx1)
   return {
-    sunElevation: ts.sun_elevation_deg[idx],
-    earthElevation: ts.earth_elevation_deg[idx],
-    sunAzimuth: ts.sun_azimuth_deg[idx],
-    earthAzimuth: ts.earth_azimuth_deg[idx],
-    matchedTime: ts.times[idx],
+    sunElevation: lerp(ts.sun_elevation_deg[idx0], ts.sun_elevation_deg[idx1Clamped], frac),
+    earthElevation: lerp(ts.earth_elevation_deg[idx0], ts.earth_elevation_deg[idx1Clamped], frac),
+    sunAzimuth: lerpAz(ts.sun_azimuth_deg[idx0], ts.sun_azimuth_deg[idx1Clamped], frac),
+    earthAzimuth: lerpAz(ts.earth_azimuth_deg[idx0], ts.earth_azimuth_deg[idx1Clamped], frac),
+    matchedTime: ts.times[idx0],
     isOutRange: false,
   }
 }
 
 /**
- * Compute 30-day opportunities from selected UTC time.
+ * Compute N-day opportunities from selected UTC time.
  * Supports dual modes: idealized flat datum (0°) vs terrain-aware horizon skyline.
  */
-export function compute30DayWindows(
+export function computeWindowOpportunities(
   ts?: GeometryTimeseries,
   startUtc?: string,
   thresholdOrOptions: number | ComputeWindowsOptions = 0.0
@@ -310,7 +344,7 @@ export function compute30DayWindows(
     0,
     Math.round((startMs - firstMs) / (ts.step_seconds * 1000))
   )
-  const windowSamples = Math.ceil((30 * 24 * 60 * 60) / ts.step_seconds)// 30 days of hourly samples
+  const windowSamples = Math.ceil(((options.windowDays ?? 30) * 24 * 60 * 60) / ts.step_seconds)
   const endIndex = Math.min(ts.times.length, startIndex + windowSamples)
 
   const sliceTimes = ts.times.slice(startIndex, endIndex)
@@ -422,3 +456,6 @@ export function compute30DayWindows(
     delta_joint_hours: Math.round((jointMetrics.totalHours - flatJointMetrics.totalHours) * 10) / 10,
   }
 }
+
+// Backwards-compat alias
+export const compute30DayWindows = computeWindowOpportunities

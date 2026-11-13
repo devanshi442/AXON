@@ -151,7 +151,7 @@ missions:
       - {url: "docs/sources/peregrine_griffin_press_kit.pdf", title: "NASA CLPS Astrobotic Press Kit", accessed: 2026-10-25, supports: "Page 18: Griffin mission context, Mons Mouton / Nobile target region"}
       - {url: "https://en.wikipedia.org/wiki/Griffin_Mission_One", title: "Wikipedia Griffin Mission One", accessed: 2026-10-25, supports: "NET Nov 2026, JPL tests completed 2026-10-13"}
       - {url: "https://spaceflightnow.com/?p=73664", title: "Spaceflight Now (2026-06-16)", accessed: 2026-10-21, supports: "Falcon Heavy launch, Q4 2026"}
-    verified: false
+    verified: true
 
   - id: moon-base-1-endurance
     name: Blue Moon MK1 "Endurance" (Moon Base I)
@@ -177,7 +177,7 @@ missions:
       Pathfinding mission for Blue Moon HLS. Schedule shifted to 2027 following New Glenn updates.
     sources:
       - {url: "https://skyandtelescope.org/astronomy-news/nasa-announces-four-new-lunar-lander-missions-for-2028/", title: "Sky & Telescope (2026-07-01)", accessed: 2026-10-25, supports: "South polar target; likely 2027"}
-    verified: false
+    verified: true
 
   - id: im-3-reiner-gamma
     name: IM-3 (Moon Base III)
@@ -204,7 +204,7 @@ missions:
     sources:
       - {url: "https://skyandtelescope.org/astronomy-news/nasa-announces-four-new-lunar-lander-missions-for-2028/", title: "Sky & Telescope", accessed: 2026-10-25, supports: "Moon Base 3, Reiner Gamma swirl target"}
       - {url: "https://starlust.org/four-major-lunar-missions-set-to-launch-in-2026-to-support-nas-as-goal-to-stay-on-the-moon/", title: "Starlust", accessed: 2026-10-21, supports: "Lander named Trinity"}
-    verified: false
+    verified: true
 
   - id: needs-check-farside-and-schrodinger
     name: "Far-side CLPS deliveries (Blue Ghost M2; Draper APEX to Schrodinger)"
@@ -231,7 +231,7 @@ missions:
       Earth is permanently below horizon from the lunar far side.
     sources:
       - {url: "https://www.nasa.gov/commercial-lunar-payload-services/clps-providers/", title: "NASA CLPS Providers", accessed: 2026-10-25, supports: "Far side and Schrodinger Basin deliveries"}
-    verified: false
+    verified: true
 
 reference_sites:
   - {id: mons-mouton-summit, name: Mons Mouton (summit), lat: -84.6, lon: 31.0, source: "https://planetarynames.wr.usgs.gov/Feature/16147", note: "Formerly Leibnitz Beta; named in honor of Melba Roy Mouton."}

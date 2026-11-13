@@ -9,8 +9,9 @@ interface MissionExplorerProps {
 }
 
 export default function MissionExplorer({ sites }: MissionExplorerProps) {
-  const { scenarioAId, scenarioBId, setScenarioA, setScenarioB, utcA } = useScenarioStore()
+  const { scenarioAId, scenarioBId, setScenarioA, setScenarioB, utcA, mastHeightM } = useScenarioStore()
   const [search, setSearch] = useState('')
+  const [detailSite, setDetailSite] = useState<SelectableSite | null>(null)
   type FilterType = 'all' | 'south_pole' | 'candidate' | 'mission' | 'landed' | 'planned'
   const [statusFilter, setStatusFilter] = useState<FilterType>('all')
 
@@ -27,7 +28,9 @@ export default function MissionExplorer({ sites }: MissionExplorerProps) {
 
     if (statusFilter === 'all') return true
     if (statusFilter === 'south_pole') {
-      return (s.lat !== null && s.lat <= -70) || (s.region_type && s.region_type.includes('polar'))
+      const isSouthPolar = (s.lat !== null && s.lat <= -70) || (s.region_type && s.region_type.includes('polar'))
+      const isFarside = s.region_type === 'farside'
+      return isSouthPolar && !isFarside
     }
     if (statusFilter === 'candidate') return s.kind === 'candidate'
     if (statusFilter === 'mission') return s.kind === 'mission'
@@ -169,7 +172,7 @@ export default function MissionExplorer({ sites }: MissionExplorerProps) {
                     </div>
                   )}
                   <div className="text-3xs text-[#8A8A88] font-mono mt-0.5">
-                    Daylight: 30-day window from {formatUtcDisplay(utcA)}, mast 1.5 m
+                    Daylight: 30-day window from {formatUtcDisplay(utcA)}, mast {mastHeightM} m
                   </div>
                 </div>
 
@@ -183,7 +186,7 @@ export default function MissionExplorer({ sites }: MissionExplorerProps) {
 
               {/* Integrity & Verification Badge */}
               <div className="mt-2.5 pt-2 border-t border-[#2A2D31] flex items-center justify-between">
-                <div>
+                <div className="flex items-center gap-2">
                   {s.verified ? (
                     <span className="text-3xs text-[#6DBF8B] flex items-center gap-1 font-medium font-mono">
                       ✓ Verified
@@ -193,6 +196,13 @@ export default function MissionExplorer({ sites }: MissionExplorerProps) {
                       ⚠️ Unverified
                     </span>
                   )}
+                  <button
+                    type="button"
+                    onClick={() => setDetailSite(s)}
+                    className="px-1.5 py-0.5 rounded text-3xs font-mono bg-[#171B22] hover:bg-[#2A2D31] text-[#E4E4E2] border border-[#2A2D31] transition-colors"
+                  >
+                    Details ↗
+                  </button>
                 </div>
 
                 {/* Scenario Assign Buttons */}
@@ -231,6 +241,209 @@ export default function MissionExplorer({ sites }: MissionExplorerProps) {
           )
         })}
       </div>
+
+      {/* Mission Detail Modal / Drawer */}
+      {detailSite && (
+        <div
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in"
+          onClick={() => setDetailSite(null)}
+        >
+          <div
+            className="relative bg-[#0D1014] border border-[#2A2D31] rounded-lg max-w-2xl w-full max-h-[85vh] overflow-y-auto p-5 flex flex-col gap-4 text-xs"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <PanelCornerBrackets />
+
+            {/* Header */}
+            <div className="flex items-start justify-between gap-3 border-b border-[#2A2D31] pb-3">
+              <div>
+                <div className="flex items-center gap-2">
+                  <h2 className="text-base font-bold text-[#E4E4E2]">
+                    {detailSite.name}
+                  </h2>
+                  <span
+                    className={`px-2 py-0.5 rounded text-3xs font-mono uppercase tracking-wider ${
+                      detailSite.status === 'landed_success'
+                        ? 'bg-[#132A1C] text-[#6DBF8B] border border-[#2A5C3D]'
+                        : detailSite.status === 'landed_partial'
+                        ? 'bg-[#2A1210] text-[#E0A04A] border border-[#7F2318]'
+                        : 'bg-[#171B22] text-[#B9A58C] border border-[#2A2D31]'
+                    }`}
+                  >
+                    {detailSite.kind === 'candidate' ? 'Artemis Candidate' : detailSite.status?.replace('_', ' ') || 'Reference'}
+                  </span>
+                  {detailSite.verified && (
+                    <span className="text-3xs text-[#6DBF8B] font-mono font-medium">
+                      ✓ 2nd-Reviewer Verified
+                    </span>
+                  )}
+                </div>
+                <p className="text-2xs text-[#8A8A88] font-mono mt-0.5">
+                  {detailSite.provider ? `${detailSite.provider} · Lander: ${detailSite.lander}` : 'Lunar Surface Target'}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setDetailSite(null)}
+                className="w-7 h-7 flex items-center justify-center rounded bg-[#171B22] hover:bg-[#2A2D31] text-[#E4E4E2] text-sm font-mono border border-[#2A2D31]"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Overview Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 font-mono text-3xs">
+              <div className="p-2.5 bg-[#050608] rounded border border-[#2A2D31]">
+                <span className="text-[#8A8A88] block mb-0.5">Coordinates</span>
+                <span className="text-[#E4E4E2] font-semibold">
+                  {detailSite.lat != null && detailSite.lon != null
+                    ? `${detailSite.lat}°, ${detailSite.lon}°`
+                    : 'Unpublished'}
+                </span>
+              </div>
+              <div className="p-2.5 bg-[#050608] rounded border border-[#2A2D31]">
+                <span className="text-[#8A8A88] block mb-0.5">Uncertainty Radius</span>
+                <span className="text-[#E4E4E2] font-semibold">
+                  {detailSite.uncertainty_km != null ? `±${detailSite.uncertainty_km} km` : 'Not specified'}
+                </span>
+              </div>
+              <div className="p-2.5 bg-[#050608] rounded border border-[#2A2D31]">
+                <span className="text-[#8A8A88] block mb-0.5">Elevation</span>
+                <span className="text-[#E4E4E2] font-semibold">
+                  {detailSite.elevation_m != null ? `${detailSite.elevation_m} m` : 'From DEM'}
+                </span>
+              </div>
+              <div className="p-2.5 bg-[#050608] rounded border border-[#2A2D31]">
+                <span className="text-[#8A8A88] block mb-0.5">Terrain Tier</span>
+                <span className="text-[#6FA8C9] font-bold">
+                  {detailSite.terrain_tier ?? 'T2'}
+                </span>
+              </div>
+            </div>
+
+            {/* Mission Dates (if available) */}
+            {detailSite.dates && (
+              <div className="p-3 bg-[#050608] rounded border border-[#2A2D31] flex flex-col gap-1.5 font-mono text-3xs">
+                <span className="text-[#8A8A88] uppercase tracking-wider font-semibold">Mission Schedule</span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-2xs">
+                  <div>
+                    <span className="text-[#8A8A88]">Launch: </span>
+                    <span className="text-[#E4E4E2] font-semibold">
+                      {detailSite.dates.launch.date || 'TBD'}
+                    </span>
+                    {detailSite.dates.launch.kind && (
+                      <span className="text-[#8A8A88] ml-1">({detailSite.dates.launch.kind}, {detailSite.dates.launch.precision})</span>
+                    )}
+                  </div>
+                  <div>
+                    <span className="text-[#8A8A88]">Landing: </span>
+                    <span className="text-[#E4E4E2] font-semibold">
+                      {detailSite.dates.landing.date || 'TBD'}
+                    </span>
+                    {detailSite.dates.landing.kind && (
+                      <span className="text-[#8A8A88] ml-1">({detailSite.dates.landing.kind}, {detailSite.dates.landing.precision})</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Payloads */}
+            {detailSite.payload_highlights && detailSite.payload_highlights.length > 0 && (
+              <div className="p-3 bg-[#050608] rounded border border-[#2A2D31] flex flex-col gap-1.5">
+                <span className="text-3xs uppercase tracking-wider text-[#8A8A88] font-mono font-semibold">
+                  Payload Highlights
+                </span>
+                <ul className="list-disc list-inside space-y-1 text-2xs text-[#E4E4E2]">
+                  {detailSite.payload_highlights.map((p, idx) => (
+                    <li key={idx}>{p}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Notes */}
+            {detailSite.notes && (
+              <div className="p-3 bg-[#050608] rounded border border-[#2A2D31] flex flex-col gap-1 text-2xs">
+                <span className="text-3xs uppercase tracking-wider text-[#8A8A88] font-mono font-semibold">
+                  Description &amp; Context
+                </span>
+                <p className="text-[#E4E4E2] leading-relaxed">
+                  {detailSite.notes}
+                </p>
+              </div>
+            )}
+
+            {/* Clickable Primary Sources */}
+            <div className="p-3 bg-[#050608] rounded border border-[#2A2D31] flex flex-col gap-2">
+              <span className="text-3xs uppercase tracking-wider text-[#8A8A88] font-mono font-semibold">
+                Cited Primary Sources &amp; Verification Evidence
+              </span>
+              {detailSite.sources && detailSite.sources.length > 0 ? (
+                <div className="space-y-2 font-mono text-3xs">
+                  {detailSite.sources.map((src: any, idx: number) => (
+                    <div key={idx} className="p-2 rounded bg-[#0D1014] border border-[#2A2D31] flex flex-col gap-1">
+                      <div className="flex items-center justify-between">
+                        <a
+                          href={src.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[#6FA8C9] hover:underline font-semibold flex items-center gap-1 truncate"
+                        >
+                          <span>🔗</span> {src.title || src.url}
+                        </a>
+                        {src.accessed && (
+                          <span className="text-[#8A8A88] shrink-0 ml-2">Accessed: {src.accessed}</span>
+                        )}
+                      </div>
+                      {src.supports && (
+                        <p className="text-[#8A8A88] font-sans text-3xs">
+                          <strong className="text-[#6DBF8B]">Supports: </strong>{src.supports}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-3xs text-[#8A8A88] font-mono">No cited sources on file.</p>
+              )}
+            </div>
+
+            {/* Drawer Actions */}
+            <div className="flex items-center justify-between pt-2 border-t border-[#2A2D31] font-mono">
+              <div className="flex items-center gap-2">
+                <button
+                  disabled={detailSite.lat == null}
+                  onClick={() => {
+                    setScenarioA(detailSite.id)
+                    setDetailSite(null)
+                  }}
+                  className="px-3 py-1.5 rounded bg-[#E0A04A] hover:bg-[#C88B35] text-[#050608] font-bold text-3xs disabled:opacity-40"
+                >
+                  Set as Scenario A
+                </button>
+                <button
+                  disabled={detailSite.lat == null}
+                  onClick={() => {
+                    setScenarioB(detailSite.id)
+                    setDetailSite(null)
+                  }}
+                  className="px-3 py-1.5 rounded bg-[#6FA8C9] hover:bg-[#5A93B4] text-[#050608] font-bold text-3xs disabled:opacity-40"
+                >
+                  Set as Scenario B
+                </button>
+              </div>
+              <button
+                type="button"
+                onClick={() => setDetailSite(null)}
+                className="px-3 py-1.5 rounded bg-[#171B22] hover:bg-[#2A2D31] text-[#E4E4E2] text-3xs"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

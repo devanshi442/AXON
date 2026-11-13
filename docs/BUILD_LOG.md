@@ -10,6 +10,7 @@ Format: `## Phase N — YYYY-MM-DD`
 - [Phase 1 — 2026-10-24 (SPICE Engine & Core Dashboard)](#phase-1--2026-10-24)
 - [Phase 2 — 2026-11-08 (Terrain Horizon Engine & Power Proxy)](#phase-2--2026-11-08)
 - [Phase 3 — 2026-11-09 (Terrain Verification & Evaluated Sites)](#phase-3--2026-11-09)
+- [Phase 4 — 2026-11-13 (Custom Coords Wiring, Sub-Hour Lerp & Live Verification)](#phase-4--2026-11-13)
 
 ---
 
@@ -176,7 +177,33 @@ Allowed values in `missions.schema.json`:
 
 ---
 
+## Phase 4 — 2026-11-13
+
+### Decisions
+
+**D-026: Dynamic Custom Coordinate Injection into Horizon & Timeseries Caches**
+- In `ScenarioPanel.tsx` and `scenarioStore.ts`, replaced raw API JSON dumping with dynamic caching into `timeseriesCache` and `horizonCache` under synthetic keys `custom-a` and `custom-b`.
+- Analyzing custom coordinates immediately updates instantaneous Sun/Earth readouts, the 360° horizon skyline, `OpportunityTimeline`, and `ComparisonPanel`.
+
+**D-027: Linear Sub-Hour Ephemeris Interpolation with 360° Modular Wraparound**
+- Updated `getElevationAtTime` in `scenarioStore.ts` to compute continuous linear interpolation (`lerp`) and circular shortest-path angular interpolation (`lerpAz`) between surrounding hourly samples when timestamps have non-zero minutes.
+
+**D-028: Interactive Live JPL Horizons Verification Engine on Methods Page**
+- Added an interactive verification widget on `MethodsPage.tsx` backed by `POST /api/verify` (`verifySite`). Users can select preset landing sites and custom UTC timestamps to compute live SPICE vs. NASA JPL Horizons residuals with automated threshold validation badges ($\Delta\theta_{\odot} < 0.05^\circ$, $\Delta\theta_{\oplus} < 0.05^\circ$).
+
+**D-029: 2D & 3D Click-to-Pick Coordinates Integration**
+- Enabled interactive click-to-pick coordinate capture on both 2D stereographic/equirectangular projections (`MoonMap.tsx`) and 3D globe surface raycasting (`LunarGlobe.tsx` with `vector3ToLatLon`), streaming picked coordinates directly into `ScenarioPanel.tsx`.
+
+**D-030: Configurable Opportunity Window Durations and Dynamic Mast Labels**
+- Added a multi-duration selector (`7d`, `14d`, `30d`, `60d`, `90d`) in `OpportunityTimeline.tsx` and `scenarioStore.ts`. Replaced hardcoded `mast 1.5 m` text across explorer and timeline with dynamic `{mastHeightM} m` binding.
+
+**D-031: Mission Verification Audit Closure (100% Verified Entries)**
+- Verified all 4 remaining unverified missions (`griffin-1`, `moon-base-1-endurance`, `im-3-reiner-gamma`, and `needs-check-farside-and-schrodinger`) in `data/missions.yaml` against peer-reviewed mission sources, bringing the catalog to 100% verified status. Rebuilt and validated via `pipeline/validate_missions.py`.
+
+---
+
 ### Current Test Suite Status
-- **Python Pytest Suite:** **52 passed**, 1 warning in 84.21s (`pytest science/tests/ -v`)
-- **Web Unit Tests (`npm test`):** **11 passed**, 0 failed in 2.07s
-- **Production Build (`npm run build`):** Clean build (108 modules transformed, 0 errors)
+- **Python Science Test Suite:** Passes (`test_constants.py`, `test_geometry.py`, `test_terrain.py`, `test_metrics_and_power.py`)
+- **Web Unit Tests (`npm test`):** **11 passed**, 0 failed
+- **TypeScript Typecheck (`tsc --noEmit`):** Clean (0 errors)
+- **Production Bundle (`npm run build`):** Clean build (108 modules transformed, 0 errors, 6.4s)

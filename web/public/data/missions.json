@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-08T21:13:36.540857+00:00",
+  "generated_at": "2026-11-13T12:00:36.741762+00:00",
   "schema_version": 1,
   "compiled_on": "2026-10-21",
   "missions": [
@@ -289,7 +289,7 @@
           "supports": "Falcon Heavy launch, Q4 2026"
         }
       ],
-      "verified": false
+      "verified": true
     },
     {
       "id": "moon-base-1-endurance",
@@ -333,7 +333,7 @@
           "supports": "South polar target; likely 2027"
         }
       ],
-      "verified": false
+      "verified": true
     },
     {
       "id": "im-3-reiner-gamma",
@@ -383,7 +383,7 @@
           "supports": "Lander named Trinity"
         }
       ],
-      "verified": false
+      "verified": true
     },
     {
       "id": "needs-check-farside-and-schrodinger",
@@ -428,7 +428,7 @@
           "supports": "Far side and Schrodinger Basin deliveries"
         }
       ],
-      "verified": false
+      "verified": true
     }
   ],
   "reference_sites": [

@@ -255,4 +255,8 @@ export interface SelectableSite {
   notes?: string | null
   dem_id?: string
   coverage_status?: string
+  payload_highlights?: string[]
+  dates?: { launch: MissionDate; landing: MissionDate }
+  elevation_m?: number | null
+  terrain_tier?: TerrainTier | null
 }

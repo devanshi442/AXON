@@ -31,6 +31,8 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
     setSolarArrayType,
     arrayAreaM2,
     arrayEfficiency,
+    windowDays,
+    setWindowDays,
     timeseriesCache,
     horizonCache,
   } = useScenarioStore()
@@ -53,6 +55,7 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
     solarArrayType,
     arrayAreaM2,
     arrayEfficiency,
+    windowDays,
   })
 
   const mastHeights = [0.0, 1.5, 3.0, 5.0, 10.0]
@@ -84,10 +87,10 @@ const getWindowStyle = (start: string, end: string) => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h2 className="text-sm font-semibold text-[#E4E4E2] uppercase tracking-wider flex items-center gap-2">
-            <span>⚡</span> 30-Day Opportunity Timelines &amp; Science Windows
+            <span>⚡</span> {windowDays}-Day Opportunity Timelines &amp; Science Windows
           </h2>
           <p className="text-2xs text-[#8A8A88] mt-0.5">
-            Solar power generation potential and Direct-to-Earth (DTE) communication availability over up to 30 days of available coverage.
+            Solar power generation potential and Direct-to-Earth (DTE) communication availability over up to {windowDays} days of available coverage.
           </p>
         </div>
 
@@ -181,6 +184,26 @@ const getWindowStyle = (start: string, end: string) => {
               <option value="tracking">Full 2-Axis Sun Tracking</option>
             </select>
           </div>
+
+          {/* Analysis Window Duration Selection */}
+          <div className="flex items-center gap-2">
+            <span className="text-3xs uppercase tracking-wider text-[#8A8A88] font-medium font-mono">Duration:</span>
+            <div className="flex items-center gap-1">
+              {[7, 14, 30, 60, 90].map((days) => (
+                <button
+                  key={days}
+                  onClick={() => setWindowDays(days)}
+                  className={`px-2 py-0.5 rounded font-mono text-3xs border transition-colors ${
+                    windowDays === days
+                      ? 'bg-[#E0A04A]/20 text-[#E0A04A] border-[#E0A04A]/50 font-bold'
+                      : 'bg-[#0D1014] text-[#8A8A88] border-[#2A2D31] hover:text-[#E4E4E2]'
+                  }`}
+                >
+                  {days}d
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Sliders & Criteria */}
@@ -269,7 +292,7 @@ const getWindowStyle = (start: string, end: string) => {
                   </span>
                 </div>
                 <div className="text-3xs text-[#8A8A88] font-mono mt-1">
-                  Daylight: 30-day window from {formatUtcDisplay(utc)}, mast 1.5 m
+                  Daylight: {windowDays}-day window from {formatUtcDisplay(utc)}, mast {mastHeightM} m
                 </div>
               </div>
 
@@ -360,7 +383,7 @@ const getWindowStyle = (start: string, end: string) => {
           <div className="p-3 bg-[#050608] rounded border border-[#2A2D31] flex flex-col gap-3 font-mono">
             <div className="flex items-center justify-between">
               <span className="text-2xs font-semibold text-[#E4E4E2]">
-                30-Day Opportunity Visualizer ({oppData.total_period_hours} Timeline from {formatUtcDisplay(utc)})
+                {windowDays}-Day Opportunity Visualizer ({oppData.total_period_hours} Timeline from {formatUtcDisplay(utc)})
               </span>
               <span className="text-3xs text-[#8A8A88]">
                 {horizonMode === 'terrain' ? `Topography: ${horizon?.dem_id || 'LOLA DEM'}` : 'Idealized Horizon'}

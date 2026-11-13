@@ -4,6 +4,7 @@ import {
   getElevationAtTime,
   compute30DayWindows,
   getMaskForMastHeight,
+  SUN_UPPER_LIMB_DEG,
 } from '../stores/scenarioStore'
 import {
   lookupHorizonElevation,
@@ -78,15 +79,15 @@ export default function ComparisonPanel({ sites }: ComparisonPanelProps) {
   const fSunA =
     elA.sunElevation !== null
       ? maskA && elA.sunAzimuth !== null
-        ? computeSolarFraction(elA.sunAzimuth, elA.sunElevation, maskA)
-        : elA.sunElevation >= 0.0 ? 1.0 : 0.0
+        ? computeSolarFraction(elA.sunAzimuth, elA.sunElevation - thresholdDeg, maskA)
+        : elA.sunElevation + SUN_UPPER_LIMB_DEG >= thresholdDeg ? 1.0 : 0.0
       : 0.0
 
   const fSunB =
     elB.sunElevation !== null
       ? maskB && elB.sunAzimuth !== null
-        ? computeSolarFraction(elB.sunAzimuth, elB.sunElevation, maskB)
-        : elB.sunElevation >= 0.0 ? 1.0 : 0.0
+        ? computeSolarFraction(elB.sunAzimuth, elB.sunElevation - thresholdDeg, maskB)
+        : elB.sunElevation + SUN_UPPER_LIMB_DEG >= thresholdDeg ? 1.0 : 0.0
       : 0.0
 
   const pWattsA =

@@ -1,5 +1,5 @@
-import { useMemo, useState, type ChangeEvent } from 'react'
-import type { SelectableSite } from '../types/mission'
+import { useMemo, useState, useEffect, type ChangeEvent } from 'react'
+import type { SelectableSite, HorizonProfile } from '../types/mission'
 import {
   useScenarioStore,
   getElevationAtTime,
@@ -49,7 +49,16 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
     horizonCache,
     loading,
     error,
+    injectCustomSite,
+    pickedCoords,
   } = useScenarioStore()
+
+  useEffect(() => {
+    if (pickedCoords) {
+      setCustomLat(pickedCoords.lat)
+      setCustomLon(pickedCoords.lon)
+    }
+  }, [pickedCoords])
 
   const siteId = type === 'A' ? scenarioAId : scenarioBId
   const utc = type === 'A' ? utcA : utcB
@@ -120,7 +129,45 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
         earth_criterion: earthCriterion,
       })
 
-      setApiResult(result)
+      // Synthesize GeometryTimeseries from the API result
+      const tsr = result.timeseries as any
+      const hor = result.horizon as any
+      const customId = type === 'A' ? 'custom-a' : 'custom-b'
+
+      if (tsr && tsr.sun_elevation_deg) {
+        // Build times array if not present
+        if (!tsr.times && tsr.start_utc && tsr.step_seconds) {
+          const n = tsr.sun_elevation_deg.length
+          const stepMs = tsr.step_seconds * 1000
+          const startMs = new Date(tsr.start_utc).getTime()
+          tsr.times = Array.from({ length: n }, (_: unknown, i: number) =>
+            new Date(startMs + i * stepMs).toISOString().replace('.000Z', 'Z')
+          )
+        }
+
+        const injectedHorizon: HorizonProfile | undefined = hor
+          ? {
+              site_id: customId,
+              site_name: 'Custom Lunar Site',
+              kind: 'custom',
+              lat,
+              lon,
+              coord_status: 'ok',
+              site_height_m: 0,
+              resolution_m: 20,
+              default_range_km: 50,
+              masks: hor.masks,
+              dem_id: hor.dem_id || 'LOLA DEM',
+              coverage_status: hor.coverage_status || 'ok',
+            }
+          : undefined
+
+        injectCustomSite(customId, tsr, injectedHorizon)
+        setSite(customId)
+        setApiResult({ __banner: `Custom site loaded — scenario switched to ${customId}.` })
+      } else {
+        setApiResult(result)
+      }
     } catch (err) {
       setApiError(err instanceof Error ? err.message : 'Analysis request failed.')
     } finally {
@@ -144,8 +191,8 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
   const fSun =
     elevationData.sunElevation !== null
       ? horizonMode === 'terrain' && mask
-        ? computeSolarFraction(sunAz, sunEl, mask)
-        : sunEl + SUN_UPPER_LIMB_DEG >= 0.0
+        ? computeSolarFraction(sunAz, sunEl - thresholdDeg, mask)
+        : sunEl + SUN_UPPER_LIMB_DEG >= thresholdDeg
         ? 1.0
         : 0.0
       : 0.0
@@ -217,7 +264,7 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
             {isScenarioA ? 'Primary Site Evaluation' : 'Secondary Comparison Site'}
           </span>
         </div>
-        {selectedSite?.lat !== null && (
+        {(selectedSite?.lat != null || (siteId.startsWith('custom-') && (ts?.lat != null || customLat))) && (
           <div className="flex items-center gap-2 font-mono">
             {horizon?.dem_id && (
               <span className="text-3xs px-1.5 py-0.5 rounded bg-[#050608] border border-[#2A2D31] text-[#6FA8C9]">
@@ -225,7 +272,7 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
               </span>
             )}
             <span className="text-3xs text-[#8A8A88]">
-              {selectedSite?.lat}° Lat · {selectedSite?.lon}° Lon
+              {selectedSite?.lat ?? ts?.lat ?? customLat}° Lat · {selectedSite?.lon ?? ts?.lon ?? customLon}° Lon
             </span>
           </div>
         )}
@@ -253,6 +300,13 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
             onChange={(e) => setSite(e.target.value)}
             className="w-full px-3 py-1.5 bg-[#050608] border border-[#2A2D31] rounded text-xs text-[#E4E4E2] focus:outline-none focus:border-[#B9A58C] transition-colors font-mono"
           >
+            {siteId.startsWith('custom-') && (
+              <optgroup label="Custom Coordinates Evaluated">
+                <option value={siteId}>
+                  Custom Site ({ts?.lat ?? customLat}°, {ts?.lon ?? customLon}°)
+                </option>
+              </optgroup>
+            )}
             <optgroup label="Artemis / Candidate Landing Sites">
               {sites
                 .filter((s) => s.kind === 'candidate' && s.lat !== null)
@@ -393,13 +447,16 @@ export default function ScenarioPanel({ type, sites }: ScenarioPanelProps) {
         )}
 
         {apiResult && (
-          <div className="p-3 rounded bg-[#0D1014] border border-[#2A2D31]">
-            <p className="text-xs text-[#6DBF8B] font-semibold mb-2">
-              API Analysis Response
-            </p>
-            <pre className="text-3xs text-[#E4E4E2] whitespace-pre-wrap break-all overflow-auto max-h-64">
-              {JSON.stringify(apiResult, null, 2)}
-            </pre>
+          <div className="p-3 rounded bg-[#132A1C] border border-[#2A5C3D] flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-[#6DBF8B] font-bold text-xs">✓</span>
+              <p className="text-xs text-[#6DBF8B] font-medium font-mono">
+                {typeof apiResult.__banner === 'string'
+                  ? apiResult.__banner
+                  : `Custom site (${customLat}°, ${customLon}°) analyzed and loaded into Scenario ${type}.`}
+              </p>
+            </div>
+            <span className="text-3xs text-[#8A8A88] font-mono">Horizon &amp; Ephemeris Active</span>
           </div>
         )}
       </div>

@@ -82,3 +82,42 @@ export function compareSites(payload: MultiCompareRequest) {
     payload
   )
 }
+
+// POST /api/geometry/timeseries
+export interface TimeseriesRequest { lat: number; lon: number; start_utc: string; stop_utc: string; step_seconds?: number; alt_km?: number }
+export function getTimeseries(payload: TimeseriesRequest): Promise<Record<string, unknown>> {
+  return post<TimeseriesRequest, Record<string, unknown>>('/geometry/timeseries', payload)
+}
+
+// POST /api/geometry/events
+export interface EventsRequest { lat: number; lon: number; start_utc: string; stop_utc: string; step_seconds?: number; threshold_deg?: number; antenna_margin_deg?: number }
+export function getEvents(payload: EventsRequest): Promise<Record<string, unknown>> {
+  return post<EventsRequest, Record<string, unknown>>('/geometry/events', payload)
+}
+
+// POST /api/horizon
+export interface HorizonApiRequest { lat: number; lon: number; mast_height_m?: number; range_km?: number }
+export function getHorizon(payload: HorizonApiRequest): Promise<Record<string, unknown>> {
+  return post<HorizonApiRequest, Record<string, unknown>>('/horizon', payload)
+}
+
+// POST /api/site/best-windows
+export interface BestWindowsRequest { lat: number; lon: number; start_utc: string; stop_utc: string; min_window_hours?: number; horizon_mode?: string; mast_height_m?: number }
+export function getBestWindows(payload: BestWindowsRequest): Promise<Record<string, unknown>> {
+  return post<BestWindowsRequest, Record<string, unknown>>('/site/best-windows', payload)
+}
+
+// POST /api/verify
+export interface VerifyRequest { lat: number; lon: number; utc: string }
+export interface VerifyResult {
+  status: 'success' | 'error'
+  lat?: number; lon?: number; utc?: string
+  spice?: { sun: { azimuth_deg: number | null; elevation_deg: number | null }; earth: { azimuth_deg: number | null; elevation_deg: number | null } }
+  horizons?: { sun: { azimuth_deg: number | null; elevation_deg: number | null }; earth: { azimuth_deg: number | null; elevation_deg: number | null } }
+  max_difference_deg?: { sun: number | null; earth: number | null }
+  pass_tolerance_0_01_deg?: boolean
+  detail?: string; note?: string
+}
+export function verifySite(payload: VerifyRequest): Promise<VerifyResult> {
+  return post<VerifyRequest, VerifyResult>('/verify', payload)
+}

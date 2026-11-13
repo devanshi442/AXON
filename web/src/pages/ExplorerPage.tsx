@@ -1,5 +1,5 @@
 import { useEffect, useState, lazy, Suspense } from 'react'
-import type { MissionsData, SelectableSite, CoordKind } from '../types/mission'
+import type { MissionsData, SelectableSite, CoordKind, TerrainTier } from '../types/mission'
 import { useScenarioStore } from '../stores/scenarioStore'
 import MoonMap from '../components/MoonMap'
 import MissionExplorer from '../components/MissionExplorer'
@@ -25,6 +25,7 @@ export default function ExplorerPage() {
     loadHorizon,
     horizonMode,
     mastHeightM,
+    setPickedCoords,
   } = useScenarioStore()
 
   useEffect(() => {
@@ -91,6 +92,10 @@ export default function ExplorerPage() {
       verified: m.verified,
       sources: m.sources,
       notes: m.notes,
+      payload_highlights: m.payload_highlights,
+      dates: m.dates,
+      elevation_m: m.site.elevation_m,
+      terrain_tier: m.site.terrain_tier,
     })),
     ...(missionsData.candidate_sites || []).map((c) => ({
       id: c.id,
@@ -106,6 +111,8 @@ export default function ExplorerPage() {
       verified: c.verified ?? false,
       sources: c.sources,
       notes: c.notes,
+      elevation_m: null,
+      terrain_tier: (c.terrain_tier as TerrainTier) ?? null,
     })),
     ...missionsData.reference_sites.map((r) => ({
       id: r.id,
@@ -267,6 +274,7 @@ export default function ExplorerPage() {
                   sites={selectableSites}
                   selectedSiteId={scenarioAId}
                   onSelectSite={(site) => setScenarioA(site.id)}
+                  onPickCoords={(lat, lon) => setPickedCoords(lat, lon)}
                   scenarioAId={scenarioAId}
                   scenarioBId={scenarioBId}
                   heightClass="min-h-[460px] lg:min-h-[490px]"
@@ -279,7 +287,10 @@ export default function ExplorerPage() {
             </div>
           ) : (
             <div className="flex flex-col gap-1.5">
-              <MoonMap sites={selectableSites} />
+              <MoonMap
+                sites={selectableSites}
+                onPickCoords={(lat, lon) => setPickedCoords(lat, lon)}
+              />
               <div className="text-3xs font-mono text-[#8A8A88] px-1 text-right">
                 Flat polar stereographic projection (R=1737.4 km).
               </div>
