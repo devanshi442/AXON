@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef, lazy, Suspense } from 'react'
 import type { MissionsData, SelectableSite, CoordKind, TerrainTier } from '../types/mission'
+import { DEFAULT_LUNAR_VIEW, type LunarViewState } from '../types/lunarView'
 import { useScenarioStore } from '../stores/scenarioStore'
 import type { SolarOrientation, EarthCriterion } from '../utils/scienceMath'
 import MoonMap from '../components/MoonMap'
@@ -32,6 +33,7 @@ export default function ExplorerPage() {
   const [flashB, setFlashB] = useState(false)
   const [customPointRequest, setCustomPointRequest] = useState<CustomPointRequest | null>(null)
   const customPointRequestIdRef = useRef(0)
+  const [lunarViewState, setLunarViewState] = useState<LunarViewState>({ ...DEFAULT_LUNAR_VIEW })
 
   // Unified Selected Location Bar state
   const [selectedLocation, setSelectedLocation] = useState<
@@ -124,16 +126,42 @@ export default function ExplorerPage() {
   const assignToScenario = (site: SelectableSite, type: 'A' | 'B') => {
     if (type === 'A') setScenarioA(site.id)
     else setScenarioB(site.id)
+    if (site.lat !== null && site.lon !== null) {
+      setLunarViewState((current) => ({
+        ...current,
+        centerLat: site.lat!,
+        centerLon: site.lon!,
+        origin: 'external',
+      }))
+    }
     triggerAssignFeedback(type)
     setSelectedLocation(null)
   }
 
   const handleSelectSiteFromMapOrGlobe = (site: SelectableSite) => {
     setSelectedLocation({ kind: 'site', site })
+    if (site.lat !== null && site.lon !== null) {
+      setLunarViewState((current) => ({
+        ...current,
+        centerLat: site.lat!,
+        centerLon: site.lon!,
+        origin: 'external',
+      }))
+    }
   }
 
   const handlePickCoordsFromMapOrGlobe = (lat: number, lon: number) => {
     setSelectedLocation({ kind: 'coords', lat, lon })
+    setLunarViewState((current) => ({
+      ...current,
+      centerLat: lat,
+      centerLon: lon,
+      origin: 'external',
+    }))
+  }
+
+  const handleLunarViewChange = (nextView: LunarViewState) => {
+    setLunarViewState(nextView)
   }
 
   const requestCustomPointAnalysis = (target: 'A' | 'B') => {
@@ -488,10 +516,10 @@ export default function ExplorerPage() {
 
           <div className={`grid grid-cols-1 ${mapViewMode === 'both' ? 'lg:grid-cols-12' : ''} gap-4 items-stretch`}>
             {(mapViewMode === 'both' || mapViewMode === 'globe') && (
-              <div className={`${mapViewMode === 'both' ? 'lg:col-span-6' : ''} flex flex-col gap-1.5`}>
+              <div className={`${mapViewMode === 'both' ? 'lg:col-span-6' : ''} flex flex-col h-[540px]`}>
                 <Suspense
                   fallback={
-                    <div className="w-full min-h-[440px] bg-[#111113] border border-[#363A3F] rounded flex items-center justify-center text-3xs font-mono text-[#AFB3BA]">
+                    <div className="w-full h-[540px] bg-[#111113] border border-[#363A3F] rounded flex items-center justify-center text-3xs font-mono text-[#AFB3BA]">
                       Loading 3D lunar globe...
                     </div>
                   }
@@ -503,7 +531,10 @@ export default function ExplorerPage() {
                     onPickCoords={handlePickCoordsFromMapOrGlobe}
                     scenarioAId={scenarioAId}
                     scenarioBId={scenarioBId}
-                    heightClass={mapViewMode === 'both' ? 'min-h-[420px]' : 'min-h-[560px]'}
+                    heightClass="h-[420px]"
+                    viewState={lunarViewState}
+                    onViewChange={handleLunarViewChange}
+                    restrictToSouthPole
                     compact={false}
                   />
                 </Suspense>
@@ -511,11 +542,20 @@ export default function ExplorerPage() {
             )}
 
             {(mapViewMode === 'both' || mapViewMode === 'flat') && (
-              <div className={`${mapViewMode === 'both' ? 'lg:col-span-6' : ''} flex flex-col gap-1.5`}>
+              <div className={`${mapViewMode === 'both' ? 'lg:col-span-6' : ''} flex flex-col h-[540px]`}>
                 <MoonMap
-                  sites={selectableSites}
+                  viewState={lunarViewState}
+                  selectedPoint={
+                    selectedLocation?.kind === 'coords'
+                      ? { lat: selectedLocation.lat, lon: selectedLocation.lon }
+                      : selectedLocation?.kind === 'site' &&
+                          selectedLocation.site.lat !== null &&
+                          selectedLocation.site.lon !== null
+                        ? { lat: selectedLocation.site.lat, lon: selectedLocation.site.lon }
+                        : null
+                  }
+                  onViewChange={handleLunarViewChange}
                   onPickCoords={handlePickCoordsFromMapOrGlobe}
-                  onSelectSite={handleSelectSiteFromMapOrGlobe}
                 />
               </div>
             )}
