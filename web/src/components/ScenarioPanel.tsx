@@ -1,11 +1,14 @@
 import { useMemo, useState, useEffect, useRef } from 'react'
 import type { SelectableSite, HorizonProfile } from '../types/mission'
 import {
+  AU_KM,
+  SOLAR_IRRADIANCE_W_M2,
+} from '../constants/scienceConventions'
+import {
   useScenarioStore,
   getElevationAtTime,
   getMaskForMastHeight,
   compute30DayWindows,
-  SUN_UPPER_LIMB_DEG,
 } from '../stores/scenarioStore'
 import {
   lookupHorizonElevation,
@@ -228,11 +231,13 @@ export default function ScenarioPanel({
   const fSun =
     elevationData.sunElevation !== null
       ? horizonMode === 'terrain' && mask
-        ? computeSolarFraction(sunAz, sunEl - thresholdDeg, mask)
-        : sunEl + SUN_UPPER_LIMB_DEG >= thresholdDeg
-        ? 1.0
-        : 0.0
+        ? computeSolarFraction(sunAz, sunEl, mask, thresholdDeg)
+        : computeSolarFraction(sunAz, sunEl, null, thresholdDeg)
       : 0.0
+
+  const instantaneousFlux = elevationData.sunDistance
+    ? SOLAR_IRRADIANCE_W_M2 * Math.pow(AU_KM / elevationData.sunDistance, 2)
+    : SOLAR_IRRADIANCE_W_M2
 
   const solarPowerW =
     elevationData.sunElevation !== null
@@ -242,7 +247,8 @@ export default function ScenarioPanel({
           fSun,
           solarArrayType,
           arrayAreaM2,
-          arrayEfficiency
+          arrayEfficiency,
+          instantaneousFlux
         )
       : 0.0
 
@@ -250,7 +256,7 @@ export default function ScenarioPanel({
     elevationData.earthElevation !== null
       ? horizonMode === 'terrain' && mask
         ? computeEarthVisibility(earthAz, earthEl, mask, dteMarginDeg, earthCriterion)
-        : earthEl >= dteMarginDeg
+        : computeEarthVisibility(earthAz, earthEl, null, dteMarginDeg, earthCriterion)
       : false
 
   const opp = useMemo(() => {

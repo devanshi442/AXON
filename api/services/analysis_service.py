@@ -363,6 +363,7 @@ class AnalysisService:
         mast_height_m: float = 0.0,
         mask_data: Optional[Dict[str, Any]] = None,
         antenna_margin_deg: float = 0.0,
+        earth_criterion: str = "center",
     ) -> Dict[str, Any]:
         """
         Compute topocentric Sun and Earth azimuth and elevation at a single timestamp.
@@ -371,18 +372,26 @@ class AnalysisService:
         with _SPICE_LOCK:
             pos, e_vec, n_vec, u_vec = G.site_to_enu(lat, lon, alt_km=0.0, mast_height_m=mast_height_m)
             et = G.spice.str2et(utc)
-            s_az, s_el = G.compute_topocentric_az_el(C.SUN_NAIF_ID, et, pos, e_vec, n_vec, u_vec)
-            e_az, e_el = G.compute_topocentric_az_el(C.EARTH_NAIF_ID, et, pos, e_vec, n_vec, u_vec)
+            s_az, s_el, s_dist = G.compute_topocentric_state(C.SUN_NAIF_ID, et, pos, e_vec, n_vec, u_vec)
+            e_az, e_el, e_dist = G.compute_topocentric_state(C.EARTH_NAIF_ID, et, pos, e_vec, n_vec, u_vec)
 
         h_el = None
         if mask_data and mask_data.get("mask_deg"):
             h_el = H.lookup_horizon_elevation(mask_data["mask_deg"], s_az)
-            h_el_earth = H.lookup_horizon_elevation(mask_data["mask_deg"], e_az)
             sun_vis = (s_el + C.SUN_ANGULAR_RADIUS_DEG) > h_el
-            earth_vis = e_el >= (h_el_earth + antenna_margin_deg)
         else:
             sun_vis = (s_el + C.SUN_ANGULAR_RADIUS_DEG) > 0.0
-            earth_vis = e_el >= antenna_margin_deg
+
+        r_earth = math.degrees(math.atan(C.EARTH_EQUATORIAL_RADIUS_KM / e_dist)) if e_dist > 0 else C.EARTH_ANGULAR_RADIUS_DEG
+        earth_vis_res = V.compute_earth_visibility(
+            e_el,
+            e_az,
+            mask=mask_data,
+            earth_ang_radius_deg=r_earth,
+            margin_deg=antenna_margin_deg,
+            criterion=earth_criterion,
+        )
+        earth_vis = earth_vis_res["visible"]
 
         return {
             "utc": utc,
@@ -536,6 +545,7 @@ class AnalysisService:
             mast_height_m=mast_height_m,
             mask_data=mask_data,
             antenna_margin_deg=antenna_margin_deg,
+            earth_criterion=earth_criterion,
         )
 
         # 6. Comprehensive Solar, Earth, Joint Metrics & Power
@@ -698,6 +708,7 @@ class AnalysisService:
         array_area_m2: float = 1.0,
         array_efficiency: float = 0.28,
         horizon_mode: str = "terrain",
+        earth_criterion: str = "center",
     ) -> Dict[str, Any]:
         """
         Compare 2 to 4 lunar locations over a fair, synchronized (or legacy) observation window.
@@ -725,6 +736,7 @@ class AnalysisService:
             "array_area_m2": array_area_m2,
             "array_efficiency": array_efficiency,
             "horizon_mode": horizon_mode,
+            "earth_criterion": earth_criterion,
         }
         cache_key = analysis_cache.make_key("compare", cache_params, kernel_hash)
         cached_result = analysis_cache.get(cache_key)
@@ -811,6 +823,7 @@ class AnalysisService:
                     mast_height_m=m_height,
                     mask_data=mask_data,
                     antenna_margin_deg=antenna_margin_deg,
+                    earth_criterion=earth_criterion,
                 )
 
                 # Timeseries & Dual metrics
@@ -822,6 +835,7 @@ class AnalysisService:
                     horizon_mask=mask_data if horizon_mode == "terrain" else None,
                     sun_threshold_deg=threshold_deg,
                     dte_margin_deg=antenna_margin_deg,
+                    earth_criterion=earth_criterion,
                     solar_array_type=solar_array_type,
                     area_m2=array_area_m2,
                     efficiency=array_efficiency,

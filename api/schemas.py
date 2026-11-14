@@ -371,6 +371,7 @@ class MultiCompareRequest(BaseModel):
     array_area_m2: float = Field(default=1.0, gt=0.0)
     array_efficiency: float = Field(default=0.28, gt=0.0, le=1.0)
     horizon_mode: str = Field(default="terrain", pattern="^(terrain|flat)$")
+    earth_criterion: str = Field(default="center", pattern="^(center|full_disk|any_limb)$", description="DTE line-of-sight criterion")
 
 
 class ComparedSiteResult(BaseModel):

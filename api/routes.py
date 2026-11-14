@@ -456,6 +456,7 @@ def compare_sites(req: MultiCompareRequest):
         array_area_m2=req.array_area_m2,
         array_efficiency=req.array_efficiency,
         horizon_mode=req.horizon_mode,
+        earth_criterion=req.earth_criterion,
     )
 
 

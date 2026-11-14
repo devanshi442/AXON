@@ -1,6 +1,10 @@
 import { create } from 'zustand'
 import type { GeometryTimeseries, HorizonProfile, OpportunityData, OpportunityWindow } from '../types/mission'
 import {
+  AU_KM,
+  SOLAR_IRRADIANCE_W_M2,
+} from '../constants/scienceConventions'
+import {
   lookupHorizonElevation,
   computeSolarFraction,
   computeEarthVisibility,
@@ -263,6 +267,7 @@ export function getElevationAtTime(
   earthElevation: number | null
   sunAzimuth: number | null
   earthAzimuth: number | null
+  sunDistance: number | null
   matchedTime: string | null
   isOutRange: boolean
 } {
@@ -272,6 +277,7 @@ export function getElevationAtTime(
       earthElevation: null,
       sunAzimuth: null,
       earthAzimuth: null,
+      sunDistance: null,
       matchedTime: null,
       isOutRange: false,
     }
@@ -287,6 +293,7 @@ export function getElevationAtTime(
       earthElevation: null,
       sunAzimuth: null,
       earthAzimuth: null,
+      sunDistance: null,
       matchedTime: null,
       isOutRange: true,
     }
@@ -313,6 +320,10 @@ export function getElevationAtTime(
     earthElevation: lerp(ts.earth_elevation_deg[idx0], ts.earth_elevation_deg[idx1Clamped], frac),
     sunAzimuth: lerpAz(ts.sun_azimuth_deg[idx0], ts.sun_azimuth_deg[idx1Clamped], frac),
     earthAzimuth: lerpAz(ts.earth_azimuth_deg[idx0], ts.earth_azimuth_deg[idx1Clamped], frac),
+    sunDistance:
+      ts.sun_distance_km && ts.sun_distance_km.length > 0
+        ? lerp(ts.sun_distance_km[idx0], ts.sun_distance_km[idx1Clamped], frac)
+        : null,
     matchedTime: ts.times[idx0],
     isOutRange: false,
   }
@@ -363,11 +374,14 @@ export function computeWindowOpportunities(
   const sliceSunAz = ts.sun_azimuth_deg.slice(startIndex, endIndex)
   const sliceEarthEl = ts.earth_elevation_deg.slice(startIndex, endIndex)
   const sliceEarthAz = ts.earth_azimuth_deg.slice(startIndex, endIndex)
+  const sliceSunDist = ts.sun_distance_km ? ts.sun_distance_km.slice(startIndex, endIndex) : undefined
 
   const mask = mode === 'terrain' ? getMaskForMastHeight(options.horizonProfile, mastHeightM) : null
 
   const flatSunMask = sliceSunEl.map((el) => el + SUN_UPPER_LIMB_DEG > thresholdDeg)
-  const flatEarthMask = sliceEarthEl.map((el) => el >= dteMarginDeg)
+  const flatEarthMask = sliceEarthEl.map((el, i) =>
+    computeEarthVisibility(sliceEarthAz[i], el, null, dteMarginDeg, earthCriterion)
+  )
   const flatJointMask = flatSunMask.map((s, i) => s && flatEarthMask[i])
 
   const activeSunMask: boolean[] = []
@@ -380,10 +394,13 @@ export function computeWindowOpportunities(
     const sunAz = sliceSunAz[i]
     const earthEl = sliceEarthEl[i]
     const earthAz = sliceEarthAz[i]
+    const fluxWm2 = sliceSunDist?.[i]
+      ? SOLAR_IRRADIANCE_W_M2 * Math.pow(AU_KM / sliceSunDist[i], 2)
+      : SOLAR_IRRADIANCE_W_M2
 
     if (mode === 'terrain' && mask) {
       const hSun = lookupHorizonElevation(mask, sunAz)
-      const fSun = computeSolarFraction(sunAz, sunEl, mask)
+      const fSun = computeSolarFraction(sunAz, sunEl, mask, thresholdDeg)
       const sunUp = (sunEl + SUN_UPPER_LIMB_DEG) > (hSun + thresholdDeg)
       activeSunMask.push(sunUp)
 
@@ -391,17 +408,18 @@ export function computeWindowOpportunities(
       activeEarthMask.push(earthUp)
       activeJointMask.push(sunUp && earthUp)
 
-      const pWatts = computeSolarPowerWatts(sunEl, sunAz, fSun, orientation, areaM2, efficiency)
+      const pWatts = computeSolarPowerWatts(sunEl, sunAz, fSun, orientation, areaM2, efficiency, fluxWm2)
       totalSolarPowerWh += pWatts * (ts.step_seconds / 3600.0)
     } else {
+      const fSun = computeSolarFraction(sunAz, sunEl, null, thresholdDeg)
       const sunUp = (sunEl + SUN_UPPER_LIMB_DEG) > thresholdDeg
       activeSunMask.push(sunUp)
-      const earthUp = earthEl >= dteMarginDeg
+
+      const earthUp = computeEarthVisibility(earthAz, earthEl, null, dteMarginDeg, earthCriterion)
       activeEarthMask.push(earthUp)
       activeJointMask.push(sunUp && earthUp)
 
-      const fSun = sunUp ? 1.0 : 0.0
-      const pWatts = computeSolarPowerWatts(sunEl, sunAz, fSun, orientation, areaM2, efficiency)
+      const pWatts = computeSolarPowerWatts(sunEl, sunAz, fSun, orientation, areaM2, efficiency, fluxWm2)
       totalSolarPowerWh += pWatts * (ts.step_seconds / 3600.0)
     }
   }

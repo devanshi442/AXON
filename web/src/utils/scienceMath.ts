@@ -64,10 +64,12 @@ export function computeSolarFraction(
   sunAzDeg: number,
   sunElCenterDeg: number,
   mask?: number[] | null,
+  thresholdDeg = 0.0,
   sunRadiusDeg = SUN_ANGULAR_RADIUS_DEG_ROUNDED
 ): number {
   const hMask = lookupHorizonElevation(mask, sunAzDeg)
-  const f = (sunElCenterDeg + sunRadiusDeg - hMask) / (2.0 * sunRadiusDeg)
+  const effHorizon = hMask + thresholdDeg
+  const f = (sunElCenterDeg + sunRadiusDeg - effHorizon) / (2.0 * sunRadiusDeg)
   return Math.max(0.0, Math.min(1.0, f))
 }
 
