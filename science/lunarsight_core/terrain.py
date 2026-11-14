@@ -355,11 +355,11 @@ class WindowedDEM:
             else:
                 x = ((x + 180.0) % 360.0) - 180.0
 
-        # Pixel coordinates
+        # Pixel coordinates (aligned to pixel centers, matching rasterio +0.5 convention)
         inv_trans = ~self.transform
         col_f, row_f = inv_trans @ (x, y)
-        col_local = col_f - self.col_offset
-        row_local = row_f - self.row_offset
+        col_local = (col_f - 0.5) - self.col_offset
+        row_local = (row_f - 0.5) - self.row_offset
 
         if not (0 <= col_local < self.width - 1 and 0 <= row_local < self.height - 1):
             return None
@@ -409,8 +409,8 @@ class WindowedDEM:
         col_f = (xs - c_trans[2]) / c_trans[0]
         row_f = (ys - c_trans[5]) / c_trans[4]
 
-        col_local = col_f - self.col_offset
-        row_local = row_f - self.row_offset
+        col_local = (col_f - 0.5) - self.col_offset
+        row_local = (row_f - 0.5) - self.row_offset
 
         valid = (col_local >= 0) & (col_local < self.width - 1) & (row_local >= 0) & (row_local < self.height - 1)
         out = np.full(len(xs), np.nan, dtype=np.float64)

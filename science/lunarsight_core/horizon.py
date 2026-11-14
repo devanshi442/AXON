@@ -91,7 +91,7 @@ def compute_horizon_raymarch(
     up = u_site
 
     # Step parameters: half-pixel spacing
-    step_m = max(20.0, float(dem_info.resolution_m))
+    step_m = max(10.0, float(dem_info.resolution_m) / 2.0)
     n_bins = int(round(360.0 / az_step_deg))
     mask_deg = []
     actual_valid_ranges = []
@@ -241,7 +241,7 @@ def compute_horizon_multi(
     north = np.array([-sin_lat * cos_lon, -sin_lat * sin_lon, cos_lat], dtype=np.float64)
     up = u_site
 
-    step_m = max(20.0, float(dem_info.resolution_m))
+    step_m = max(10.0, float(dem_info.resolution_m) / 2.0)
 
     for i in range(n_bins):
         az = i * az_step_deg
