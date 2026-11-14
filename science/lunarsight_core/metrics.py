@@ -160,6 +160,8 @@ def extract_windows_refined(
                     dur_hrs = round((dt_end - dt_start).total_seconds() / 3600.0, 4)
                 except Exception:
                     dur_hrs = round((end_idx - start_idx) * (step_seconds / 3600.0), 4)
+                if precision == "hourly" and start_idx == end_idx and dur_hrs == 0.0:
+                    dur_hrs = round(step_seconds / 3600.0, 4)
                 dur_hrs = min(dur_hrs, total_period_hours)
             elif precision == "1-minute":
                 try:
@@ -207,6 +209,8 @@ def extract_windows_refined(
                 dur_hrs = round((dt_end - dt_start).total_seconds() / 3600.0, 4)
             except Exception:
                 dur_hrs = round((end_idx - start_idx) * (step_seconds / 3600.0), 4)
+            if precision == "hourly" and start_idx == end_idx and dur_hrs == 0.0:
+                dur_hrs = round(step_seconds / 3600.0, 4)
             dur_hrs = min(dur_hrs, total_period_hours)
         elif precision == "1-minute":
             try:

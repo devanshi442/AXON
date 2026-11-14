@@ -439,7 +439,15 @@ export function computeWindowOpportunities(
       duration_hours: w.durationHours,
     }))
 
-  const totalPeriodHours = Math.round(sliceTimes.length * (ts.step_seconds / 3600) * 10) / 10
+  let totalPeriodHours = Math.round(sliceTimes.length * (ts.step_seconds / 3600) * 10) / 10
+  if (sliceTimes.length >= 2) {
+    const dtFirst = new Date(sliceTimes[0]).getTime()
+    const dtLast = new Date(sliceTimes[sliceTimes.length - 1]).getTime()
+    const diffHours = (dtLast - dtFirst) / (3600 * 1000)
+    if (Math.abs(diffHours - (sliceTimes.length - 1) * (ts.step_seconds / 3600)) < 1e-3 && diffHours >= 24) {
+      totalPeriodHours = Math.round(diffHours * 10) / 10
+    }
+  }
 
   return {
     start_utc: sliceTimes[0],
