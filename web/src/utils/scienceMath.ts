@@ -58,7 +58,7 @@ export function lookupHorizonElevation(
 
 /**
  * Compute fraction of solar disk visible above horizon skyline f_sun in [0, 1].
- * Formula: clip((el_center + r_sun - h_mask) / (2 * r_sun), 0, 1)
+ * Formula: circular-segment area of circular disk above effective horizon.
  */
 export function computeSolarFraction(
   sunAzDeg: number,
@@ -67,9 +67,13 @@ export function computeSolarFraction(
   thresholdDeg = 0.0,
   sunRadiusDeg = SUN_ANGULAR_RADIUS_DEG_ROUNDED
 ): number {
+  if (sunRadiusDeg <= 0) return 0.0
   const hMask = lookupHorizonElevation(mask, sunAzDeg)
   const effHorizon = hMask + thresholdDeg
-  const f = (sunElCenterDeg + sunRadiusDeg - effHorizon) / (2.0 * sunRadiusDeg)
+  const hAbove = Math.max(0.0, Math.min(2.0 * sunRadiusDeg, sunElCenterDeg + sunRadiusDeg - effHorizon))
+  const dNorm = Math.max(-1.0, Math.min(1.0, 1.0 - hAbove / sunRadiusDeg))
+  const theta = Math.acos(dNorm)
+  const f = (theta - dNorm * Math.sin(theta)) / Math.PI
   return Math.max(0.0, Math.min(1.0, f))
 }
 

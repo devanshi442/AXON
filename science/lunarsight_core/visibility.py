@@ -75,13 +75,13 @@ def compute_sun_visibility(
     else:
         effective_horizon = threshold_deg
 
-    # Local-flat-mask approximation: linear fraction of disk above mask
+    # Local-flat-mask approximation: circular-segment area of disk above mask
     # 0 = completely below horizon, 1 = completely above horizon
-    fraction = np.clip(
-        (el + r_sun - effective_horizon) / (2.0 * r_sun),
-        0.0,
-        1.0,
-    )
+    r_safe = np.maximum(r_sun, 1e-9)
+    h_above = np.clip(el + r_sun - effective_horizon, 0.0, 2.0 * r_safe)
+    d_norm = np.clip(1.0 - h_above / r_safe, -1.0, 1.0)
+    theta = np.arccos(d_norm)
+    fraction = np.clip((theta - d_norm * np.sin(theta)) / np.pi, 0.0, 1.0)
     visible = fraction > 0.0
 
     coverage_status = "idealized"
