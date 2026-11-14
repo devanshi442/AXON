@@ -1,0 +1,1061 @@
+/* AXON LunarSight — charcoal / electric-blue theme */
+:root,
+.dark {
+  --bg-app: #111113;
+  --bg-panel: #18191B;
+  --bg-card: #212225;
+  --bg-hover: #272A2D;
+  --text-primary: #EDEEF0;
+  --text-secondary: #AFB3BA;
+  --text-muted: #777D86;
+  --border: #363A3F;
+  --accent: #638BFF;
+  --success: #30C48D;
+  --warning: #E9AD51;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+html,
+body {
+  background: var(--bg-app);
+}
+
+body {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+::selection {
+  background: rgba(99, 139, 255, .28);
+  color: #fff;
+}
+
+/* Shared application shell */
+.axon-shell {
+  min-height: 100vh;
+  display: flex;
+  background: var(--bg-app);
+  color: var(--text-primary);
+}
+
+.axon-sidebar {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  display: flex;
+  flex: 0 0 228px;
+  flex-direction: column;
+  width: 228px;
+  height: 100vh;
+  padding: 21px 13px 16px;
+  gap: 23px;
+  background: #18191B;
+  border-right: 1px solid var(--border);
+}
+
+.axon-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 1px 9px;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.axon-brand-mark,
+.axon-landing-mark {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  place-items: center;
+  color: var(--accent);
+  background: rgba(99, 139, 255, .09);
+  border: 1px solid rgba(99, 139, 255, .42);
+  border-radius: 8px;
+}
+
+.axon-brand-mark svg,
+.axon-landing-mark svg {
+  width: 25px;
+  height: 25px;
+  stroke: currentColor;
+  stroke-width: 1.05;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.axon-brand-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  line-height: 1.05;
+}
+
+.axon-brand-copy strong {
+  font-size: 14px;
+  font-weight: 750;
+  letter-spacing: .09em;
+}
+
+.axon-brand-copy small {
+  color: var(--text-muted);
+  font-family: "Roboto Mono", ui-monospace, monospace;
+  font-size: 9px;
+  letter-spacing: .16em;
+}
+
+.axon-sidebar-rule {
+  height: 1px;
+  margin: 0 8px;
+  background: var(--border);
+}
+
+.axon-nav-group {
+  display: grid;
+  gap: 7px;
+}
+
+.axon-nav-label {
+  padding: 0 10px 5px;
+  color: var(--text-muted);
+  font-family: "Roboto Mono", ui-monospace, monospace;
+  font-size: 9px;
+  letter-spacing: .14em;
+}
+
+.axon-nav {
+  display: grid;
+  gap: 5px;
+}
+
+.axon-nav-item {
+  position: relative;
+  display: flex;
+  min-height: 50px;
+  align-items: center;
+  gap: 11px;
+  padding: 8px 10px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: background .16s ease, border-color .16s ease, color .16s ease;
+}
+
+.axon-nav-item:hover {
+  color: var(--text-primary);
+  background: var(--bg-hover);
+}
+
+.axon-nav-item.active {
+  color: var(--text-primary);
+  background: #272A2D;
+  border-color: rgba(99, 139, 255, .18);
+  box-shadow: inset 2px 0 var(--accent);
+}
+
+.axon-nav-icon {
+  display: grid;
+  width: 19px;
+  height: 19px;
+  flex: 0 0 auto;
+  place-items: center;
+  color: var(--accent);
+}
+
+.axon-nav-icon svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  stroke-width: 1.45;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.axon-nav-copy {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.axon-nav-copy strong {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.axon-nav-copy small {
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+.axon-nav-active-dot {
+  width: 6px;
+  height: 6px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 3px rgba(99, 139, 255, .12);
+}
+
+.axon-sidebar-spacer {
+  flex: 1;
+}
+
+.axon-sidebar-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 0 9px;
+}
+
+.axon-sidebar-note-line {
+  width: 2px;
+  height: 30px;
+  flex: 0 0 auto;
+  border-radius: 4px;
+  background: var(--accent);
+  opacity: .75;
+}
+
+.axon-sidebar-note-title {
+  color: var(--text-secondary);
+  font-family: "Roboto Mono", ui-monospace, monospace;
+  font-size: 9px;
+  letter-spacing: .1em;
+}
+
+.axon-sidebar-note-copy {
+  margin-top: 3px;
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+.axon-sidebar-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 9px 0;
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
+  font-family: "Roboto Mono", ui-monospace, monospace;
+  font-size: 8px;
+  letter-spacing: .08em;
+}
+
+.axon-status-dot,
+.axon-live-status i {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--success);
+}
+
+.axon-app-main {
+  display: flex;
+  min-width: 0;
+  min-height: 100vh;
+  flex: 1;
+  flex-direction: column;
+}
+
+.axon-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  height: 58px;
+  flex: 0 0 58px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30px;
+  background: rgba(17, 17, 19, .92);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(14px);
+}
+
+.axon-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.axon-breadcrumb > span {
+  font-family: "Roboto Mono", ui-monospace, monospace;
+  font-size: 9px;
+  letter-spacing: .1em;
+}
+
+.axon-breadcrumb svg {
+  width: 13px;
+  height: 13px;
+  fill: none;
+  stroke: var(--text-muted);
+  stroke-width: 1.5;
+}
+
+.axon-breadcrumb strong {
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.axon-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.axon-live-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--text-secondary);
+  font-family: "Roboto Mono", ui-monospace, monospace;
+  font-size: 9px;
+  letter-spacing: .08em;
+}
+
+.axon-live-status i {
+  width: 6px;
+  height: 6px;
+  box-shadow: 0 0 9px rgba(48, 196, 141, .3);
+}
+
+.axon-theme-toggle {
+  display: grid;
+  width: 33px;
+  height: 33px;
+  place-items: center;
+  color: var(--text-secondary);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background .16s ease, border-color .16s ease, color .16s ease;
+}
+
+.axon-theme-toggle:hover {
+  color: var(--text-primary);
+  background: var(--bg-hover);
+  border-color: #515761;
+}
+
+.axon-theme-toggle svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.axon-page-content {
+  width: min(100%, 1600px);
+  flex: 1;
+  margin: 0 auto;
+  padding: 25px 30px 36px;
+}
+
+.axon-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 13px 30px;
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
+  font-family: "Roboto Mono", ui-monospace, monospace;
+  font-size: 8px;
+  letter-spacing: .04em;
+}
+
+/* Earthrise landing page */
+.axon-landing {
+  position: relative;
+  display: flex;
+  min-height: 100vh;
+  min-height: 100svh;
+  flex-direction: column;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--bg-app);
+  color: var(--text-primary);
+}
+
+.axon-landing-backdrop,
+.axon-landing-vignette,
+.axon-landing-stars,
+.axon-landing-contours {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.axon-landing-backdrop {
+  z-index: -4;
+  background-image:
+    linear-gradient(90deg, rgba(17, 17, 19, .99) 0%, rgba(17, 17, 19, .94) 31%, rgba(17, 17, 19, .70) 53%, rgba(17, 17, 19, .16) 100%),
+    linear-gradient(0deg, rgba(17, 17, 19, .78) 0%, transparent 37%, rgba(17, 17, 19, .18) 100%),
+    url("/images/earthrise-lunar-horizon.webp");
+  background-size: cover;
+  background-position: center 56%;
+  transform: scale(1.01);
+}
+
+.axon-landing-vignette {
+  z-index: -3;
+  background:
+    radial-gradient(ellipse at 78% 46%, rgba(99, 139, 255, .12), transparent 38%),
+    linear-gradient(90deg, rgba(17, 17, 19, .18), transparent 65%);
+}
+
+.axon-landing-stars {
+  z-index: -2;
+  opacity: .35;
+  background:
+    radial-gradient(1px 1px at 14% 19%, #fff 45%, transparent 55%),
+    radial-gradient(1px 1px at 43% 13%, #fff 45%, transparent 55%),
+    radial-gradient(1px 1px at 68% 27%, #fff 45%, transparent 55%),
+    radial-gradient(1px 1px at 29% 63%, #fff 45%, transparent 55%),
+    radial-gradient(1px 1px at 88% 72%, #fff 45%, transparent 55%);
+}
+
+.axon-landing-contours {
+  z-index: -1;
+  inset: auto -7% 2% auto;
+  width: min(70vw, 940px);
+  height: 76%;
+  opacity: .37;
+  overflow: visible;
+}
+
+.axon-landing-contours path {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.1;
+  vector-effect: non-scaling-stroke;
+  opacity: .64;
+}
+
+.axon-landing-contours-secondary {
+  opacity: .48;
+}
+
+.axon-landing-header {
+  display: flex;
+  width: min(1440px, calc(100% - 64px));
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin: 0 auto;
+  padding: 24px 0 17px;
+  border-bottom: 1px solid rgba(237, 238, 240, .16);
+}
+
+.axon-landing-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.axon-landing-mark {
+  width: 36px;
+  height: 36px;
+}
+
+.axon-landing-brand > span:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.axon-landing-brand strong {
+  font-size: 14px;
+  letter-spacing: .12em;
+}
+
+.axon-landing-brand small {
+  color: var(--text-muted);
+  font-family: "Roboto Mono", ui-monospace, monospace;
+  font-size: 8px;
+  letter-spacing: .18em;
+}
+
+.axon-landing-clock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  font-family: "Roboto Mono", ui-monospace, monospace;
+}
+
+.axon-landing-clock span {
+  color: var(--text-muted);
+  font-size: 8px;
+  letter-spacing: .11em;
+}
+
+.axon-landing-clock strong {
+  color: var(--text-secondary);
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.axon-landing-copy {
+  position: relative;
+  z-index: 2;
+  width: min(1440px, calc(100% - 64px));
+  margin: auto;
+  padding: clamp(78px, 12vh, 150px) 0 clamp(72px, 11vh, 130px);
+}
+
+.axon-landing-kicker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-secondary);
+  font-family: "Roboto Mono", ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: .12em;
+}
+
+.axon-landing-kicker i {
+  width: 22px;
+  height: 1px;
+  background: var(--accent);
+}
+
+.axon-landing-kicker span {
+  color: var(--accent);
+}
+
+.axon-landing-copy h1 {
+  margin: 21px 0 17px;
+  color: #F4F5F7;
+  font-size: clamp(52px, 8.1vw, 112px);
+  font-weight: 700;
+  letter-spacing: -.065em;
+  line-height: .91;
+}
+
+.axon-landing-copy h1 em {
+  color: var(--accent);
+  font-style: normal;
+}
+
+.axon-landing-copy > p {
+  max-width: 525px;
+  margin: 0;
+  color: #C1C5CC;
+  font-size: clamp(13px, 1.25vw, 16px);
+  line-height: 1.7;
+  text-shadow: 0 1px 12px rgba(17, 17, 19, .5);
+}
+
+.axon-landing-metrics {
+  display: grid;
+  width: min(570px, 100%);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+  margin-top: 34px;
+  padding: 15px 0;
+  border-top: 1px solid rgba(237, 238, 240, .2);
+  border-bottom: 1px solid rgba(237, 238, 240, .2);
+}
+
+.axon-landing-metrics > div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0 15px;
+  border-right: 1px solid rgba(237, 238, 240, .14);
+}
+
+.axon-landing-metrics > div:first-child {
+  padding-left: 0;
+}
+
+.axon-landing-metrics > div:last-child {
+  border-right: 0;
+}
+
+.axon-landing-metrics small {
+  color: var(--text-muted);
+  font-family: "Roboto Mono", ui-monospace, monospace;
+  font-size: 8px;
+  letter-spacing: .09em;
+}
+
+.axon-landing-metrics strong {
+  color: var(--text-primary);
+  font-family: "Roboto Mono", ui-monospace, monospace;
+  font-size: 16px;
+  font-weight: 550;
+}
+
+.axon-landing-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 28px;
+}
+
+.axon-action-primary {
+  display: inline-flex;
+  min-height: 43px;
+  align-items: center;
+  justify-content: center;
+  gap: 19px;
+  padding: 0 17px;
+  color: #fff;
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 7px;
+  font-family: "Roboto Mono", ui-monospace, monospace;
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: .08em;
+  text-decoration: none;
+  transition: transform .16s ease, filter .16s ease;
+}
+
+.axon-action-primary:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.axon-action-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  text-decoration: none;
+  transition: color .16s ease;
+}
+
+.axon-action-secondary:hover {
+  color: #fff;
+}
+
+.axon-action-secondary span {
+  color: var(--accent);
+}
+
+.axon-landing-footer {
+  display: flex;
+  width: min(1440px, calc(100% - 64px));
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 auto;
+  padding: 15px 0 19px;
+  border-top: 1px solid rgba(237, 238, 240, .16);
+  color: var(--text-muted);
+  font-family: "Roboto Mono", ui-monospace, monospace;
+  font-size: 8px;
+  letter-spacing: .07em;
+}
+
+/* Explorer banner: photo, topographic linework and high-contrast title */
+.axon-page-hero {
+  position: relative;
+  min-height: 182px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  isolation: isolate;
+  margin-bottom: 18px;
+  padding: 27px 31px;
+  background-color: #18191B;
+  background-image:
+    linear-gradient(96deg, rgba(24, 25, 27, .98) 0%, rgba(24, 25, 27, .91) 38%, rgba(24, 25, 27, .63) 63%, rgba(24, 25, 27, .35) 100%),
+    url("/images/earthrise-lunar-horizon.webp");
+  background-size: cover;
+  background-position: center 58%;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.axon-page-hero::after {
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  right: 0;
+  width: 37%;
+  height: 100%;
+  content: "";
+  background-image:
+    linear-gradient(90deg, rgba(24, 25, 27, 1) 0%, rgba(24, 25, 27, .48) 50%, rgba(24, 25, 27, .24) 100%),
+    url("/images/lunar-crater-detail.webp");
+  background-size: cover;
+  background-position: center 46%;
+  opacity: .48;
+  mix-blend-mode: screen;
+  mask-image: linear-gradient(90deg, transparent 0%, #000 23%, #000 100%);
+}
+
+.axon-page-hero-contours {
+  position: absolute;
+  z-index: 0;
+  top: -24%;
+  right: 5%;
+  width: 52%;
+  height: 150%;
+  overflow: visible;
+  pointer-events: none;
+  opacity: .56;
+}
+
+.axon-page-hero-contours path {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.05;
+  opacity: .55;
+  vector-effect: non-scaling-stroke;
+}
+
+.axon-page-hero-copy {
+  position: relative;
+  z-index: 2;
+  max-width: 660px;
+}
+
+.axon-page-hero-eyebrow {
+  color: #AABCF0;
+  font-family: "Roboto Mono", ui-monospace, monospace;
+  font-size: 9px;
+  letter-spacing: .14em;
+}
+
+.axon-page-hero h1 {
+  margin: 8px 0 6px;
+  color: var(--text-primary);
+  font-size: clamp(24px, 3vw, 34px);
+  font-weight: 650;
+  letter-spacing: -.045em;
+  line-height: 1.08;
+}
+
+.axon-page-hero p {
+  max-width: 560px;
+  margin: 0;
+  color: #BFC3CB;
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.axon-page-hero-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 15px;
+}
+
+.axon-page-hero-tags span {
+  padding: 4px 7px;
+  color: #D0D5E2;
+  background: rgba(17, 17, 19, .58);
+  border: 1px solid rgba(237, 238, 240, .16);
+  border-radius: 4px;
+  font-family: "Roboto Mono", ui-monospace, monospace;
+  font-size: 8px;
+  letter-spacing: .05em;
+}
+
+/* Slightly roomier cards and controls to match the reference theme */
+.axon-page-content .rounded,
+.axon-page-content .glass-card {
+  border-radius: 8px;
+}
+
+.axon-page-content button,
+.axon-page-content select,
+.axon-page-content input,
+.axon-page-content textarea {
+  font-family: inherit;
+}
+
+.axon-page-content button {
+  transition-property: color, background-color, border-color, box-shadow, transform;
+  transition-duration: .16s;
+}
+
+.axon-page-content :focus-visible,
+.axon-topbar :focus-visible,
+.axon-sidebar :focus-visible,
+.axon-landing a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* Make the primary compare/execute controls use the theme accent, not the success colour */
+.axon-page-content button.bg-\[\#30C48D\] {
+  color: #fff !important;
+  background-color: var(--accent) !important;
+}
+
+.axon-page-content button.bg-\[\#30C48D\]:hover {
+  background-color: #779BFF !important;
+}
+
+@media (max-width: 1050px) {
+  .axon-sidebar {
+    flex-basis: 198px;
+    width: 198px;
+  }
+
+  .axon-page-content {
+    padding-right: 22px;
+    padding-left: 22px;
+  }
+}
+
+@media (max-width: 760px) {
+  .axon-shell {
+    display: block;
+  }
+
+  .axon-sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+    min-height: 62px;
+    flex-direction: row;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 16px;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .axon-sidebar-rule,
+  .axon-sidebar-note,
+  .axon-sidebar-footer,
+  .axon-nav-label,
+  .axon-sidebar-spacer {
+    display: none;
+  }
+
+  .axon-nav-group {
+    margin-left: auto;
+  }
+
+  .axon-nav {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .axon-nav-item {
+    min-height: 36px;
+    gap: 7px;
+    padding: 7px 9px;
+  }
+
+  .axon-nav-copy small {
+    display: none;
+  }
+
+  .axon-nav-icon,
+  .axon-nav-icon svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .axon-app-main {
+    min-height: calc(100vh - 62px);
+  }
+
+  .axon-topbar {
+    height: 50px;
+    flex-basis: 50px;
+    padding: 0 16px;
+  }
+
+  .axon-page-content {
+    padding: 18px 15px 28px;
+  }
+
+  .axon-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 12px 15px;
+  }
+
+  .axon-landing-header,
+  .axon-landing-copy,
+  .axon-landing-footer {
+    width: calc(100% - 36px);
+  }
+
+  .axon-landing-copy {
+    padding: 88px 0 90px;
+  }
+
+  .axon-landing-backdrop {
+    background-image:
+      linear-gradient(180deg, rgba(17, 17, 19, .45) 0%, rgba(17, 17, 19, .72) 35%, rgba(17, 17, 19, .96) 100%),
+      url("/images/earthrise-lunar-horizon.webp");
+    background-position: 59% center;
+  }
+
+  .axon-landing-contours {
+    right: -25%;
+    bottom: 7%;
+    width: 100%;
+    height: 58%;
+    opacity: .25;
+  }
+
+  .axon-landing-copy h1 {
+    font-size: clamp(47px, 12vw, 78px);
+  }
+
+  .axon-landing-footer {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+  .axon-landing-footer span:nth-child(2) {
+    display: none;
+  }
+
+  .axon-page-hero {
+    min-height: 170px;
+    padding: 23px 20px;
+    background-position: 58% center;
+  }
+
+  .axon-page-hero::after {
+    width: 42%;
+    opacity: .28;
+  }
+}
+
+@media (max-width: 480px) {
+  .axon-sidebar {
+    justify-content: space-between;
+    gap: 8px;
+    padding: 9px 11px;
+  }
+
+  .axon-brand-copy small {
+    display: none;
+  }
+
+  .axon-nav-item {
+    min-height: 34px;
+    padding: 6px 8px;
+  }
+
+  .axon-nav-icon {
+    display: none;
+  }
+
+  .axon-topbar {
+    padding: 0 12px;
+  }
+
+  .axon-live-status {
+    display: none;
+  }
+
+  .axon-page-content {
+    padding-right: 11px;
+    padding-left: 11px;
+  }
+
+  .axon-landing-header,
+  .axon-landing-copy,
+  .axon-landing-footer {
+    width: calc(100% - 28px);
+  }
+
+  .axon-landing-header {
+    align-items: flex-start;
+  }
+
+  .axon-landing-clock span {
+    max-width: 125px;
+    text-align: right;
+  }
+
+  .axon-landing-clock strong {
+    font-size: 8px;
+  }
+
+  .axon-landing-copy {
+    padding: 76px 0 84px;
+  }
+
+  .axon-landing-copy h1 {
+    font-size: clamp(42px, 13vw, 62px);
+  }
+
+  .axon-landing-copy > p {
+    max-width: 34ch;
+    font-size: 13px;
+  }
+
+  .axon-landing-metrics {
+    gap: 0;
+  }
+
+  .axon-landing-metrics > div {
+    padding: 0 8px;
+  }
+
+  .axon-landing-metrics small {
+    font-size: 7px;
+  }
+
+  .axon-landing-metrics strong {
+    font-size: 12px;
+  }
+
+  .axon-landing-actions {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .axon-page-hero {
+    padding: 20px 16px;
+  }
+
+  .axon-page-hero::after {
+    display: none;
+  }
+
+  .axon-page-hero-contours {
+    right: -10%;
+    width: 80%;
+    opacity: .32;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}

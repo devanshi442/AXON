@@ -11,22 +11,16 @@ export default function LandingPage() {
   const [missionsData, setMissionsData] = useState<MissionsData | null>(null)
   const [utcClock, setUtcClock] = useState<string>(() => formatUtcClock(new Date()))
 
-  // Fetch missions data for dynamic site counts
   useEffect(() => {
     fetch('/data/missions.json')
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
         return res.json()
       })
-      .then((data: MissionsData) => {
-        setMissionsData(data)
-      })
-      .catch((err) => {
-        console.warn('Could not load missions.json on landing page', err)
-      })
+      .then((data: MissionsData) => setMissionsData(data))
+      .catch((err) => console.warn('Could not load missions.json on landing page', err))
   }, [])
 
-  // Live UTC Clock updater
   useEffect(() => {
     const update = () => setUtcClock(formatUtcClock(new Date()))
     update()
@@ -37,106 +31,73 @@ export default function LandingPage() {
   const candidateCount = missionsData?.candidate_sites?.length ?? 10
   const referenceCount = missionsData?.reference_sites?.length ?? 2
 
-  // Update layout debug attributes on mount & resize
-  useEffect(() => {
-    const updateDebug = () => {
-      const el = document.getElementById('viewport-debug')
-      const h1 = document.querySelector('.h1-hero') as HTMLElement
-      if (el && h1) {
-        const style = window.getComputedStyle(h1)
-        el.setAttribute('data-scrollwidth', String(document.documentElement.scrollWidth))
-        el.setAttribute('data-innerwidth', String(window.innerWidth))
-        el.setAttribute('data-isfit', String(document.documentElement.scrollWidth <= window.innerWidth))
-        el.setAttribute('data-fontfamily', style.fontFamily)
-        el.setAttribute('data-fontsize', style.fontSize)
-        el.setAttribute('data-fontweight', style.fontWeight)
-      }
-    }
-    updateDebug()
-    window.addEventListener('resize', updateDebug)
-    return () => window.removeEventListener('resize', updateDebug)
-  }, [])
-
   return (
-    <main className="hero-landing">
-      {/* Hidden debug element to report computed font and layout fit */}
-      <div id="viewport-debug" className="sr-only" aria-hidden="true" />
+    <main className="axon-landing">
+      <div className="axon-landing-backdrop" aria-hidden="true" />
+      <div className="axon-landing-vignette" aria-hidden="true" />
+      <div className="axon-landing-stars" aria-hidden="true" />
+      <svg className="axon-landing-contours" viewBox="0 0 920 760" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <g>
+          <path d="M360 40c110 80 124 130 220 130s144-62 270-18 145 132 100 208-112 88-120 168 56 130 132 198" />
+          <path d="M330 22c112 82 145 148 241 148s144-62 270-18 145 132 100 208-112 88-120 168 56 130 132 198" />
+          <path d="M300 4c112 82 165 166 261 166s144-62 270-18 145 132 100 208-112 88-120 168 56 130 132 198" />
+          <path d="M270-14c112 82 185 184 281 184s144-62 270-18 145 132 100 208-112 88-120 168 56 130 132 198" />
+          <path d="M240-32c112 82 205 202 301 202s144-62 270-18 145 132 100 208-112 88-120 168 56 130 132 198" />
+          <path d="M210-50c112 82 225 220 321 220s144-62 270-18 145 132 100 208-112 88-120 168 56 130 132 198" />
+          <path d="M180-68c112 82 245 238 341 238s144-62 270-18 145 132 100 208-112 88-120 168 56 130 132 198" />
+        </g>
+        <g className="axon-landing-contours-secondary">
+          <path d="M560-40c-32 114 18 168 92 196s112 84 85 156-102 116-86 202 96 108 180 139" />
+          <path d="M584-42c-32 114 18 168 92 196s112 84 85 156-102 116-86 202 96 108 180 139" />
+          <path d="M608-44c-32 114 18 168 92 196s112 84 85 156-102 116-86 202 96 108 180 139" />
+        </g>
+      </svg>
 
-      {/* Background Star field */}
-      <div className="stars" aria-hidden="true" />
+      <header className="axon-landing-header">
+        <Link to="/" className="axon-landing-brand" aria-label="AXON LunarSight home">
+          <span className="axon-landing-mark" aria-hidden="true">
+            <svg viewBox="0 0 28 28" fill="none">
+              <circle cx="14" cy="14" r="10.5" />
+              <path d="M3.8 10.2h20.4M3.8 17.8h20.4M14 3.5c4.1 4.7 4.1 16.3 0 21M14 3.5c-4.1 4.7-4.1 16.3 0 21" />
+            </svg>
+          </span>
+          <span><strong>AXON</strong><small>LUNARSIGHT</small></span>
+        </Link>
+        <div className="axon-landing-clock">
+          <span>MISSION INTELLIGENCE / LIVE UTC</span>
+          <strong>{utcClock}</strong>
+        </div>
+      </header>
 
-      {/* Moon at bottom center */}
-      <div className="moon-hero">
-        <img
-          alt="The gibbous Moon against a black sky"
-          aria-label="Rendering of the Moon"
-          src="/images/moon.jpg"
-        />
-      </div>
+      <section className="axon-landing-copy">
+        <div className="axon-landing-kicker"><i /> TERRAIN-AWARE MISSION ANALYSIS <span> / 01</span></div>
+        <h1>THE SOUTH POLE.<br /><em>IN FULL VIEW.</em></h1>
+        <p>
+          Understand when sunlight reaches the surface and when Earth clears the horizon.
+          Compare Artemis landing regions with terrain-aware lunar analysis.
+        </p>
 
-      {/* Tan corner brackets (#B9A58C, 2px, ~7vw square, ~80% opacity) */}
-      <i className="br-corner tl" aria-hidden="true" />
-      <i className="br-corner tr" aria-hidden="true" />
-      <i className="br-corner bl" aria-hidden="true" />
-      <i className="br-corner brr" aria-hidden="true" />
+        <div className="axon-landing-metrics">
+          <div><small>CANDIDATE SITES</small><strong>{candidateCount.toString().padStart(2, '0')}</strong></div>
+          <div><small>REFERENCE SITES</small><strong>{referenceCount.toString().padStart(2, '0')}</strong></div>
+          <div><small>ANALYSIS BASIS</small><strong>LOLA / SPICE</strong></div>
+        </div>
 
-      {/* Top HUD Bar */}
-      <div className="hud-hero">
-        <span>LUNARSIGHT</span>
-        <span id="utc">{utcClock}</span>
-      </div>
-
-      {/* Title Section */}
-      <section className="title-hero">
-        <div className="kicker-hero">WHERE THE SUN REACHES THE</div>
-        <h1 className="h1-hero">SOUTH POLE</h1>
-        <div className="meta-hero">
-          <div>
-            <small>CANDIDATE SITES</small>
-            <b>{candidateCount} + {referenceCount} reference</b>
-          </div>
-          <p>
-            Terrain-aware sunlight and Earth line of sight for Artemis landing regions,
-            from lunar elevation data.
-          </p>
-          <div className="r">
-            <small>WINDOW</small>
-            <b>2024 to 2028</b>
-          </div>
+        <div className="axon-landing-actions">
+          <Link to="/explorer" className="axon-action-primary" id="btn-open-explorer">
+            OPEN THE EXPLORER <span aria-hidden="true">↗</span>
+          </Link>
+          <Link to="/methods" className="axon-action-secondary">
+            Methods and limitations <span aria-hidden="true">→</span>
+          </Link>
         </div>
       </section>
 
-      {/* Centred Action Button & Secondary Links */}
-      <div
-        className="flex flex-col items-center"
-        style={{
-          position: 'absolute',
-          bottom: 'clamp(28px, 6vh, 60px)',
-          zIndex: 3,
-        }}
-      >
-        <Link to="/explorer" className="cta-hero" id="btn-open-explorer">
-          OPEN THE EXPLORER
-        </Link>
-        <div className="mt-4 flex flex-col items-center gap-1 text-center font-mono text-3xs text-[#8A8A88]">
-          <Link
-            to="/methods"
-            className="hover:text-[#B9A58C] underline underline-offset-4 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#B9A58C]"
-            style={{ textShadow: '0 1px 8px rgba(5,6,8,0.9)' }}
-          >
-            Methods and Limitations
-          </Link>
-          <span
-            style={{
-              textShadow: '0 1px 8px rgba(5,6,8,0.9)',
-              opacity: 0.8,
-              fontSize: '9px',
-            }}
-          >
-            Moon photo: Safwan CK, Pexels.
-          </span>
-        </div>
-      </div>
+      <footer className="axon-landing-footer">
+        <span>ARTEMIS SOUTH POLAR OPERATIONS</span>
+        <span>LOLA ELEVATION · SPICE EPHEMERIDES · JPL HORIZONS VALIDATION</span>
+        <span>{candidateCount + referenceCount} LOCATIONS IN VIEW</span>
+      </footer>
     </main>
   )
 }

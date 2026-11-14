@@ -165,22 +165,22 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
   const windowLabel = windowDays === 0.5 ? '12-Hour' : windowDays === 1 ? '24-Hour' : `${windowDays}-Day`
 
   return (
-    <div className="relative bg-[#0D1014] border border-[#2A2D31] rounded p-4 flex flex-col gap-4">
+    <div className="relative bg-[#18191B] border border-[#363A3F] rounded p-4 flex flex-col gap-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>
-          <h2 className="text-sm font-semibold text-[#E4E4E2] uppercase tracking-wider flex items-center gap-2">
+          <h2 className="text-sm font-semibold text-[#EDEEF0] uppercase tracking-wider flex items-center gap-2">
             <span>📈</span> {windowLabel} Opportunity Timelines &amp; Science Windows (1-Hour Granularity)
           </h2>
-          <p className="text-2xs text-[#8A8A88] mt-0.5">
-            Continuous hourly Sun elevation for <span className="text-[#E0A04A] font-semibold">Scenario A ({nameA})</span> vs{' '}
-            <span className="text-[#6FA8C9] font-semibold">Scenario B ({nameB})</span> against the {thresholdDeg.toFixed(1)}° baseline. Hover anywhere for exact hourly values.
+          <p className="text-2xs text-[#AFB3BA] mt-0.5">
+            Continuous hourly Sun elevation for <span className="text-[#E9AD51] font-semibold">Scenario A ({nameA})</span> vs{' '}
+            <span className="text-[#638BFF] font-semibold">Scenario B ({nameB})</span> against the {thresholdDeg.toFixed(1)}° baseline. Hover anywhere for exact hourly values.
           </p>
         </div>
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => setShowRawWindows((v) => !v)}
-            className="px-2.5 py-1 rounded text-3xs font-mono bg-[#050608] text-[#B9A58C] border border-[#2A2D31] hover:border-[#B9A58C]/50 transition-colors"
+            className="px-2.5 py-1 rounded text-3xs font-mono bg-[#111113] text-[#638BFF] border border-[#363A3F] hover:border-[#638BFF]/50 transition-colors"
           >
             {showRawWindows ? 'Hide Interval Schedule ▲' : 'Interval Schedule ▼'}
           </button>
@@ -188,60 +188,60 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
       </div>
 
       {!oppA && !oppB ? (
-        <div className="py-8 text-center text-xs text-[#8A8A88] bg-[#050608] rounded border border-[#2A2D31] font-mono">
+        <div className="py-8 text-center text-xs text-[#AFB3BA] bg-[#111113] rounded border border-[#363A3F] font-mono">
           Loading ephemeris time series for Scenario A and B...
         </div>
       ) : (
         <div className="flex flex-col gap-4">
           {/* Summary Metric Badges (A vs B side by side) */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div className="p-3 bg-[#050608] rounded border border-[#E0A04A]/40 flex flex-col justify-between">
-              <span className="text-3xs uppercase tracking-wider text-[#E0A04A] font-semibold font-mono">
+            <div className="p-3 bg-[#111113] rounded border border-[#E9AD51]/40 flex flex-col justify-between">
+              <span className="text-3xs uppercase tracking-wider text-[#E9AD51] font-semibold font-mono">
                 ☀️ Solar Illumination ({windowLabel})
               </span>
               <div className="flex items-baseline gap-4 mt-1">
                 <div>
-                  <div className="text-lg font-bold font-mono text-[#E0A04A]">{oppA?.sun.total_hours ?? 0}h</div>
-                  <div className="text-3xs text-[#8A8A88] font-mono">A · {oppA?.sun.percentage ?? 0}%</div>
+                  <div className="text-lg font-bold font-mono text-[#E9AD51]">{oppA?.sun.total_hours ?? 0}h</div>
+                  <div className="text-3xs text-[#AFB3BA] font-mono">A · {oppA?.sun.percentage ?? 0}%</div>
                 </div>
-                <div className="h-6 w-px bg-[#2A2D31]" />
+                <div className="h-6 w-px bg-[#363A3F]" />
                 <div>
-                  <div className="text-lg font-bold font-mono text-[#6FA8C9]">{oppB?.sun.total_hours ?? 0}h</div>
-                  <div className="text-3xs text-[#8A8A88] font-mono">B · {oppB?.sun.percentage ?? 0}%</div>
+                  <div className="text-lg font-bold font-mono text-[#638BFF]">{oppB?.sun.total_hours ?? 0}h</div>
+                  <div className="text-3xs text-[#AFB3BA] font-mono">B · {oppB?.sun.percentage ?? 0}%</div>
                 </div>
               </div>
             </div>
 
-            <div className="p-3 bg-[#050608] rounded border border-[#6FA8C9]/40 flex flex-col justify-between">
-              <span className="text-3xs uppercase tracking-wider text-[#6FA8C9] font-semibold font-mono">
+            <div className="p-3 bg-[#111113] rounded border border-[#638BFF]/40 flex flex-col justify-between">
+              <span className="text-3xs uppercase tracking-wider text-[#638BFF] font-semibold font-mono">
                 📡 Direct-To-Earth Comm ({windowLabel})
               </span>
               <div className="flex items-baseline gap-4 mt-1">
                 <div>
-                  <div className="text-lg font-bold font-mono text-[#E0A04A]">{oppA?.earth.total_hours ?? 0}h</div>
-                  <div className="text-3xs text-[#8A8A88] font-mono">A · {oppA?.earth.percentage ?? 0}%</div>
+                  <div className="text-lg font-bold font-mono text-[#E9AD51]">{oppA?.earth.total_hours ?? 0}h</div>
+                  <div className="text-3xs text-[#AFB3BA] font-mono">A · {oppA?.earth.percentage ?? 0}%</div>
                 </div>
-                <div className="h-6 w-px bg-[#2A2D31]" />
+                <div className="h-6 w-px bg-[#363A3F]" />
                 <div>
-                  <div className="text-lg font-bold font-mono text-[#6FA8C9]">{oppB?.earth.total_hours ?? 0}h</div>
-                  <div className="text-3xs text-[#8A8A88] font-mono">B · {oppB?.earth.percentage ?? 0}%</div>
+                  <div className="text-lg font-bold font-mono text-[#638BFF]">{oppB?.earth.total_hours ?? 0}h</div>
+                  <div className="text-3xs text-[#AFB3BA] font-mono">B · {oppB?.earth.percentage ?? 0}%</div>
                 </div>
               </div>
             </div>
 
-            <div className="p-3 bg-[#050608] rounded border border-[#6DBF8B]/40 flex flex-col justify-between">
-              <span className="text-3xs uppercase tracking-wider text-[#6DBF8B] font-semibold font-mono">
+            <div className="p-3 bg-[#111113] rounded border border-[#30C48D]/40 flex flex-col justify-between">
+              <span className="text-3xs uppercase tracking-wider text-[#30C48D] font-semibold font-mono">
                 ⚡ Joint Power + Comm ({windowLabel})
               </span>
               <div className="flex items-baseline gap-4 mt-1">
                 <div>
-                  <div className="text-lg font-bold font-mono text-[#E0A04A]">{oppA?.joint.total_hours ?? 0}h</div>
-                  <div className="text-3xs text-[#8A8A88] font-mono">A · {oppA?.joint.percentage ?? 0}%</div>
+                  <div className="text-lg font-bold font-mono text-[#E9AD51]">{oppA?.joint.total_hours ?? 0}h</div>
+                  <div className="text-3xs text-[#AFB3BA] font-mono">A · {oppA?.joint.percentage ?? 0}%</div>
                 </div>
-                <div className="h-6 w-px bg-[#2A2D31]" />
+                <div className="h-6 w-px bg-[#363A3F]" />
                 <div>
-                  <div className="text-lg font-bold font-mono text-[#6FA8C9]">{oppB?.joint.total_hours ?? 0}h</div>
-                  <div className="text-3xs text-[#8A8A88] font-mono">B · {oppB?.joint.percentage ?? 0}%</div>
+                  <div className="text-lg font-bold font-mono text-[#638BFF]">{oppB?.joint.total_hours ?? 0}h</div>
+                  <div className="text-3xs text-[#AFB3BA] font-mono">B · {oppB?.joint.percentage ?? 0}%</div>
                 </div>
               </div>
             </div>
@@ -249,29 +249,29 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
 
           {/* Interactive 1-Hour Granular Line & Baseline Chart */}
           {graphData && (
-            <div className="p-3 bg-[#050608] rounded border border-[#2A2D31] flex flex-col gap-2 font-mono select-none">
+            <div className="p-3 bg-[#111113] rounded border border-[#363A3F] flex flex-col gap-2 font-mono select-none">
               <div className="flex flex-wrap justify-between items-center text-3xs gap-2 mb-1">
                 <div className="flex flex-wrap items-center gap-4">
                   <div className="flex items-center gap-1.5">
-                    <span className="w-3 h-1 bg-[#E0A04A] rounded-full"></span>
-                    <span className="text-[#E0A04A] font-semibold">Scenario A: {nameA}</span>
+                    <span className="w-3 h-1 bg-[#E9AD51] rounded-full"></span>
+                    <span className="text-[#E9AD51] font-semibold">Scenario A: {nameA}</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <span className="w-3 h-1 bg-[#6FA8C9] rounded-full"></span>
-                    <span className="text-[#6FA8C9] font-semibold">Scenario B: {nameB}</span>
+                    <span className="w-3 h-1 bg-[#638BFF] rounded-full"></span>
+                    <span className="text-[#638BFF] font-semibold">Scenario B: {nameB}</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <span className="w-3 h-px border-t border-dashed border-[#6DBF8B]"></span>
-                    <span className="text-[#6DBF8B]">Baseline Threshold ({thresholdDeg.toFixed(1)}°)</span>
+                    <span className="w-3 h-px border-t border-dashed border-[#30C48D]"></span>
+                    <span className="text-[#30C48D]">Baseline Threshold ({thresholdDeg.toFixed(1)}°)</span>
                   </div>
                 </div>
-                <span className="text-[#8A8A88]">
+                <span className="text-[#AFB3BA]">
                   Step: 1h ({graphData.points.length - 1} hourly samples) · Mast: {mastHeightM}m
                 </span>
               </div>
 
               <div
-                className="relative w-full h-[230px] border-b border-l border-[#2A2D31] cursor-crosshair bg-[#070A0D]"
+                className="relative w-full h-[230px] border-b border-l border-[#363A3F] cursor-crosshair bg-[#151619]"
                 onMouseMove={(e) => {
                   const rect = e.currentTarget.getBoundingClientRect()
                   const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width))
@@ -287,10 +287,10 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
                 >
                   {/* Shaded area under Scenario A & B curves */}
                   {graphData.areaB && (
-                    <path d={graphData.areaB} fill="#6FA8C9" fillOpacity="0.08" />
+                    <path d={graphData.areaB} fill="#638BFF" fillOpacity="0.08" />
                   )}
                   {graphData.areaA && (
-                    <path d={graphData.areaA} fill="#E0A04A" fillOpacity="0.12" />
+                    <path d={graphData.areaA} fill="#E9AD51" fillOpacity="0.12" />
                   )}
 
                   {/* Baseline Threshold Line */}
@@ -299,7 +299,7 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
                     y1={graphData.baselineY}
                     x2="100"
                     y2={graphData.baselineY}
-                    stroke="#6DBF8B"
+                    stroke="#30C48D"
                     strokeDasharray="2,2"
                     strokeWidth="0.6"
                     vectorEffect="non-scaling-stroke"
@@ -310,7 +310,7 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
                     <path
                       d={graphData.pathB}
                       fill="none"
-                      stroke="#6FA8C9"
+                      stroke="#638BFF"
                       strokeWidth="1.8"
                       vectorEffect="non-scaling-stroke"
                     />
@@ -321,7 +321,7 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
                     <path
                       d={graphData.pathA}
                       fill="none"
-                      stroke="#E0A04A"
+                      stroke="#E9AD51"
                       strokeWidth="2"
                       vectorEffect="non-scaling-stroke"
                     />
@@ -329,16 +329,16 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
                 </svg>
 
                 {/* Y-Axis Labels */}
-                <div className="absolute left-1.5 top-1 text-[10px] text-[#8A8A88] bg-[#050608]/80 px-1 rounded">
+                <div className="absolute left-1.5 top-1 text-[10px] text-[#AFB3BA] bg-[#111113]/80 px-1 rounded">
                   +{graphData.maxEl.toFixed(1)}°
                 </div>
                 <div
-                  className="absolute left-1.5 text-[10px] text-[#6DBF8B] bg-[#050608]/80 px-1 rounded -translate-y-1/2"
+                  className="absolute left-1.5 text-[10px] text-[#30C48D] bg-[#111113]/80 px-1 rounded -translate-y-1/2"
                   style={{ top: `${Math.max(10, Math.min(90, graphData.baselineY))}%` }}
                 >
                   Baseline {thresholdDeg.toFixed(1)}°
                 </div>
-                <div className="absolute left-1.5 bottom-1 text-[10px] text-[#8A8A88] bg-[#050608]/80 px-1 rounded">
+                <div className="absolute left-1.5 bottom-1 text-[10px] text-[#AFB3BA] bg-[#111113]/80 px-1 rounded">
                   {graphData.minEl.toFixed(1)}°
                 </div>
 
@@ -346,30 +346,30 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
                 {hoveredPoint && (
                   <>
                     <div
-                      className="absolute top-0 bottom-0 w-px bg-[#E4E4E2]/40 pointer-events-none"
+                      className="absolute top-0 bottom-0 w-px bg-[#EDEEF0]/40 pointer-events-none"
                       style={{ left: `${hoveredPoint.pctX}%` }}
                     />
 
                     <div
-                      className={`absolute top-2 z-20 w-60 bg-[#0D1014]/95 backdrop-blur border border-[#B9A58C]/50 rounded p-2.5 text-3xs font-mono shadow-xl pointer-events-none ${
+                      className={`absolute top-2 z-20 w-60 bg-[#18191B]/95 backdrop-blur border border-[#638BFF]/50 rounded p-2.5 text-3xs font-mono shadow-xl pointer-events-none ${
                         hoveredPoint.pctX > 55 ? '-translate-x-[105%]' : 'translate-x-[5%]'
                       }`}
                       style={{ left: `${hoveredPoint.pctX}%` }}
                     >
-                      <div className="font-bold text-[#E4E4E2] border-b border-[#2A2D31] pb-1 mb-1.5 flex justify-between">
+                      <div className="font-bold text-[#EDEEF0] border-b border-[#363A3F] pb-1 mb-1.5 flex justify-between">
                         <span>Hour +{hoveredPoint.idx}h</span>
-                        <span className="text-[#8A8A88]">{formatTick(hoveredPoint.timeA)}</span>
+                        <span className="text-[#AFB3BA]">{formatTick(hoveredPoint.timeA)}</span>
                       </div>
 
                       <div className="space-y-1">
-                        <div className="flex justify-between items-center text-[#E0A04A]">
+                        <div className="flex justify-between items-center text-[#E9AD51]">
                           <span>A Sun / Earth El:</span>
                           <span className="font-bold">
                             {hoveredPoint.sunA !== null ? `${hoveredPoint.sunA.toFixed(2)}°` : 'N/A'} /{' '}
                             {hoveredPoint.earthA !== null ? `${hoveredPoint.earthA.toFixed(2)}°` : 'N/A'}
                           </span>
                         </div>
-                        <div className="flex justify-between items-center text-[#6FA8C9]">
+                        <div className="flex justify-between items-center text-[#638BFF]">
                           <span>B Sun / Earth El:</span>
                           <span className="font-bold">
                             {hoveredPoint.sunB !== null ? `${hoveredPoint.sunB.toFixed(2)}°` : 'N/A'} /{' '}
@@ -377,7 +377,7 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
                           </span>
                         </div>
                         {hoveredPoint.sunA !== null && hoveredPoint.sunB !== null && (
-                          <div className="pt-1 border-t border-[#2A2D31] flex justify-between items-center text-[#6DBF8B]">
+                          <div className="pt-1 border-t border-[#363A3F] flex justify-between items-center text-[#30C48D]">
                             <span>Delta (B − A):</span>
                             <span className="font-bold">
                               {hoveredPoint.sunB - hoveredPoint.sunA >= 0 ? '+' : ''}
@@ -390,13 +390,13 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
 
                     {hoveredPoint.sunA !== null && (
                       <div
-                        className="absolute w-2.5 h-2.5 rounded-full bg-[#E0A04A] border-2 border-[#050608] -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+                        className="absolute w-2.5 h-2.5 rounded-full bg-[#E9AD51] border-2 border-[#111113] -translate-x-1/2 -translate-y-1/2 pointer-events-none"
                         style={{ left: `${hoveredPoint.pctX}%`, top: `${graphData.toY(hoveredPoint.sunA)}%` }}
                       />
                     )}
                     {hoveredPoint.sunB !== null && (
                       <div
-                        className="absolute w-2.5 h-2.5 rounded-full bg-[#6FA8C9] border-2 border-[#050608] -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+                        className="absolute w-2.5 h-2.5 rounded-full bg-[#638BFF] border-2 border-[#111113] -translate-x-1/2 -translate-y-1/2 pointer-events-none"
                         style={{ left: `${hoveredPoint.pctX}%`, top: `${graphData.toY(hoveredPoint.sunB)}%` }}
                       />
                     )}
@@ -405,7 +405,7 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
               </div>
 
               {/* X-Axis Labels */}
-              <div className="flex justify-between text-[10px] text-[#8A8A88] px-1 pt-0.5">
+              <div className="flex justify-between text-[10px] text-[#AFB3BA] px-1 pt-0.5">
                 <span>Start (0h)</span>
                 <span>+{Math.round((windowDays * 24) / 4)}h</span>
                 <span>+{Math.round((windowDays * 24) / 2)}h</span>
@@ -417,10 +417,10 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
 
           {/* Collapsible Raw Interval Table */}
           {showRawWindows && (
-            <div className="p-3 bg-[#050608] rounded border border-[#2A2D31] max-h-56 overflow-y-auto animate-fade-in">
+            <div className="p-3 bg-[#111113] rounded border border-[#363A3F] max-h-56 overflow-y-auto animate-fade-in">
               <table className="w-full text-left text-3xs font-mono">
                 <thead>
-                  <tr className="border-b border-[#2A2D31] text-[#8A8A88]">
+                  <tr className="border-b border-[#363A3F] text-[#AFB3BA]">
                     <th className="pb-1.5">Scenario</th>
                     <th className="pb-1.5">Window Type</th>
                     <th className="pb-1.5">Start (UTC)</th>
@@ -428,9 +428,9 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
                     <th className="pb-1.5 text-right">Duration</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#2A2D31]">
+                <tbody className="divide-y divide-[#363A3F]">
                   {oppA?.joint.windows.map((w, idx) => (
-                    <tr key={`a-j-${idx}`} className="text-[#E0A04A]">
+                    <tr key={`a-j-${idx}`} className="text-[#E9AD51]">
                       <td className="py-1">A ({nameA})</td>
                       <td className="py-1">Joint Sun + Earth</td>
                       <td className="py-1">{w.start}</td>
@@ -439,7 +439,7 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
                     </tr>
                   ))}
                   {oppB?.joint.windows.map((w, idx) => (
-                    <tr key={`b-j-${idx}`} className="text-[#6FA8C9]">
+                    <tr key={`b-j-${idx}`} className="text-[#638BFF]">
                       <td className="py-1">B ({nameB})</td>
                       <td className="py-1">Joint Sun + Earth</td>
                       <td className="py-1">{w.start}</td>

@@ -1,16 +1,16 @@
 /* ═══════════════════════════════════════════════════════════════════════════
    AXON LunarSight — Unified Global Styles (Phase B)
    Design tokens:
-     Background: #050608
-     Panels:     #0D1014
-     Borders:    #2A2D31
-     Text:       #E4E4E2 (primary) / #8A8A88 (secondary/muted)
-     Tan:        #B9A58C (frame and headings)
-     A Amber:    #E0A04A
-     B Steel:    #6FA8C9
-     Lit Green:  #6DBF8B
-     Dark Grey:  #6B6F75
-     Warning:    #E5604A
+     Background: #111113
+     Panels:     #18191B
+     Borders:    #363A3F
+     Text:       #EDEEF0 (primary) / #AFB3BA (secondary/muted)
+     Tan:        #638BFF (frame and headings)
+     A Amber:    #E9AD51
+     B Steel:    #638BFF
+     Lit Green:  #30C48D
+     Dark Grey:  #777D86
+     Warning:    #EF6464
      Radius <= 4 px, no glow
    ═══════════════════════════════════════════════════════════════════════════ */
 
@@ -20,21 +20,21 @@
 @import 'tailwindcss/utilities';
 
 :root, .dark {
-  --bg-app:         #050608;
-  --bg-panel:       #0D1014;
-  --bg-card:        #0D1014;
-  --text-primary:   #E4E4E2;
-  --text-secondary: #8A8A88;
-  --text-muted:     #6B6F75;
-  --border:         #2A2D31;
+  --bg-app:         #111113;
+  --bg-panel:       #18191B;
+  --bg-card:        #18191B;
+  --text-primary:   #EDEEF0;
+  --text-secondary: #AFB3BA;
+  --text-muted:     #777D86;
+  --border:         #363A3F;
 
   /* Semantic unified tokens */
-  --color-tan:      #B9A58C;
-  --color-sun:      #E0A04A;   /* Scenario A amber */
-  --color-earth:    #6FA8C9;   /* Scenario B steel blue */
-  --color-lit:      #6DBF8B;   /* lit green */
-  --color-grey:     #6B6F75;   /* dark grey */
-  --color-warning:  #E5604A;   /* warning */
+  --color-tan:      #638BFF;
+  --color-sun:      #E9AD51;   /* Scenario A amber */
+  --color-earth:    #638BFF;   /* Scenario B steel blue */
+  --color-lit:      #30C48D;   /* lit green */
+  --color-grey:     #777D86;   /* dark grey */
+  --color-warning:  #EF6464;   /* warning */
 }
 
 /* ── Base ──────────────────────────────────────────────────────────────────── */
@@ -48,20 +48,20 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   scroll-behavior: smooth;
-  background-color: #050608;
-  color: #E4E4E2;
+  background-color: #111113;
+  color: #EDEEF0;
 }
 
 body {
   margin: 0;
-  background-color: #050608;
-  color: #E4E4E2;
+  background-color: #111113;
+  color: #EDEEF0;
   min-height: 100vh;
 }
 
 /* ── Focus visible (accessibility) ─────────────────────────────────────────── */
 :focus-visible {
-  outline: 2px solid #B9A58C;
+  outline: 2px solid #638BFF;
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -72,42 +72,42 @@ body {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #050608;
+  background: #111113;
 }
 ::-webkit-scrollbar-thumb {
-  background: #2A2D31;
+  background: #363A3F;
   border-radius: 4px;
 }
 
 /* ── Leaflet overrides (Radius <= 4px, No glow) ────────────────────────────── */
 .leaflet-container {
-  background: #050608;
+  background: #111113;
   font-family: inherit;
 }
 .leaflet-control-attribution {
   background: rgba(13, 16, 20, 0.9) !important;
-  color: #8A8A88 !important;
-  border: 1px solid #2A2D31;
+  color: #AFB3BA !important;
+  border: 1px solid #363A3F;
   border-radius: 4px;
 }
 .leaflet-control-zoom a {
-  background: #0D1014 !important;
-  color: #E4E4E2 !important;
-  border-color: #2A2D31 !important;
+  background: #18191B !important;
+  color: #EDEEF0 !important;
+  border-color: #363A3F !important;
   border-radius: 4px !important;
 }
 .leaflet-control-zoom a:hover {
-  background: #171B22 !important;
+  background: #272A2D !important;
 }
 .leaflet-popup-content-wrapper {
-  background: #0D1014 !important;
-  color: #E4E4E2 !important;
-  border: 1px solid #2A2D31 !important;
+  background: #18191B !important;
+  color: #EDEEF0 !important;
+  border: 1px solid #363A3F !important;
   border-radius: 4px !important;
   box-shadow: none !important;
 }
 .leaflet-popup-tip {
-  background: #0D1014 !important;
+  background: #18191B !important;
 }
 
 /* ── Mission marker styles (Radius <= 4px / circular dots, No glow) ────────── */
@@ -115,15 +115,15 @@ body {
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  border: 2px solid #E4E4E2;
-  background: #E0A04A;
+  border: 2px solid #EDEEF0;
+  background: #E9AD51;
   box-shadow: none;
 }
 .marker-planned {
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  border: 2px dashed #8A8A88;
+  border: 2px dashed #AFB3BA;
   background: transparent;
   box-shadow: none;
 }
@@ -131,33 +131,33 @@ body {
   width: 14px;
   height: 14px;
   border-radius: 2px;
-  border: 2px dashed #8A8A88;
+  border: 2px dashed #AFB3BA;
   background: rgba(111, 168, 201, 0.15);
   transform: rotate(45deg);
   box-shadow: none;
 }
 .marker-selected {
-  outline: 2px solid #B9A58C !important;
+  outline: 2px solid #638BFF !important;
   outline-offset: 2px;
   box-shadow: none !important;
 }
 
 /* ── Utility classes ────────────────────────────────────────────────────────── */
-.text-sun   { color: #E0A04A; }
-.text-earth { color: #6FA8C9; }
-.bg-sun     { background-color: #E0A04A; }
-.bg-earth   { background-color: #6FA8C9; }
+.text-sun   { color: #E9AD51; }
+.text-earth { color: #638BFF; }
+.bg-sun     { background-color: #E9AD51; }
+.bg-earth   { background-color: #638BFF; }
 
 .font-jost  { font-family: 'Jost', sans-serif !important; }
 .font-mono  { font-family: 'Roboto Mono', monospace !important; }
 
 .bg-space-gradient {
-  background: #0D1014;
+  background: #18191B;
 }
 
 .glass-card {
-  background: #0D1014;
-  border: 1px solid #2A2D31;
+  background: #18191B;
+  border: 1px solid #363A3F;
   border-radius: 4px;
 }
 
@@ -278,7 +278,7 @@ body {
 .meta-hero small {
   display: block;
   font: 400 10px 'Roboto Mono', monospace;
-  color: #8A8A88;
+  color: #AFB3BA;
   letter-spacing: .08em;
 }
 .meta-hero b {
@@ -345,7 +345,7 @@ body {
   display: flex;
   gap: 10px;
   font: 400 11px 'Roboto Mono', monospace;
-  color: #8A8A88;
+  color: #AFB3BA;
   letter-spacing: .1em;
 }
 .hud-hero span+span:before {
@@ -362,12 +362,12 @@ body {
   .moon-hero { animation: none; }
 }
 
-/* ── Panel corner brackets (tan #B9A58C) ─────────────────────────────────── */
+/* ── Panel corner brackets (tan #638BFF) ─────────────────────────────────── */
 .panel-corner {
   position: absolute;
   width: 9px;
   height: 9px;
-  border-color: #B9A58C;
+  border-color: #638BFF;
   border-style: solid;
   pointer-events: none;
   opacity: 0.85;

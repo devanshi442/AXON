@@ -7,7 +7,6 @@ import {
   SUN_UPPER_LIMB_DEG,
 } from '../stores/scenarioStore'
 import {
-  lookupHorizonElevation,
   computeSolarFraction,
   computeSolarPowerWatts,
   formatUtcDisplay,
@@ -82,9 +81,9 @@ export default function ComparisonPanel({ sites }: ComparisonPanelProps) {
   const DivergingBar = ({ valA, valB, unit = '', invert = false, maxDelta = 100, label }: { valA: number | null, valB: number | null, unit?: string, invert?: boolean, maxDelta?: number, label: string }) => {
     if (valA === null || valB === null) {
       return (
-        <div className="py-2.5 flex items-center justify-between border-b border-[#2A2D31] font-mono">
-          <span className="text-3xs text-[#8A8A88]">{label}</span>
-          <span className="text-3xs text-[#8A8A88]">N/A</span>
+        <div className="py-2.5 flex items-center justify-between border-b border-[#363A3F] font-mono">
+          <span className="text-3xs text-[#AFB3BA]">{label}</span>
+          <span className="text-3xs text-[#AFB3BA]">N/A</span>
         </div>
       )
     }
@@ -98,48 +97,48 @@ export default function ComparisonPanel({ sites }: ComparisonPanelProps) {
     const sign = delta > 0 ? '+' : ''
     
     return (
-      <div className="py-3 flex flex-col gap-1.5 border-b border-[#2A2D31] last:border-0 font-mono">
+      <div className="py-3 flex flex-col gap-1.5 border-b border-[#363A3F] last:border-0 font-mono">
         <div className="flex justify-between items-end">
-          <span className="text-3xs text-[#8A8A88] font-medium uppercase tracking-wider">{label}</span>
-          <span className={`text-xs font-bold ${isTie ? 'text-[#8A8A88]' : isBBetter ? 'text-[#6FA8C9]' : 'text-[#E0A04A]'}`}>
+          <span className="text-3xs text-[#AFB3BA] font-medium uppercase tracking-wider">{label}</span>
+          <span className={`text-xs font-bold ${isTie ? 'text-[#AFB3BA]' : isBBetter ? 'text-[#638BFF]' : 'text-[#E9AD51]'}`}>
             {sign}{delta.toFixed(1)}{unit}
           </span>
         </div>
         
         <div className="flex items-center gap-3">
-          <span className="text-3xs text-[#E0A04A] w-12 text-right">{valA.toFixed(1)}{unit}</span>
+          <span className="text-3xs text-[#E9AD51] w-12 text-right">{valA.toFixed(1)}{unit}</span>
           
-          <div className="flex-1 h-2.5 bg-[#050608] rounded-full flex relative overflow-hidden ring-1 ring-[#2A2D31]">
-            <div className="absolute left-1/2 top-0 bottom-0 w-px bg-[#8A8A88] z-10" />
+          <div className="flex-1 h-2.5 bg-[#111113] rounded-full flex relative overflow-hidden ring-1 ring-[#363A3F]">
+            <div className="absolute left-1/2 top-0 bottom-0 w-px bg-[#AFB3BA] z-10" />
             <div className="flex-1 flex justify-end">
-              {!isTie && !isBBetter && <div style={{ width: `${pct}%` }} className="h-full bg-[#E0A04A]" />}
+              {!isTie && !isBBetter && <div style={{ width: `${pct}%` }} className="h-full bg-[#E9AD51]" />}
             </div>
             <div className="flex-1">
-              {!isTie && isBBetter && <div style={{ width: `${pct}%` }} className="h-full bg-[#6FA8C9]" />}
+              {!isTie && isBBetter && <div style={{ width: `${pct}%` }} className="h-full bg-[#638BFF]" />}
             </div>
           </div>
           
-          <span className="text-3xs text-[#6FA8C9] w-12 text-left">{valB.toFixed(1)}{unit}</span>
+          <span className="text-3xs text-[#638BFF] w-12 text-left">{valB.toFixed(1)}{unit}</span>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="relative bg-[#0D1014] border border-[#2A2D31] rounded p-4 flex flex-col gap-4">
+    <div className="relative bg-[#18191B] border border-[#363A3F] rounded p-4 flex flex-col gap-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>
-          <h2 className="text-sm font-semibold text-[#E4E4E2] uppercase tracking-wider flex items-center gap-2">
+          <h2 className="text-sm font-semibold text-[#EDEEF0] uppercase tracking-wider flex items-center gap-2">
             <span>⚖️</span> Side-by-Side Advantage (B vs A)
           </h2>
-          <p className="text-2xs text-[#8A8A88] mt-0.5">
-            Diverging baseline comparison. Bars extending right (<span className="text-[#6FA8C9]">Blue</span>) favor Scenario B. Bars extending left (<span className="text-[#E0A04A]">Orange</span>) favor Scenario A.
+          <p className="text-2xs text-[#AFB3BA] mt-0.5">
+            Diverging baseline comparison. Bars extending right (<span className="text-[#638BFF]">Blue</span>) favor Scenario B. Bars extending left (<span className="text-[#E9AD51]">Orange</span>) favor Scenario A.
           </p>
         </div>
       </div>
 
       {hasRegionCentre && (
-        <div className="p-2.5 rounded bg-[#2A1210] border border-[#7F2318] text-3xs text-[#E0A04A] font-medium font-sans">
+        <div className="p-2.5 rounded bg-[#2A1210] border border-[#7F2318] text-3xs text-[#E9AD51] font-medium font-sans">
           ⚠️ Note: One or both selections are generic region centres. Metrics will differ wildly from actual peaks.
         </div>
       )}
@@ -147,29 +146,29 @@ export default function ComparisonPanel({ sites }: ComparisonPanelProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
         
         {/* Physical Context */}
-        <div className="bg-[#050608] border border-[#2A2D31] rounded p-3">
-          <h3 className="text-xs font-semibold text-[#B9A58C] uppercase tracking-wider mb-2 font-mono flex items-center gap-2">
+        <div className="bg-[#111113] border border-[#363A3F] rounded p-3">
+          <h3 className="text-xs font-semibold text-[#638BFF] uppercase tracking-wider mb-2 font-mono flex items-center gap-2">
             <span>📍</span> Geography &amp; Context
           </h3>
-          <div className="flex flex-col text-3xs font-mono text-[#8A8A88] gap-1.5">
-            <div className="flex justify-between border-b border-[#2A2D31] pb-1.5">
+          <div className="flex flex-col text-3xs font-mono text-[#AFB3BA] gap-1.5">
+            <div className="flex justify-between border-b border-[#363A3F] pb-1.5">
               <span>Date</span>
-              <span className="text-[#E4E4E2]">{formatUtcDisplay(utcA)}</span>
+              <span className="text-[#EDEEF0]">{formatUtcDisplay(utcA)}</span>
             </div>
-            <div className="flex justify-between border-b border-[#2A2D31] pb-1.5">
+            <div className="flex justify-between border-b border-[#363A3F] pb-1.5">
               <span>Lat/Lon (A)</span>
-              <span className="text-[#E0A04A]">{siteA?.lat ?? 'N/A'}°, {siteA?.lon ?? 'N/A'}°</span>
+              <span className="text-[#E9AD51]">{siteA?.lat ?? 'N/A'}°, {siteA?.lon ?? 'N/A'}°</span>
             </div>
             <div className="flex justify-between">
               <span>Lat/Lon (B)</span>
-              <span className="text-[#6FA8C9]">{siteB?.lat ?? 'N/A'}°, {siteB?.lon ?? 'N/A'}°</span>
+              <span className="text-[#638BFF]">{siteB?.lat ?? 'N/A'}°, {siteB?.lon ?? 'N/A'}°</span>
             </div>
           </div>
         </div>
 
         {/* Instantaneous Lighting */}
-        <div className="bg-[#050608] border border-[#2A2D31] rounded p-3">
-          <h3 className="text-xs font-semibold text-[#E4E4E2] uppercase tracking-wider mb-2 font-mono flex items-center gap-2">
+        <div className="bg-[#111113] border border-[#363A3F] rounded p-3">
+          <h3 className="text-xs font-semibold text-[#EDEEF0] uppercase tracking-wider mb-2 font-mono flex items-center gap-2">
             <span>☀️</span> Instantaneous (At UTC)
           </h3>
           <DivergingBar label="Solar Array Power" valA={pWattsA} valB={pWattsB} unit="W" maxDelta={100} />
@@ -178,8 +177,8 @@ export default function ComparisonPanel({ sites }: ComparisonPanelProps) {
         </div>
 
         {/* 30-Day Aggregates */}
-        <div className="md:col-span-2 bg-[#050608] border border-[#2A2D31] rounded p-3">
-          <h3 className="text-xs font-semibold text-[#6DBF8B] uppercase tracking-wider mb-2 font-mono flex items-center gap-2">
+        <div className="md:col-span-2 bg-[#111113] border border-[#363A3F] rounded p-3">
+          <h3 className="text-xs font-semibold text-[#30C48D] uppercase tracking-wider mb-2 font-mono flex items-center gap-2">
             <span>⚡</span> {windowDays}-Day Mission Windows
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">

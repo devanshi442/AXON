@@ -471,11 +471,11 @@ export default function LunarGlobe({
 
   if (!webGLSupported) {
     return (
-      <div className="p-4 bg-[#0D1014] border border-[#2A2D31] rounded text-[#E4E4E2]">
-        <h3 className="text-xs font-bold text-[#E0A04A] mb-1">
+      <div className="p-4 bg-[#18191B] border border-[#363A3F] rounded text-[#EDEEF0]">
+        <h3 className="text-xs font-bold text-[#E9AD51] mb-1">
           WebGL Hardware Acceleration Unavailable
         </h3>
-        <p className="text-3xs text-[#8A8A88]">
+        <p className="text-3xs text-[#AFB3BA]">
           Use the Flat Polar Map beside this panel to select sites and coordinates.
         </p>
       </div>
@@ -499,14 +499,14 @@ export default function LunarGlobe({
   }
 
   return (
-    <div className="bg-[#0D1014] border border-[#2A2D31] rounded p-4 flex flex-col gap-3 w-full">
+    <div className="bg-[#18191B] border border-[#363A3F] rounded p-4 flex flex-col gap-3 w-full">
       {showControls && (
         <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-semibold text-[#E4E4E2] uppercase tracking-wider">
+            <span className="text-sm font-semibold text-[#EDEEF0] uppercase tracking-wider">
               🌐 3D South Pole Globe
             </span>
-            <span className="px-2 py-0.5 rounded bg-[#050608] border border-[#2A2D31] text-3xs font-mono text-[#8A8A88]">
+            <span className="px-2 py-0.5 rounded bg-[#111113] border border-[#363A3F] text-3xs font-mono text-[#AFB3BA]">
               Lat: -90° to -70°S | Lon: -180° to +180°E
             </span>
           </div>
@@ -514,8 +514,8 @@ export default function LunarGlobe({
             onClick={setCameraView}
             className={`px-2.5 py-1 rounded text-3xs font-mono font-medium transition-colors cursor-pointer ${
               currentView === 'south_pole'
-                ? 'bg-[#E0A04A]/20 text-[#E0A04A] border border-[#E0A04A]/50'
-                : 'bg-[#050608] text-[#8A8A88] hover:text-[#E4E4E2] border border-[#2A2D31]'
+                ? 'bg-[#E9AD51]/20 text-[#E9AD51] border border-[#E9AD51]/50'
+                : 'bg-[#111113] text-[#AFB3BA] hover:text-[#EDEEF0] border border-[#363A3F]'
             }`}
           >
             🏔️ Reset South Pole View
@@ -526,21 +526,21 @@ export default function LunarGlobe({
       <div
         ref={mountRef}
         id="globe-canvas-container"
-        className={`w-full ${heightClass} bg-[#050608] border border-[#2A2D31] rounded overflow-hidden relative cursor-grab active:cursor-grabbing select-none`}
+        className={`w-full ${heightClass} bg-[#111113] border border-[#363A3F] rounded overflow-hidden relative cursor-grab active:cursor-grabbing select-none`}
         tabIndex={0}
         aria-label="3D Interactive Lunar Globe (drag to rotate, scroll to zoom)"
       />
 
       {!compact && (
-        <div className="flex flex-wrap items-center justify-between gap-2 text-3xs font-mono text-[#8A8A88]">
+        <div className="flex flex-wrap items-center justify-between gap-2 text-3xs font-mono text-[#AFB3BA]">
           <div className="flex items-center gap-3">
             <span className="flex items-center gap-1">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#E0A04A]" />
-              <span className="text-[#E0A04A]">Scenario A</span>
+              <span className="w-2.5 h-2.5 rounded-full bg-[#E9AD51]" />
+              <span className="text-[#E9AD51]">Scenario A</span>
             </span>
             <span className="flex items-center gap-1">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#6FA8C9]" />
-              <span className="text-[#6FA8C9]">Scenario B</span>
+              <span className="w-2.5 h-2.5 rounded-full bg-[#638BFF]" />
+              <span className="text-[#638BFF]">Scenario B</span>
             </span>
             <span className="flex items-center gap-1">
               <span className="w-2.5 h-2.5 rounded-full bg-white" />

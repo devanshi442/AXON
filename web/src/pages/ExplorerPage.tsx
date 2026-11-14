@@ -7,6 +7,7 @@ import ScenarioPanel from '../components/ScenarioPanel'
 import OpportunityTimeline from '../components/OpportunityTimeline'
 import ComparisonPanel from '../components/ComparisonPanel'
 import PanelCornerBrackets from '../components/PanelCornerBrackets'
+import ExplorerHero from '../components/ExplorerHero'
 
 const LunarGlobe = lazy(() => import('../components/LunarGlobe'))
 
@@ -155,8 +156,8 @@ export default function ExplorerPage() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center py-32 text-[#8A8A88] gap-3">
-        <div className="w-8 h-8 border-2 border-[#6FA8C9] border-t-transparent rounded-full animate-spin" />
+      <div className="flex flex-col items-center justify-center py-32 text-[#AFB3BA] gap-3">
+        <div className="w-8 h-8 border-2 border-[#638BFF] border-t-transparent rounded-full animate-spin" />
         <span className="text-sm font-medium">Loading CLPS mission registry and lunar ephemerides...</span>
       </div>
     )
@@ -164,7 +165,7 @@ export default function ExplorerPage() {
 
   if (error || !missionsData) {
     return (
-      <div className="p-6 bg-[#2A1210] border border-[#7F2318] rounded text-[#E5604A] max-w-lg mx-auto my-12 text-center">
+      <div className="p-6 bg-[#2A1210] border border-[#7F2318] rounded text-[#EF6464] max-w-lg mx-auto my-12 text-center">
         <h2 className="text-base font-semibold mb-1">Failed to Load Missions</h2>
         <p className="text-xs">{error || 'Data is unavailable'}</p>
       </div>
@@ -231,21 +232,22 @@ export default function ExplorerPage() {
 
   return (
     <div className="flex flex-col gap-5 animate-fade-in pb-12">
+      <ExplorerHero />
       {/* ================= Sticky Simulation & Preset Bar ================= */}
-      <div className="sticky top-0 z-30 -mx-4 px-4 py-2.5 bg-[#070A0D]/95 backdrop-blur border-b border-[#2A2D31] flex flex-col gap-2">
+      <div className="sticky top-[58px] z-30 -mx-4 px-4 py-2.5 bg-[#151619]/95 backdrop-blur border-b border-[#363A3F] flex flex-col gap-2">
         <div className="flex flex-wrap items-center gap-2 justify-between">
           <div className="flex flex-wrap items-center gap-2">
             <span
-              className={`px-2.5 py-1 rounded text-3xs font-bold font-mono uppercase tracking-wider bg-[#E0A04A] text-[#050608] transition-shadow ${
-                flashA ? 'ring-2 ring-[#E4E4E2] ring-offset-2 ring-offset-[#070A0D]' : ''
+              className={`px-2.5 py-1 rounded text-3xs font-bold font-mono uppercase tracking-wider bg-[#E9AD51] text-[#111113] transition-shadow ${
+                flashA ? 'ring-2 ring-[#EDEEF0] ring-offset-2 ring-offset-[#151619]' : ''
               }`}
               title={siteA?.name}
             >
               A: {siteA?.name ? (siteA.name.length > 20 ? siteA.name.slice(0, 18) + '…' : siteA.name) : scenarioAId}
             </span>
             <span
-              className={`px-2.5 py-1 rounded text-3xs font-bold font-mono uppercase tracking-wider bg-[#6FA8C9] text-[#050608] transition-shadow ${
-                flashB ? 'ring-2 ring-[#E4E4E2] ring-offset-2 ring-offset-[#070A0D]' : ''
+              className={`px-2.5 py-1 rounded text-3xs font-bold font-mono uppercase tracking-wider bg-[#638BFF] text-[#111113] transition-shadow ${
+                flashB ? 'ring-2 ring-[#EDEEF0] ring-offset-2 ring-offset-[#151619]' : ''
               }`}
               title={siteB?.name}
             >
@@ -253,46 +255,46 @@ export default function ExplorerPage() {
             </span>
 
             {/* Date / Forecast UTC Selector */}
-            <div className="flex flex-wrap items-center gap-2 rounded border border-[#2A2D31] bg-[#0D1014] px-2 py-1">
-              <label className="flex items-center gap-1.5 text-3xs font-mono text-[#8A8A88]">
+            <div className="flex flex-wrap items-center gap-2 rounded border border-[#363A3F] bg-[#18191B] px-2 py-1">
+              <label className="flex items-center gap-1.5 text-3xs font-mono text-[#AFB3BA]">
                 Forecast Date (UTC)
                 <input
                   type="datetime-local"
                   value={utcA.slice(0, 16)}
                   onChange={(e) => e.target.value && setUtcA(new Date(e.target.value + ':00Z').toISOString())}
-                  className="w-[154px] bg-[#050608] border border-[#2A2D31] rounded px-1.5 py-0.5 text-[#E4E4E2]"
+                  className="w-[154px] bg-[#111113] border border-[#363A3F] rounded px-1.5 py-0.5 text-[#EDEEF0]"
                 />
               </label>
-              <label className="flex items-center gap-1 text-3xs font-mono text-[#8A8A88] select-none">
+              <label className="flex items-center gap-1 text-3xs font-mono text-[#AFB3BA] select-none">
                 <input
                   type="checkbox"
                   checked={syncBToA}
                   onChange={(e) => setSyncBToA(e.target.checked)}
-                  className="accent-[#6FA8C9]"
+                  className="accent-[#638BFF]"
                 />
                 Sync B
               </label>
               {!syncBToA && (
-                <label className="flex items-center gap-1.5 text-3xs font-mono text-[#8A8A88]">
+                <label className="flex items-center gap-1.5 text-3xs font-mono text-[#AFB3BA]">
                   UTC B
                   <input
                     type="datetime-local"
                     value={utcB.slice(0, 16)}
                     onChange={(e) => e.target.value && setUtcB(new Date(e.target.value + ':00Z').toISOString())}
-                    className="w-[154px] bg-[#050608] border border-[#2A2D31] rounded px-1.5 py-0.5 text-[#E4E4E2]"
+                    className="w-[154px] bg-[#111113] border border-[#363A3F] rounded px-1.5 py-0.5 text-[#EDEEF0]"
                   />
                 </label>
               )}
             </div>
 
             {/* Terrain vs Flat */}
-            <div className="flex items-center bg-[#0D1014] p-0.5 rounded border border-[#2A2D31] text-3xs font-mono">
+            <div className="flex items-center bg-[#18191B] p-0.5 rounded border border-[#363A3F] text-3xs font-mono">
               <button
                 onClick={() => setHorizonMode('terrain')}
                 className={`px-2 py-1 rounded font-medium transition-colors ${
                   horizonMode === 'terrain'
-                    ? 'bg-[#6DBF8B]/20 text-[#6DBF8B] border border-[#6DBF8B]/50 font-bold'
-                    : 'text-[#8A8A88] hover:text-[#E4E4E2]'
+                    ? 'bg-[#30C48D]/20 text-[#30C48D] border border-[#30C48D]/50 font-bold'
+                    : 'text-[#AFB3BA] hover:text-[#EDEEF0]'
                 }`}
               >
                 Terrain
@@ -301,8 +303,8 @@ export default function ExplorerPage() {
                 onClick={() => setHorizonMode('flat')}
                 className={`px-2 py-1 rounded font-medium transition-colors ${
                   horizonMode === 'flat'
-                    ? 'bg-[#171B22] text-[#E4E4E2] font-bold border border-[#2A2D31]'
-                    : 'text-[#8A8A88] hover:text-[#E4E4E2]'
+                    ? 'bg-[#272A2D] text-[#EDEEF0] font-bold border border-[#363A3F]'
+                    : 'text-[#AFB3BA] hover:text-[#EDEEF0]'
                 }`}
               >
                 Flat
@@ -311,15 +313,15 @@ export default function ExplorerPage() {
 
             {/* Mast Height */}
             <div className="flex items-center gap-1 text-3xs font-mono">
-              <span className="text-[#8A8A88] hidden md:inline">Mast:</span>
+              <span className="text-[#AFB3BA] hidden md:inline">Mast:</span>
               {MAST_HEIGHTS.map((h) => (
                 <button
                   key={h}
                   onClick={() => setMastHeightM(h)}
                   className={`px-1.5 py-0.5 rounded border transition-colors ${
                     mastHeightM === h
-                      ? 'bg-[#6FA8C9]/20 text-[#6FA8C9] border-[#6FA8C9]/50 font-bold'
-                      : 'bg-[#0D1014] text-[#8A8A88] border-[#2A2D31] hover:text-[#E4E4E2]'
+                      ? 'bg-[#638BFF]/20 text-[#638BFF] border-[#638BFF]/50 font-bold'
+                      : 'bg-[#18191B] text-[#AFB3BA] border-[#363A3F] hover:text-[#EDEEF0]'
                   }`}
                 >
                   {h}m
@@ -329,15 +331,15 @@ export default function ExplorerPage() {
 
             {/* Window Duration (12h, 24h, 7d, 14d, 30d) */}
             <div className="flex items-center gap-1 text-3xs font-mono">
-              <span className="text-[#8A8A88] hidden md:inline">Window:</span>
+              <span className="text-[#AFB3BA] hidden md:inline">Window:</span>
               {WINDOW_DAY_OPTIONS.map((d) => (
                 <button
                   key={d}
                   onClick={() => setWindowDays(d)}
                   className={`px-1.5 py-0.5 rounded border transition-colors ${
                     windowDays === d
-                      ? 'bg-[#E0A04A]/20 text-[#E0A04A] border-[#E0A04A]/50 font-bold'
-                      : 'bg-[#0D1014] text-[#8A8A88] border-[#2A2D31] hover:text-[#E4E4E2]'
+                      ? 'bg-[#E9AD51]/20 text-[#E9AD51] border-[#E9AD51]/50 font-bold'
+                      : 'bg-[#18191B] text-[#AFB3BA] border-[#363A3F] hover:text-[#EDEEF0]'
                   }`}
                 >
                   {d === 0.5 ? '12h' : d === 1 ? '24h' : `${d}d`}
@@ -351,7 +353,7 @@ export default function ExplorerPage() {
             <button
               type="button"
               onClick={runComparisonAndScroll}
-              className="px-3 py-1 rounded text-3xs font-mono font-bold uppercase tracking-wider bg-[#6DBF8B] hover:bg-[#5aa877] text-[#050608] transition-colors cursor-pointer shadow"
+              className="px-3 py-1 rounded text-3xs font-mono font-bold uppercase tracking-wider bg-[#30C48D] hover:bg-[#5aa877] text-[#111113] transition-colors cursor-pointer shadow"
             >
               ⚡ Compare &amp; View Forecast ↓
             </button>
@@ -359,7 +361,7 @@ export default function ExplorerPage() {
             <button
               type="button"
               onClick={() => setShowAdvancedPhysics((v) => !v)}
-              className="px-2.5 py-1 rounded text-3xs font-mono font-medium bg-[#0D1014] text-[#B9A58C] border border-[#2A2D31] hover:border-[#B9A58C]/50 transition-colors shrink-0"
+              className="px-2.5 py-1 rounded text-3xs font-mono font-medium bg-[#18191B] text-[#638BFF] border border-[#363A3F] hover:border-[#638BFF]/50 transition-colors shrink-0"
             >
               Physics {showAdvancedPhysics ? '▲' : '▼'}
             </button>
@@ -367,11 +369,11 @@ export default function ExplorerPage() {
         </div>
 
         {showAdvancedPhysics && (
-          <div className="p-3 bg-[#0D1014] border border-[#2A2D31] rounded grid grid-cols-1 md:grid-cols-4 gap-4 font-mono animate-fade-in">
+          <div className="p-3 bg-[#18191B] border border-[#363A3F] rounded grid grid-cols-1 md:grid-cols-4 gap-4 font-mono animate-fade-in">
             <div className="flex flex-col gap-1">
               <div className="flex items-center justify-between text-3xs">
-                <span className="text-[#8A8A88] font-medium">Sun Elevation Threshold:</span>
-                <span className="text-[#E0A04A] font-bold">{thresholdDeg.toFixed(1)}°</span>
+                <span className="text-[#AFB3BA] font-medium">Sun Elevation Threshold:</span>
+                <span className="text-[#E9AD51] font-bold">{thresholdDeg.toFixed(1)}°</span>
               </div>
               <input
                 type="range"
@@ -380,14 +382,14 @@ export default function ExplorerPage() {
                 step="0.5"
                 value={thresholdDeg}
                 onChange={(e) => setThresholdDeg(parseFloat(e.target.value))}
-                className="w-full accent-[#E0A04A] cursor-pointer"
+                className="w-full accent-[#E9AD51] cursor-pointer"
               />
             </div>
 
             <div className="flex flex-col gap-1">
               <div className="flex items-center justify-between text-3xs">
-                <span className="text-[#8A8A88] font-medium">Antenna Clearance Margin:</span>
-                <span className="text-[#6FA8C9] font-bold">+{dteMarginDeg.toFixed(1)}°</span>
+                <span className="text-[#AFB3BA] font-medium">Antenna Clearance Margin:</span>
+                <span className="text-[#638BFF] font-bold">+{dteMarginDeg.toFixed(1)}°</span>
               </div>
               <input
                 type="range"
@@ -396,19 +398,19 @@ export default function ExplorerPage() {
                 step="0.5"
                 value={dteMarginDeg}
                 onChange={(e) => setDteMarginDeg(parseFloat(e.target.value))}
-                className="w-full accent-[#6FA8C9] cursor-pointer"
+                className="w-full accent-[#638BFF] cursor-pointer"
               />
             </div>
 
             <div className="flex flex-col gap-1">
               <div className="flex items-center justify-between text-3xs">
-                <span className="text-[#8A8A88] font-medium">Earth LOS Criterion:</span>
-                <span className="text-[#6FA8C9] capitalize">{earthCriterion.replace('_', ' ')}</span>
+                <span className="text-[#AFB3BA] font-medium">Earth LOS Criterion:</span>
+                <span className="text-[#638BFF] capitalize">{earthCriterion.replace('_', ' ')}</span>
               </div>
               <select
                 value={earthCriterion}
                 onChange={(e) => setEarthCriterion(e.target.value as EarthCriterion)}
-                className="w-full px-2 py-1 bg-[#050608] border border-[#2A2D31] rounded text-3xs text-[#E4E4E2] focus:outline-none"
+                className="w-full px-2 py-1 bg-[#111113] border border-[#363A3F] rounded text-3xs text-[#EDEEF0] focus:outline-none"
               >
                 <option value="center">Center LOS (Earth center &gt;= horizon + margin)</option>
                 <option value="full_disk">Full Disk Clear (Lower limb above horizon)</option>
@@ -418,12 +420,12 @@ export default function ExplorerPage() {
 
             <div className="flex flex-col gap-1">
               <div className="flex items-center justify-between text-3xs">
-                <span className="text-[#8A8A88] font-medium">Solar Array:</span>
+                <span className="text-[#AFB3BA] font-medium">Solar Array:</span>
               </div>
               <select
                 value={solarArrayType}
                 onChange={(e) => setSolarArrayType(e.target.value as SolarOrientation)}
-                className="w-full px-2 py-1 bg-[#050608] border border-[#2A2D31] rounded text-3xs text-[#E4E4E2] focus:outline-none"
+                className="w-full px-2 py-1 bg-[#111113] border border-[#363A3F] rounded text-3xs text-[#EDEEF0] focus:outline-none"
               >
                 <option value="vertical">Vertical Mast (Azimuth Tracking)</option>
                 <option value="flat">Horizontal Surface (cos i = sin el)</option>
@@ -438,12 +440,12 @@ export default function ExplorerPage() {
       <div className="relative">
         <PanelCornerBrackets />
         <div className="flex flex-col gap-2">
-          <div className="flex flex-wrap items-center justify-between gap-2 p-2.5 bg-[#0D1014] border border-[#2A2D31] rounded text-xs">
+          <div className="flex flex-wrap items-center justify-between gap-2 p-2.5 bg-[#18191B] border border-[#363A3F] rounded text-xs">
             <div className="flex items-center gap-2">
-              <span className="text-3xs uppercase font-mono text-[#E4E4E2] font-semibold">
+              <span className="text-3xs uppercase font-mono text-[#EDEEF0] font-semibold">
                 South Polar Targeting Canvas
               </span>
-              <span className="px-2 py-0.5 rounded bg-[#050608] border border-[#2A2D31] text-3xs font-mono text-[#6FA8C9]">
+              <span className="px-2 py-0.5 rounded bg-[#111113] border border-[#363A3F] text-3xs font-mono text-[#638BFF]">
                 Preset Domain: Lat -90° to -70°S · Lon -180° to +180°E
               </span>
             </div>
@@ -453,8 +455,8 @@ export default function ExplorerPage() {
                 onClick={() => setMapViewMode('both')}
                 className={`px-2.5 py-1 rounded text-3xs font-mono font-medium transition-colors ${
                   mapViewMode === 'both'
-                    ? 'bg-[#6DBF8B]/20 text-[#6DBF8B] border border-[#6DBF8B]/50 font-bold'
-                    : 'bg-[#050608] text-[#8A8A88] hover:text-[#E4E4E2] border border-[#2A2D31]'
+                    ? 'bg-[#30C48D]/20 text-[#30C48D] border border-[#30C48D]/50 font-bold'
+                    : 'bg-[#111113] text-[#AFB3BA] hover:text-[#EDEEF0] border border-[#363A3F]'
                 }`}
               >
                 ⚡ Split View (3D Globe + Flat Polar Map)
@@ -464,8 +466,8 @@ export default function ExplorerPage() {
                 onClick={() => setMapViewMode('globe')}
                 className={`px-2.5 py-1 rounded text-3xs font-mono font-medium transition-colors ${
                   mapViewMode === 'globe'
-                    ? 'bg-[#E0A04A]/20 text-[#E0A04A] border border-[#E0A04A]/50 font-bold'
-                    : 'bg-[#050608] text-[#8A8A88] hover:text-[#E4E4E2] border border-[#2A2D31]'
+                    ? 'bg-[#E9AD51]/20 text-[#E9AD51] border border-[#E9AD51]/50 font-bold'
+                    : 'bg-[#111113] text-[#AFB3BA] hover:text-[#EDEEF0] border border-[#363A3F]'
                 }`}
               >
                 🌐 3D Globe Only
@@ -475,8 +477,8 @@ export default function ExplorerPage() {
                 onClick={() => setMapViewMode('flat')}
                 className={`px-2.5 py-1 rounded text-3xs font-mono font-medium transition-colors ${
                   mapViewMode === 'flat'
-                    ? 'bg-[#6FA8C9]/20 text-[#6FA8C9] border border-[#6FA8C9]/50 font-bold'
-                    : 'bg-[#050608] text-[#8A8A88] hover:text-[#E4E4E2] border border-[#2A2D31]'
+                    ? 'bg-[#638BFF]/20 text-[#638BFF] border border-[#638BFF]/50 font-bold'
+                    : 'bg-[#111113] text-[#AFB3BA] hover:text-[#EDEEF0] border border-[#363A3F]'
                 }`}
               >
                 🗺️ Flat Polar Map Only
@@ -489,7 +491,7 @@ export default function ExplorerPage() {
               <div className={`${mapViewMode === 'both' ? 'lg:col-span-6' : ''} flex flex-col gap-1.5`}>
                 <Suspense
                   fallback={
-                    <div className="w-full min-h-[440px] bg-[#050608] border border-[#2A2D31] rounded flex items-center justify-center text-3xs font-mono text-[#8A8A88]">
+                    <div className="w-full min-h-[440px] bg-[#111113] border border-[#363A3F] rounded flex items-center justify-center text-3xs font-mono text-[#AFB3BA]">
                       Loading 3D lunar globe...
                     </div>
                   }
@@ -521,24 +523,24 @@ export default function ExplorerPage() {
 
           {/* Selection Action Bar when clicking a pin or arbitrary surface point */}
           {selectedLocation && (
-            <div className="p-3 bg-[#050608] border-2 border-[#6DBF8B] rounded flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-fade-in text-xs shadow-lg">
+            <div className="p-3 bg-[#111113] border-2 border-[#638BFF] rounded flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-fade-in text-xs shadow-lg">
               <div>
                 {selectedLocation.kind === 'site' ? (
                   <>
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-bold text-[#E4E4E2]">{selectedLocation.site.name}</span>
-                      <span className="px-1.5 py-0.5 rounded text-3xs font-medium bg-[#171B22] text-[#6DBF8B] font-mono">
+                      <span className="font-bold text-[#EDEEF0]">{selectedLocation.site.name}</span>
+                      <span className="px-1.5 py-0.5 rounded text-3xs font-medium bg-[#272A2D] text-[#30C48D] font-mono">
                         {selectedLocation.site.kind === 'candidate' ? 'Artemis Candidate' : selectedLocation.site.isMission ? 'CLPS Mission' : 'Reference Site'}
                       </span>
                     </div>
-                    <div className="text-[#8A8A88] font-mono text-2xs mt-0.5">
+                    <div className="text-[#AFB3BA] font-mono text-2xs mt-0.5">
                       Lat: {selectedLocation.site.lat}° · Lon: {selectedLocation.site.lon}°
                     </div>
                   </>
                 ) : (
                   <>
-                    <span className="font-bold text-[#6DBF8B]">Arbitrary Surface Point Selected</span>
-                    <div className="text-[#E4E4E2] font-mono text-2xs mt-0.5">
+                    <span className="font-bold text-[#30C48D]">Arbitrary Surface Point Selected</span>
+                    <div className="text-[#EDEEF0] font-mono text-2xs mt-0.5">
                       Lat: {selectedLocation.lat}° · Lon: {selectedLocation.lon}°
                     </div>
                   </>
@@ -549,13 +551,13 @@ export default function ExplorerPage() {
                   <>
                     <button
                       onClick={() => assignToScenario(selectedLocation.site, 'A')}
-                      className="px-3 py-1.5 rounded bg-[#E0A04A] text-[#050608] font-bold font-mono transition-colors cursor-pointer"
+                      className="px-3 py-1.5 rounded bg-[#E9AD51] text-[#111113] font-bold font-mono transition-colors cursor-pointer"
                     >
                       Set as Scenario A
                     </button>
                     <button
                       onClick={() => assignToScenario(selectedLocation.site, 'B')}
-                      className="px-3 py-1.5 rounded bg-[#6FA8C9] text-[#050608] font-bold font-mono transition-colors cursor-pointer"
+                      className="px-3 py-1.5 rounded bg-[#638BFF] text-[#111113] font-bold font-mono transition-colors cursor-pointer"
                     >
                       Set as Scenario B
                     </button>
@@ -564,13 +566,13 @@ export default function ExplorerPage() {
                   <>
                     <button
                       onClick={() => requestCustomPointAnalysis('A')}
-                      className="px-3 py-1.5 rounded bg-[#E0A04A] text-[#050608] font-bold font-mono transition-colors cursor-pointer"
+                      className="px-3 py-1.5 rounded bg-[#E9AD51] text-[#111113] font-bold font-mono transition-colors cursor-pointer"
                     >
                       ⚡ Analyze in Scenario A
                     </button>
                     <button
                       onClick={() => requestCustomPointAnalysis('B')}
-                      className="px-3 py-1.5 rounded bg-[#6FA8C9] text-[#050608] font-bold font-mono transition-colors cursor-pointer"
+                      className="px-3 py-1.5 rounded bg-[#638BFF] text-[#111113] font-bold font-mono transition-colors cursor-pointer"
                     >
                       ⚡ Analyze in Scenario B
                     </button>
@@ -578,7 +580,7 @@ export default function ExplorerPage() {
                 )}
                 <button
                   onClick={() => setSelectedLocation(null)}
-                  className="px-2 py-1 rounded bg-[#171B22] hover:bg-[#2A2D31] text-[#8A8A88] font-mono"
+                  className="px-2 py-1 rounded bg-[#272A2D] hover:bg-[#363A3F] text-[#AFB3BA] font-mono"
                 >
                   ✕
                 </button>
@@ -607,16 +609,16 @@ export default function ExplorerPage() {
       </div>
 
       {/* Explicit Action Bar between Scenario Selection and Comparison Results */}
-      <div className="p-3 bg-[#0D1014] border border-[#6DBF8B]/50 rounded flex flex-col sm:flex-row items-center justify-between gap-3">
-        <div className="text-xs text-[#E4E4E2] font-mono">
-          Ready to evaluate <strong className="text-[#E0A04A]">Scenario A ({siteA?.name || scenarioAId})</strong> vs{' '}
-          <strong className="text-[#6FA8C9]">Scenario B ({siteB?.name || scenarioBId})</strong> over{' '}
-          <strong className="text-[#6DBF8B]">{windowDays === 0.5 ? '12 hours' : windowDays === 1 ? '24 hours' : `${windowDays} days`}</strong>.
+      <div className="p-3 bg-[#18191B] border border-[#638BFF]/50 rounded flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="text-xs text-[#EDEEF0] font-mono">
+          Ready to evaluate <strong className="text-[#E9AD51]">Scenario A ({siteA?.name || scenarioAId})</strong> vs{' '}
+          <strong className="text-[#638BFF]">Scenario B ({siteB?.name || scenarioBId})</strong> over{' '}
+          <strong className="text-[#30C48D]">{windowDays === 0.5 ? '12 hours' : windowDays === 1 ? '24 hours' : `${windowDays} days`}</strong>.
         </div>
         <button
           type="button"
           onClick={runComparisonAndScroll}
-          className="px-5 py-2 rounded bg-[#6DBF8B] hover:bg-[#5aa877] text-[#050608] text-xs font-bold font-mono uppercase tracking-wider transition-colors cursor-pointer shrink-0 shadow-md"
+          className="px-5 py-2 rounded bg-[#30C48D] hover:bg-[#5aa877] text-[#111113] text-xs font-bold font-mono uppercase tracking-wider transition-colors cursor-pointer shrink-0 shadow-md"
         >
           ⚡ Run Comparison &amp; 30-Day Forecast ↓
         </button>
@@ -633,27 +635,27 @@ export default function ExplorerPage() {
       </div>
 
       {/* Educational Guide tucked cleanly at the bottom as a collapsible reference */}
-      <div className="bg-[#0D1014] border border-[#2A2D31] rounded p-3">
+      <div className="bg-[#18191B] border border-[#363A3F] rounded p-3">
         <div className="flex items-center justify-between cursor-pointer" onClick={() => setShowEducationalCard(!showEducationalCard)}>
-          <span className="text-xs font-semibold text-[#8A8A88] uppercase tracking-wider font-mono">
+          <span className="text-xs font-semibold text-[#AFB3BA] uppercase tracking-wider font-mono">
             🎓 Reference Guide: Grazing Polar Sunlight (~1.54° Tilt) &amp; Lunar Libration
           </span>
-          <span className="text-3xs text-[#6FA8C9] font-mono">
+          <span className="text-3xs text-[#638BFF] font-mono">
             {showEducationalCard ? 'Hide ▲' : 'Expand ▼'}
           </span>
         </div>
         {showEducationalCard && (
-          <div className="mt-3 pt-3 border-t border-[#2A2D31] grid grid-cols-1 md:grid-cols-3 gap-3 text-3xs text-[#8A8A88]">
-            <div className="bg-[#050608] p-2.5 rounded border border-[#2A2D31]">
-              <strong className="text-[#E0A04A] block mb-1">☀️ Grazing Polar Sunlight</strong>
+          <div className="mt-3 pt-3 border-t border-[#363A3F] grid grid-cols-1 md:grid-cols-3 gap-3 text-3xs text-[#AFB3BA]">
+            <div className="bg-[#111113] p-2.5 rounded border border-[#363A3F]">
+              <strong className="text-[#E9AD51] block mb-1">☀️ Grazing Polar Sunlight</strong>
               The Moon's axis is tilted only 1.54° to the ecliptic. At the South Pole, the Sun skims the horizon—topographic peaks stay lit while crater floors stay in shadow.
             </div>
-            <div className="bg-[#050608] p-2.5 rounded border border-[#2A2D31]">
-              <strong className="text-[#6FA8C9] block mb-1">🌍 Lunar Libration &amp; DTE</strong>
+            <div className="bg-[#111113] p-2.5 rounded border border-[#363A3F]">
+              <strong className="text-[#638BFF] block mb-1">🌍 Lunar Libration &amp; DTE</strong>
               Orbital libration (~±6.7° latitude over 27.3 days) makes Earth bob above and below local terrain horizons.
             </div>
-            <div className="bg-[#050608] p-2.5 rounded border border-[#2A2D31]">
-              <strong className="text-[#6DBF8B] block mb-1">⚡ Joint Operations Window</strong>
+            <div className="bg-[#111113] p-2.5 rounded border border-[#363A3F]">
+              <strong className="text-[#30C48D] block mb-1">⚡ Joint Operations Window</strong>
               Solar-powered landers without relay satellites require simultaneous sunlight and direct Earth line-of-sight.
             </div>
           </div>

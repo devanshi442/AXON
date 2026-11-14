@@ -46,7 +46,7 @@ export default function App() {
             <Layout>
               <Suspense
                 fallback={
-                  <div className="flex items-center justify-center py-24 text-[#8A8A88]">
+                  <div className="flex items-center justify-center py-24 text-[#AFB3BA]">
                     Loading 3D Lunar Globe...
                   </div>
                 }
