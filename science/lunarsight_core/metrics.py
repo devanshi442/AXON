@@ -345,7 +345,8 @@ def compute_comprehensive_metrics(
         area_m2=p_cfg.get("area_m2", 1.0),
         efficiency=p_cfg.get("efficiency", 0.28),
         orientation=p_cfg.get("orientation", "horizontal"),
-        az0_deg=p_cfg.get("az0_deg", 0.0),
+        az0_deg=p_cfg.get("az0_deg") if p_cfg.get("az0_deg") is not None else (p_cfg.get("azimuth_deg") or 0.0),
+        tilt_deg=p_cfg.get("tilt_deg") if p_cfg.get("tilt_deg") is not None else p_cfg.get("solar_tilt_deg"),
         step_seconds=step_s,
     )
 
@@ -460,7 +461,7 @@ def compute_site_flat_and_terrain_metrics(
     if power_config is None:
         power_config = {
             "orientation": kwargs.get("solar_array_type") or kwargs.get("orientation", "flat"),
-            "tilt_deg": kwargs.get("solar_tilt_deg") or kwargs.get("tilt_deg"),
+            "tilt_deg": kwargs.get("solar_tilt_deg") if kwargs.get("solar_tilt_deg") is not None else kwargs.get("tilt_deg"),
             "azimuth_deg": kwargs.get("solar_azimuth_deg") or kwargs.get("azimuth_deg"),
             "area_m2": kwargs.get("area_m2") or kwargs.get("array_area_m2", 1.0),
             "efficiency": kwargs.get("efficiency") or kwargs.get("array_efficiency", 0.28),

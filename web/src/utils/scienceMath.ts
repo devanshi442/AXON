@@ -105,6 +105,7 @@ export function computeEarthVisibility(
  *   flat (horizontal): cos(i) = sin(el)
  *   vertical: vertical cylinder / azimuth tracking mast: cos(i) = cos(el)
  *   tracking: normal to sun beam whenever sun is visible: cos(i) = 1.0
+ *   tilted (tiltDeg provided): cos(i) = sin(el) * cos(tilt) + cos(el) * sin(tilt) * cos(az - az0)
  */
 export function computeSolarPowerWatts(
   sunElDeg: number,
@@ -113,15 +114,21 @@ export function computeSolarPowerWatts(
   orientation: SolarOrientation = 'flat',
   areaM2 = 1.0,
   efficiency = 0.28,
-  fluxWm2 = SOLAR_IRRADIANCE_W_M2
+  fluxWm2 = SOLAR_IRRADIANCE_W_M2,
+  tiltDeg?: number | null,
+  az0Deg = 0
 ): number {
-  void sunAzDeg // Reserved for azimuth-dependent array calculations
   if (sunFraction <= 0.0) return 0.0
 
   const elRad = (sunElDeg * Math.PI) / 180.0
   let cosI = 0.0
 
-  if (orientation === 'flat') {
+  if (tiltDeg !== undefined && tiltDeg !== null) {
+    const tiltRad = (tiltDeg * Math.PI) / 180.0
+    const azRad = (sunAzDeg * Math.PI) / 180.0
+    const az0Rad = (az0Deg * Math.PI) / 180.0
+    cosI = Math.sin(elRad) * Math.cos(tiltRad) + Math.cos(elRad) * Math.sin(tiltRad) * Math.cos(azRad - az0Rad)
+  } else if (orientation === 'flat') {
     cosI = Math.sin(elRad)
   } else if (orientation === 'vertical') {
     cosI = Math.cos(elRad)

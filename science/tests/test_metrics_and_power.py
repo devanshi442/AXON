@@ -145,6 +145,16 @@ def test_power_model_orientations_and_flux():
     cos_st = power.compute_incidence_angle_factor(15.0, 200.0, orientation="sun_tracking")
     assert math.isclose(cos_st.item(), 1.0, abs_tol=1e-4)
 
+    # 5. Tilted panel: 45 deg tilt facing South (az0 = 180 deg)
+    # Sun at el=45, az=180 -> beam directly normal to panel -> cos(i) = 1.0
+    cos_tilt_normal = power.compute_incidence_angle_factor(45.0, 180.0, tilt_deg=45.0, az0_deg=180.0)
+    assert math.isclose(cos_tilt_normal.item(), 1.0, abs_tol=1e-4)
+
+    # Changing tilt_deg changes power
+    p_flat = power.compute_solar_power(sun_el_deg=10.0, sun_az_deg=180.0, sun_fraction=1.0, orientation="horizontal")
+    p_tilted = power.compute_solar_power(sun_el_deg=10.0, sun_az_deg=180.0, sun_fraction=1.0, orientation="horizontal", tilt_deg=80.0, az0_deg=180.0)
+    assert p_tilted["total_energy_wh"] > p_flat["total_energy_wh"]
+
 
 def test_monotonicity_flat_vs_terrain_and_mast():
     """

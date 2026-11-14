@@ -44,9 +44,12 @@ def compute_incidence_angle_factor(
     sun_az_deg: Union[float, List[float], np.ndarray],
     orientation: str = "horizontal",
     az0_deg: float = 0.0,
+    tilt_deg: Optional[float] = None,
 ) -> np.ndarray:
     """
     Compute cos(i) clipped >= 0 for selected solar panel orientation.
+    If tilt_deg is specified, models a planar array tilted by tilt_deg from horizontal facing az0_deg:
+    cos(i) = sin(el) * cos(tilt) + cos(el) * sin(tilt) * cos(az - az0)
     """
     el_rad = np.radians(np.asarray(sun_el_deg, dtype=np.float64))
     az_rad = np.radians(np.asarray(sun_az_deg, dtype=np.float64))
@@ -61,19 +64,28 @@ def compute_incidence_angle_factor(
     elif orientation in ("tilted", "fixed_vertical"):
         orientation = "vertical_fixed"
 
-    if orientation == "horizontal":
-        # Panel facing zenith: normal is Up vector -> dot(Sun, Normal) = sin(el)
-        cos_i = np.sin(el_rad)
-    elif orientation == "vertical_fixed":
-        # Vertical panel facing azimuth az0: normal in horizontal plane at az0
-        az0_rad = math.radians(az0_deg)
-        cos_i = np.cos(el_rad) * np.cos(az_rad - az0_rad)
-    elif orientation == "vertical_azimuth_tracking":
-        # Vertical cylinder / rotating mast tracking sun in azimuth: cos(az - az_sun) = 1
-        cos_i = np.cos(el_rad)
-    elif orientation == "sun_tracking":
+    if orientation == "sun_tracking":
         # Full 2-axis tracking normal to beam
         cos_i = np.ones_like(el_rad)
+    elif orientation == "vertical_azimuth_tracking":
+        # Vertical cylinder / rotating mast tracking sun in azimuth: cos(az - az_sun) = 1
+        if tilt_deg is not None:
+            tilt_rad = math.radians(tilt_deg)
+            cos_i = np.sin(el_rad) * math.cos(tilt_rad) + np.cos(el_rad) * math.sin(tilt_rad)
+        else:
+            cos_i = np.cos(el_rad)
+    elif tilt_deg is not None or orientation in ("horizontal", "vertical_fixed"):
+        az0_rad = math.radians(az0_deg)
+        if tilt_deg is not None:
+            tilt_rad = math.radians(tilt_deg)
+        elif orientation == "horizontal":
+            tilt_rad = 0.0
+        else:
+            tilt_rad = math.radians(90.0)
+
+        # Standard planar solar geometry:
+        # cos(i) = sin(el) * cos(tilt) + cos(el) * sin(tilt) * cos(az - az0)
+        cos_i = np.sin(el_rad) * math.cos(tilt_rad) + np.cos(el_rad) * math.sin(tilt_rad) * np.cos(az_rad - az0_rad)
     else:
         raise ValueError(f"Unknown orientation '{orientation}'. Choose horizontal, vertical_fixed, vertical_azimuth_tracking, sun_tracking.")
 
@@ -89,6 +101,7 @@ def compute_solar_power(
     efficiency: float = 0.28,
     orientation: str = "horizontal",
     az0_deg: float = 0.0,
+    tilt_deg: Optional[float] = None,
     step_seconds: int = 3600,
 ) -> Dict[str, Any]:
     """
@@ -103,12 +116,14 @@ def compute_solar_power(
     else:
         flux = compute_solar_flux(sun_distance_km)
 
-    cos_i = compute_incidence_angle_factor(el, az, orientation=orientation, az0_deg=az0_deg)
+    cos_i = compute_incidence_angle_factor(
+        el, az, orientation=orientation, az0_deg=az0_deg, tilt_deg=tilt_deg
+    )
 
     # Specific power per m² of array: P_spec = S(d) * eta * cos(i) * f_sun
-    specific_power_w_m2 = flux * efficiency * cos_i * frac
+    specific_power_w_m2 = np.atleast_1d(flux * efficiency * cos_i * frac)
     # Total power in Watts: P = P_spec * A
-    power_watts = specific_power_w_m2 * area_m2
+    power_watts = np.atleast_1d(specific_power_w_m2 * area_m2)
 
     step_hours = step_seconds / 3600.0
     n_pts = len(power_watts)
@@ -134,6 +149,7 @@ def compute_solar_power(
         "efficiency": efficiency,
         "orientation": orientation,
         "az0_deg": az0_deg,
+        "tilt_deg": tilt_deg,
         "power_watts": np.round(power_watts, 2).tolist(),
         "specific_power_w_m2": np.round(specific_power_w_m2, 2).tolist(),
         "total_energy_wh": round(total_energy_wh, 1),
