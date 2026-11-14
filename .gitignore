@@ -8,6 +8,10 @@ terrain/
 !web/public/terrain/
 !web/public/terrain/**
 
+# Preserve the superseded terrain snapshot outside the active deploy assets.
+!archive/legacy-lunar-terrain/web/public/terrain/
+!archive/legacy-lunar-terrain/web/public/terrain/**
+
 # ── Mission reference documents (PDFs) ──
 docs/sources/*.pdf
 
