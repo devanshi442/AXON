@@ -493,39 +493,39 @@ export default function ExplorerPage() {
                 Preset Domain: Lat -90° to -70°S · Lon -180° to +180°E
               </span>
             </div>
-            <div className="flex items-center gap-1.5">
+            <div className="inline-flex p-0.5 rounded bg-[#080A0E] border border-[#1E2633] text-3xs font-mono">
               <button
                 type="button"
                 onClick={() => setMapViewMode('both')}
-                className={`px-2.5 py-1 rounded text-3xs font-mono font-medium transition-colors ${
+                className={`px-3 py-1 rounded transition-colors ${
                   mapViewMode === 'both'
-                    ? 'bg-[#30C48D]/20 text-[#30C48D] border border-[#30C48D]/50 font-bold'
-                    : 'bg-[#111113] text-[#AFB3BA] hover:text-[#EDEEF0] border border-[#363A3F]'
+                    ? 'bg-[#18202C] text-[#38BDF8] font-semibold border border-[#38BDF8]/30'
+                    : 'text-[#94A3B8] hover:text-[#F1F5F9]'
                 }`}
               >
-                Split View (3D Globe + Flat Polar Map)
+                Split View
               </button>
               <button
                 type="button"
                 onClick={() => setMapViewMode('globe')}
-                className={`px-2.5 py-1 rounded text-3xs font-mono font-medium transition-colors ${
+                className={`px-3 py-1 rounded transition-colors ${
                   mapViewMode === 'globe'
-                    ? 'bg-[#E9AD51]/20 text-[#E9AD51] border border-[#E9AD51]/50 font-bold'
-                    : 'bg-[#111113] text-[#AFB3BA] hover:text-[#EDEEF0] border border-[#363A3F]'
+                    ? 'bg-[#18202C] text-[#38BDF8] font-semibold border border-[#38BDF8]/30'
+                    : 'text-[#94A3B8] hover:text-[#F1F5F9]'
                 }`}
               >
-                3D Globe Only
+                3D Globe
               </button>
               <button
                 type="button"
                 onClick={() => setMapViewMode('flat')}
-                className={`px-2.5 py-1 rounded text-3xs font-mono font-medium transition-colors ${
+                className={`px-3 py-1 rounded transition-colors ${
                   mapViewMode === 'flat'
-                    ? 'bg-[#638BFF]/20 text-[#638BFF] border border-[#638BFF]/50 font-bold'
-                    : 'bg-[#111113] text-[#AFB3BA] hover:text-[#EDEEF0] border border-[#363A3F]'
+                    ? 'bg-[#18202C] text-[#38BDF8] font-semibold border border-[#38BDF8]/30'
+                    : 'text-[#94A3B8] hover:text-[#F1F5F9]'
                 }`}
               >
-                Flat Polar Map Only
+                Flat Polar Map
               </button>
             </div>
           </div>
@@ -535,7 +535,7 @@ export default function ExplorerPage() {
               <div className={`${mapViewMode === 'both' ? 'lg:col-span-6' : ''} flex flex-col h-[540px]`}>
                 <Suspense
                   fallback={
-                    <div className="w-full h-[540px] bg-[#111113] border border-[#363A3F] rounded flex items-center justify-center text-3xs font-mono text-[#AFB3BA]">
+                    <div className="w-full h-[540px] bg-[#0C1017] border border-[#1E2633] rounded flex items-center justify-center text-3xs font-mono text-[#94A3B8]">
                       Loading 3D lunar globe...
                     </div>
                   }
@@ -581,24 +581,24 @@ export default function ExplorerPage() {
 
           {/* Selection Action Bar when clicking a pin or arbitrary surface point */}
           {selectedLocation && (
-            <div className="p-3 bg-[#111113] border-2 border-[#638BFF] rounded flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-fade-in text-xs shadow-lg">
+            <div className="p-3 bg-[#0C1017] border border-[#38BDF8]/40 rounded flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
               <div>
                 {selectedLocation.kind === 'site' ? (
                   <>
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-bold text-[#EDEEF0]">{selectedLocation.site.name}</span>
-                      <span className="px-1.5 py-0.5 rounded text-3xs font-medium bg-[#272A2D] text-[#30C48D] font-mono">
+                      <span className="font-semibold text-[#F1F5F9]">{selectedLocation.site.name}</span>
+                      <span className="px-1.5 py-0.5 rounded text-3xs font-medium bg-[#1E293B] text-[#94A3B8] border border-[#334155] font-mono">
                         {selectedLocation.site.kind === 'candidate' ? 'Artemis Candidate' : selectedLocation.site.isMission ? 'CLPS Mission' : 'Reference Site'}
                       </span>
                     </div>
-                    <div className="text-[#AFB3BA] font-mono text-2xs mt-0.5">
+                    <div className="text-[#94A3B8] font-mono text-2xs mt-0.5">
                       Lat: {selectedLocation.site.lat}° · Lon: {selectedLocation.site.lon}°
                     </div>
                   </>
                 ) : (
                   <>
-                    <span className="font-bold text-[#30C48D]">Arbitrary Surface Point Selected</span>
-                    <div className="text-[#EDEEF0] font-mono text-2xs mt-0.5">
+                    <span className="font-semibold text-[#38BDF8]">Surface Point Selected</span>
+                    <div className="text-[#F1F5F9] font-mono text-2xs mt-0.5">
                       Lat: {selectedLocation.lat}° · Lon: {selectedLocation.lon}°
                     </div>
                   </>
@@ -609,36 +609,36 @@ export default function ExplorerPage() {
                   <>
                     <button
                       onClick={() => assignToScenario(selectedLocation.site, 'A')}
-                      className="px-3 py-1.5 rounded bg-[#E9AD51] text-[#111113] font-bold font-mono transition-colors cursor-pointer"
+                      className="px-3 py-1.5 rounded bg-[#F5A623] hover:bg-[#E09612] text-[#080A0E] font-semibold font-mono text-2xs transition-colors cursor-pointer"
                     >
-                      Set as Scenario A
+                      Assign to A
                     </button>
                     <button
                       onClick={() => assignToScenario(selectedLocation.site, 'B')}
-                      className="px-3 py-1.5 rounded bg-[#638BFF] text-[#111113] font-bold font-mono transition-colors cursor-pointer"
+                      className="px-3 py-1.5 rounded bg-[#38BDF8] hover:bg-[#0EA5E9] text-[#080A0E] font-semibold font-mono text-2xs transition-colors cursor-pointer"
                     >
-                      Set as Scenario B
+                      Assign to B
                     </button>
                   </>
                 ) : (
                   <>
                     <button
                       onClick={() => requestCustomPointAnalysis('A')}
-                      className="px-3 py-1.5 rounded bg-[#E9AD51] text-[#111113] font-bold font-mono transition-colors cursor-pointer"
+                      className="px-3 py-1.5 rounded bg-[#F5A623] hover:bg-[#E09612] text-[#080A0E] font-semibold font-mono text-2xs transition-colors cursor-pointer"
                     >
-                      Analyze in Scenario A
+                      Analyze in A
                     </button>
                     <button
                       onClick={() => requestCustomPointAnalysis('B')}
-                      className="px-3 py-1.5 rounded bg-[#638BFF] text-[#111113] font-bold font-mono transition-colors cursor-pointer"
+                      className="px-3 py-1.5 rounded bg-[#38BDF8] hover:bg-[#0EA5E9] text-[#080A0E] font-semibold font-mono text-2xs transition-colors cursor-pointer"
                     >
-                      Analyze in Scenario B
+                      Analyze in B
                     </button>
                   </>
                 )}
                 <button
                   onClick={() => setSelectedLocation(null)}
-                  className="px-2 py-1 rounded bg-[#272A2D] hover:bg-[#363A3F] text-[#AFB3BA] font-mono"
+                  className="px-2 py-1 text-3xs font-mono text-[#64748B] hover:text-[#94A3B8] transition-colors ml-1"
                 >
                   ✕
                 </button>
@@ -667,16 +667,16 @@ export default function ExplorerPage() {
       </div>
 
       {/* Explicit Action Bar between Scenario Selection and Comparison Results */}
-      <div className="p-3 bg-[#18191B] border border-[#638BFF]/50 rounded flex flex-col sm:flex-row items-center justify-between gap-3">
-        <div className="text-xs text-[#EDEEF0] font-mono">
-          Ready to evaluate <strong className="text-[#E9AD51]">Scenario A ({siteA?.name || scenarioAId})</strong> vs{' '}
-          <strong className="text-[#638BFF]">Scenario B ({siteB?.name || scenarioBId})</strong> over{' '}
-          <strong className="text-[#30C48D]">{windowDays === 0.5 ? '12 hours' : windowDays === 1 ? '24 hours' : `${windowDays} days`}</strong>.
+      <div className="p-3 bg-[#0C1017] border border-[#1E2633] rounded flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="text-xs text-[#94A3B8] font-mono">
+          Ready to evaluate <strong className="text-[#F5A623]">Scenario A ({siteA?.name || scenarioAId})</strong> vs{' '}
+          <strong className="text-[#38BDF8]">Scenario B ({siteB?.name || scenarioBId})</strong> over{' '}
+          <strong className="text-[#2DD4BF]">{windowDays === 0.5 ? '12 hours' : windowDays === 1 ? '24 hours' : `${windowDays} days`}</strong>.
         </div>
         <button
           type="button"
           onClick={runComparisonAndScroll}
-          className="px-5 py-2 rounded bg-[#30C48D] hover:bg-[#5aa877] text-[#111113] text-xs font-bold font-mono uppercase tracking-wider transition-colors cursor-pointer shrink-0 shadow-md"
+          className="px-5 py-2 rounded bg-[#38BDF8] hover:bg-[#0EA5E9] text-[#080A0E] text-xs font-bold font-mono uppercase tracking-wider transition-colors cursor-pointer shrink-0"
         >
           Run Comparison &amp; 30-Day Forecast ↓
         </button>

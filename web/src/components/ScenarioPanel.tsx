@@ -308,29 +308,29 @@ export default function ScenarioPanel({
   const sunlightPct = opp?.sun.percentage ?? 0
   const sunlightHours = opp ? Math.round(opp.sun.total_hours) : 0
   const totalPeriodHours = opp ? Math.round(opp.total_period_hours) : Math.round(windowDays * 24)
-  const accentBorder = isScenarioA ? 'border-[#E9AD51]' : 'border-[#638BFF]'
-  const badgeBg = isScenarioA ? 'bg-[#E9AD51] text-[#111113]' : 'bg-[#638BFF] text-[#111113]'
+  const accentBorder = isScenarioA ? 'border-[#F5A623]/60' : 'border-[#38BDF8]/60'
+  const badgeBg = isScenarioA ? 'bg-[#F5A623] text-[#080A0E]' : 'bg-[#38BDF8] text-[#080A0E]'
 
   return (
-    <div className={`relative p-4 bg-[#18191B] border ${accentBorder} rounded flex flex-col gap-3`}>
+    <div className={`relative p-4 bg-[#0C1017] border ${accentBorder} rounded flex flex-col gap-3`}>
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className={`px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider font-mono ${badgeBg}`}>
             Scenario {type}
           </span>
-          <span className="text-xs text-[#AFB3BA] font-medium">
+          <span className="text-xs text-[#94A3B8] font-medium">
             {isScenarioA ? 'Baseline Reference Site' : 'Target / Comparison Site'}
           </span>
         </div>
         {(selectedSite?.lat != null || (siteId.startsWith('custom-') && (ts?.lat != null || customLat))) && (
           <div className="flex items-center gap-2 font-mono">
             {horizon?.dem_id && (
-              <span className="text-3xs px-1.5 py-0.5 rounded bg-[#111113] border border-[#363A3F] text-[#638BFF]">
+              <span className="text-3xs px-1.5 py-0.5 rounded bg-[#080A0E] border border-[#1E2633] text-[#38BDF8]">
                 {horizon.dem_id}
               </span>
             )}
-            <span className="text-3xs text-[#AFB3BA]">
+            <span className="text-3xs text-[#94A3B8]">
               {selectedSite?.lat ?? ts?.lat ?? customLat}° Lat · {selectedSite?.lon ?? ts?.lon ?? customLon}° Lon
             </span>
           </div>
@@ -338,9 +338,9 @@ export default function ScenarioPanel({
       </div>
 
       {/* Site Selector Dropdown + Custom Coords Toggle */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-2.5 bg-[#111113] border border-[#363A3F] rounded">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-2.5 bg-[#080A0E] border border-[#1E2633] rounded">
         <div className="flex-1 min-w-0">
-          <label className="block text-3xs uppercase tracking-wider text-[#AFB3BA] font-mono mb-1">
+          <label className="block text-3xs uppercase tracking-wider text-[#94A3B8] font-mono mb-1">
             Select Preset Site or Use Custom Coordinates
           </label>
           <select
@@ -353,7 +353,7 @@ export default function ScenarioPanel({
                 setSite(val)
               }
             }}
-            className="w-full px-2.5 py-1.5 bg-[#18191B] border border-[#363A3F] rounded text-xs text-[#EDEEF0] font-semibold focus:outline-none focus:border-[#638BFF]"
+            className="w-full px-2.5 py-1.5 bg-[#0C1017] border border-[#1E2633] rounded text-xs text-[#F1F5F9] font-semibold focus:outline-none focus:border-[#38BDF8]"
           >
             {siteId.startsWith('custom-') && (
               <option value={siteId}>
@@ -493,61 +493,61 @@ export default function ScenarioPanel({
       ) : (
         <div className="grid grid-cols-2 gap-3">
           {/* Sun Elevation Card */}
-          <div className="p-3 rounded bg-[#111113] border border-[#363A3F] flex flex-col justify-between">
+          <div className="p-3 rounded bg-[#080A0E] border border-[#1E2633] flex flex-col justify-between">
             <div className="flex items-center justify-between">
-              <span className="text-3xs uppercase tracking-wider text-[#E9AD51] font-semibold flex items-center gap-1 font-mono">
-                <span className="w-2 h-2 rounded-full bg-[#E9AD51]"></span>
+              <span className="text-3xs uppercase tracking-wider text-[#F5A623] font-semibold flex items-center gap-1.5 font-mono">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#F5A623]"></span>
                 Sun Power
               </span>
               <span
                 className={`px-1.5 py-0.2 rounded text-3xs font-medium font-mono ${
                   fSun >= 0.99
-                    ? 'bg-[#E9AD51]/20 text-[#E9AD51] border border-[#E9AD51]/40'
+                    ? 'bg-[#F5A623]/20 text-[#F5A623] border border-[#F5A623]/40'
                     : fSun > 0.0
-                    ? 'bg-[#E9AD51]/10 text-[#E9AD51] border border-[#E9AD51]/30'
-                    : 'bg-[#272A2D] text-[#AFB3BA] border border-[#363A3F]'
+                    ? 'bg-[#F5A623]/10 text-[#F5A623] border border-[#F5A623]/30'
+                    : 'bg-[#18202C] text-[#64748B] border border-[#1E2633]'
                 }`}
               >
                 {fSun >= 0.99 ? 'Fully Lit' : fSun > 0 ? `Partial (${Math.round(fSun * 100)}%)` : 'In Shadow'}
               </span>
             </div>
             <div className="my-1.5">
-              <div className="text-xl font-bold font-mono text-[#E9AD51]">
+              <div className="text-xl font-bold font-mono text-[#F5A623]">
                 {elevationData.sunElevation !== null
                   ? `${elevationData.sunElevation >= 0 ? '+' : ''}${elevationData.sunElevation.toFixed(2)}°`
                   : 'N/A'}
               </div>
-              <div className="text-3xs text-[#AFB3BA] mt-0.5 flex items-center justify-between font-mono">
+              <div className="text-3xs text-[#94A3B8] mt-0.5 flex items-center justify-between font-mono">
                 <span>Skyline: {sunHorizonEl.toFixed(1)}°</span>
-                <span className="text-[#E9AD51] font-bold">{solarPowerW.toFixed(1)} W</span>
+                <span className="text-[#F5A623] font-bold">{solarPowerW.toFixed(1)} W</span>
               </div>
             </div>
           </div>
 
           {/* Earth Elevation Card */}
-          <div className="p-3 rounded bg-[#111113] border border-[#363A3F] flex flex-col justify-between">
+          <div className="p-3 rounded bg-[#080A0E] border border-[#1E2633] flex flex-col justify-between">
             <div className="flex items-center justify-between gap-1">
-              <span className="text-3xs uppercase tracking-wider text-[#638BFF] font-semibold flex items-center gap-1 font-mono">
-                <span className="w-2 h-2 rounded-full bg-[#638BFF] shrink-0"></span>
+              <span className="text-3xs uppercase tracking-wider text-[#38BDF8] font-semibold flex items-center gap-1.5 font-mono">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#38BDF8] shrink-0"></span>
                 Earth DTE
               </span>
               <span
                 className={`px-1.5 py-0.2 rounded text-3xs font-medium font-mono shrink-0 ${
                   isEarthUp
-                    ? 'bg-[#638BFF]/20 text-[#638BFF] border border-[#638BFF]/40'
-                    : 'bg-[#272A2D] text-[#AFB3BA] border border-[#363A3F]'
+                    ? 'bg-[#38BDF8]/20 text-[#38BDF8] border border-[#38BDF8]/40'
+                    : 'bg-[#18202C] text-[#64748B] border border-[#1E2633]'
                 }`}
               >
                 {isEarthUp ? 'Direct LOS' : 'Occulted'}
               </span>
             </div>
             <div className="my-1.5">
-              <div className="text-xl font-bold font-mono text-[#638BFF]">
+              <div className="text-xl font-bold font-mono text-[#38BDF8]">
                 {elevationData.earthElevation !== null
                   ? `${elevationData.earthElevation >= 0 ? '+' : ''}${elevationData.earthElevation.toFixed(2)}°`
                   : 'N/A'}
               </div>
-              <div className="text-3xs text-[#AFB3BA] mt-0.5 flex items-center justify-between font-mono">
+              <div className="text-3xs text-[#94A3B8] mt-0.5 flex items-center justify-between font-mono">
                 <span>Skyline: {earthHorizonEl.toFixed(1)}°</span>
                 <span>Margin: +{dteMarginDeg.toFixed(1)}°</span>
               </div>
@@ -555,16 +555,16 @@ export default function ScenarioPanel({
           </div>
 
           {/* Operational Lighting Summary */}
-          <div className="col-span-2 px-3 py-2 bg-[#111113] border border-[#363A3F] rounded text-xs text-[#EDEEF0] flex items-center justify-between">
+          <div className="col-span-2 px-3 py-2 bg-[#080A0E] border border-[#1E2633] rounded text-xs text-[#F1F5F9] flex items-center justify-between">
             <div>
-              <span className="text-3xs uppercase font-mono tracking-wider text-[#AFB3BA] mr-2">
+              <span className="text-3xs uppercase font-mono tracking-wider text-[#94A3B8] mr-2">
                 {windowDays === 0.5 ? '12h' : windowDays === 1 ? '24h' : `${windowDays}d`} Forecast:
               </span>
               <span className="font-medium">
-                Sunlight for <strong className="text-[#E9AD51]">{sunlightPct.toFixed(1)}%</strong> ({sunlightHours} of {totalPeriodHours} h) at mast {mastHeightM} m
+                Sunlight for <strong className="text-[#F5A623]">{sunlightPct.toFixed(1)}%</strong> ({sunlightHours} of {totalPeriodHours} h) at mast {mastHeightM} m
               </span>
             </div>
-            <span className="text-3xs font-mono text-[#30C48D]">
+            <span className="text-3xs font-mono text-[#2DD4BF]">
               {opp?.solar_energy_kwh ?? 0} kWh/m²
             </span>
           </div>

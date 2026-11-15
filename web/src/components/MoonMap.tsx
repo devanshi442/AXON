@@ -242,18 +242,18 @@ export default function MoonMap({
   const resetView = () => onViewChange({ ...DEFAULT_LUNAR_VIEW })
 
   return (
-    <div className="bg-[#18191B] border border-[#363A3F] rounded p-4 flex flex-col gap-3 w-full h-full">
+    <div className="bg-[#0C1017] border border-[#1E2633] rounded p-4 flex flex-col gap-3 w-full h-full">
       <div className="flex flex-wrap items-center justify-between gap-2 text-xs min-h-[36px]">
         <div className="flex items-center gap-2">
-          <svg className="w-5 h-5 text-[#638BFF]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+          <svg className="w-5 h-5 text-[#38BDF8]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
             <circle cx="12" cy="12" r="9" />
             <path d="M3.6 9h16.8M3.6 15h16.8M12 3a15 15 0 010 18M12 3a15 15 0 000 18" strokeLinecap="round" />
           </svg>
           <div>
-            <h2 className="text-sm font-semibold text-[#EDEEF0] uppercase tracking-wider">
+            <h2 className="text-sm font-semibold text-[#F1F5F9] uppercase tracking-wider">
               South Polar Stereographic Map
             </h2>
-            <span className="text-[9px] font-mono text-[#777D86]">
+            <span className="text-[9px] font-mono text-[#64748B]">
               LROC WAC imagery · LOLA relief · 70°S–90°S
             </span>
           </div>
@@ -263,7 +263,7 @@ export default function MoonMap({
           <button
             type="button"
             onClick={resetView}
-            className="map-viewport-control px-2.5 py-1 rounded border border-[#363A3F] bg-[#111113] text-[#AFB3BA] hover:text-white"
+            className="map-viewport-control px-2.5 py-1 rounded border border-[#1E2633] bg-[#080A0E] text-[#94A3B8] hover:text-[#F1F5F9] transition-colors"
           >
             Reset
           </button>
@@ -272,7 +272,7 @@ export default function MoonMap({
 
       <div
         ref={viewportRef}
-        className="relative w-full h-[420px] min-h-[420px] bg-[#111113] rounded overflow-hidden border border-[#363A3F] select-none cursor-grab active:cursor-grabbing touch-none"
+        className="relative w-full h-[420px] min-h-[420px] bg-[#080A0E] rounded overflow-hidden border border-[#1E2633] select-none cursor-grab active:cursor-grabbing touch-none"
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
@@ -280,7 +280,6 @@ export default function MoonMap({
         onWheel={handleWheel}
         aria-label="Synchronized south polar map. Drag to pan and scroll to zoom."
       >
-        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,rgba(99,139,255,0.035),transparent_68%)]" />
 
         <img
           src="/terrain/lunar-south-pole-wac-70s-299m.webp"
@@ -322,7 +321,7 @@ export default function MoonMap({
         />
 
         <div
-          className="absolute rounded-full border border-dashed border-[#638BFF]/45 pointer-events-none"
+          className="absolute rounded-full border border-dashed border-[#38BDF8]/30 pointer-events-none"
           style={{
             width: ringData[0].radius * 2,
             height: ringData[0].radius * 2,
@@ -331,7 +330,7 @@ export default function MoonMap({
           }}
         />
         <div
-          className="absolute h-px bg-white/35 pointer-events-none"
+          className="absolute h-px bg-white/20 pointer-events-none"
           style={{
             width: ringData[0].radius * 2,
             left: metrics.poleX - ringData[0].radius,
@@ -339,7 +338,7 @@ export default function MoonMap({
           }}
         />
         <div
-          className="absolute w-px bg-white/35 pointer-events-none"
+          className="absolute w-px bg-white/20 pointer-events-none"
           style={{
             height: ringData[0].radius * 2,
             left: metrics.poleX,
@@ -350,7 +349,7 @@ export default function MoonMap({
         {ringData.slice(1).map((ring) => (
           <div
             key={ring.lat}
-            className="absolute rounded-full border border-dashed border-[#515761]/70 pointer-events-none"
+            className="absolute rounded-full border border-dashed border-[#334155]/60 pointer-events-none"
             style={{
               width: ring.radius * 2,
               height: ring.radius * 2,
@@ -363,7 +362,7 @@ export default function MoonMap({
         {ringData.map((ring) => (
           <span
             key={`label-${ring.lat}`}
-            className="absolute -translate-x-1/2 px-1 py-0.5 bg-[#111113]/75 text-[9px] text-[#AFB3BA] font-mono pointer-events-none"
+            className="absolute -translate-x-1/2 px-1 py-0.5 bg-[#080A0E]/85 text-[9px] text-[#94A3B8] font-mono pointer-events-none"
             style={{ left: metrics.poleX, top: metrics.poleY - ring.radius + 3 }}
           >
             {ring.label}
@@ -425,7 +424,7 @@ export default function MoonMap({
         <div className="absolute left-3 bottom-3 z-20 flex items-center gap-1.5">
           <button
             type="button"
-            className="map-viewport-control grid w-8 h-8 place-items-center rounded border border-[#363A3F] bg-[#18191B]/95 text-[#EDEEF0] hover:border-[#638BFF]"
+            className="map-viewport-control grid w-8 h-8 place-items-center rounded border border-[#1E2633] bg-[#0C1017]/95 text-[#F1F5F9] hover:border-[#38BDF8] transition-colors"
             onClick={() => zoomAroundCenter(1.35)}
             aria-label="Zoom in"
           >
@@ -433,18 +432,18 @@ export default function MoonMap({
           </button>
           <button
             type="button"
-            className="map-viewport-control grid w-8 h-8 place-items-center rounded border border-[#363A3F] bg-[#18191B]/95 text-[#EDEEF0] hover:border-[#638BFF]"
+            className="map-viewport-control grid w-8 h-8 place-items-center rounded border border-[#1E2633] bg-[#0C1017]/95 text-[#F1F5F9] hover:border-[#38BDF8] transition-colors"
             onClick={() => zoomAroundCenter(1 / 1.35)}
             aria-label="Zoom out"
           >
             −
           </button>
-          <span className="ml-1 rounded bg-[#111113]/85 px-2 py-1 text-[9px] text-[#AFB3BA] font-mono">
+          <span className="ml-1 rounded bg-[#080A0E]/85 border border-[#1E2633] px-2 py-1 text-[9px] text-[#94A3B8] font-mono">
             {viewState.zoom.toFixed(1)}×
           </span>
         </div>
 
-        <div className="absolute right-3 bottom-3 z-20 rounded bg-[#111113]/85 border border-[#363A3F] px-2 py-1 text-[9px] text-[#AFB3BA] font-mono pointer-events-none">
+        <div className="absolute right-3 bottom-3 z-20 rounded bg-[#080A0E]/85 border border-[#1E2633] px-2 py-1 text-[9px] text-[#94A3B8] font-mono pointer-events-none">
           {selectedPoint
             ? `Selected · ${selectedPoint.lat.toFixed(2)}°, ${selectedPoint.lon.toFixed(2)}°`
             : imageryLoaded
@@ -454,7 +453,7 @@ export default function MoonMap({
               : 'Loading LROC polar imagery…'}
         </div>
       </div>
-      <div className="flex items-center justify-between gap-2 text-[9px] font-mono text-[#777D86]">
+      <div className="flex items-center justify-between gap-2 text-[9px] font-mono text-[#64748B]">
         <span>70°S–90°S WAC coverage · 30 m source LOLA DEM inside 75°S · Drag to pan</span>
         <span>{viewState.centerLat.toFixed(2)}° · {viewState.centerLon.toFixed(2)}°</span>
       </div>

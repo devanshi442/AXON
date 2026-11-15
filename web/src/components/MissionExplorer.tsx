@@ -92,12 +92,8 @@ export default function MissionExplorer({ sites, onAssignScenario }: MissionExpl
             onClick={() => setStatusFilter(opt.id)}
             className={`px-3 py-1 rounded font-medium transition-colors ${
               statusFilter === opt.id
-                ? opt.id === 'south_pole'
-                  ? 'bg-[#E9AD51]/20 text-[#E9AD51] border border-[#E9AD51]/50'
-                  : opt.id === 'candidate'
-                  ? 'bg-[#638BFF]/20 text-[#638BFF] border border-[#638BFF]/50'
-                  : 'bg-[#638BFF]/20 text-[#638BFF] border border-[#638BFF]/40'
-                : 'bg-[#111113] text-[#AFB3BA] hover:text-[#EDEEF0] border border-[#363A3F]'
+                ? 'bg-[#18202C] text-[#38BDF8] border border-[#38BDF8]/40 font-semibold'
+                : 'bg-[#080A0E] text-[#94A3B8] hover:text-[#F1F5F9] border border-[#1E2633]'
             }`}
           >
             {opt.label}
@@ -116,28 +112,26 @@ export default function MissionExplorer({ sites, onAssignScenario }: MissionExpl
           return (
             <div
               key={s.id}
-              className={`px-3 py-2 rounded bg-[#111113] border transition-all flex flex-col gap-1 ${
+              className={`px-3 py-2 rounded bg-[#080A0E] border transition-all flex flex-col gap-1 ${
                 isA && isB
-                  ? 'border-[#E9AD51] outline outline-1 outline-[#638BFF]'
+                  ? 'border-[#F5A623] ring-1 ring-[#38BDF8]'
                   : isA
-                  ? 'border-[#E9AD51]'
+                  ? 'border-[#F5A623]'
                   : isB
-                  ? 'border-[#638BFF]'
-                  : 'border-[#363A3F] hover:border-[#777D86]'
+                  ? 'border-[#38BDF8]'
+                  : 'border-[#1E2633] hover:border-[#334155]'
               }`}
             >
               {/* Line 1: Name + status badge */}
               <div className="flex items-center justify-between gap-2">
-                <h3 className="text-xs font-semibold text-[#EDEEF0] truncate">{s.name}</h3>
+                <h3 className="text-xs font-semibold text-[#F1F5F9] truncate">{s.name}</h3>
                 <span
                   className={`shrink-0 px-1.5 py-0.5 rounded text-3xs font-medium font-mono uppercase tracking-wider ${
                     s.status === 'landed_success'
-                      ? 'bg-[#132A1C] text-[#30C48D] border border-[#2A5C3D]'
+                      ? 'bg-[#064E3B]/60 text-[#34D399] border border-[#059669]/40'
                       : s.status === 'landed_partial'
-                      ? 'bg-[#2A1210] text-[#E9AD51] border border-[#7F2318]'
-                      : s.status === 'planned' || s.kind === 'candidate'
-                      ? 'bg-[#272A2D] text-[#638BFF] border border-[#363A3F]'
-                      : 'bg-[#272A2D] text-[#AFB3BA] border border-[#363A3F]'
+                      ? 'bg-[#451A03]/60 text-[#FBBF24] border border-[#D97706]/40'
+                      : 'bg-[#1E293B] text-[#94A3B8] border border-[#334155]'
                   }`}
                 >
                   {s.kind === 'candidate' ? 'Candidate' : (s.status?.replace('_', ' ') || 'Reference')}
@@ -145,31 +139,25 @@ export default function MissionExplorer({ sites, onAssignScenario }: MissionExpl
               </div>
 
               {/* Line 2: Lat/Lon + region-vs-specific pill */}
-              <div className="flex items-center justify-between gap-2 text-3xs font-mono text-[#AFB3BA]">
+              <div className="flex items-center justify-between gap-2 text-3xs font-mono text-[#94A3B8]">
                 <span className="truncate">
                   {hasCoords ? `${s.lat}°, ${s.lon}°` : 'Coordinates not published'}
                   {s.region_type ? ` · ${s.region_type.replace(/_/g, ' ')}` : ''}
                 </span>
                 {hasCoords && (
-                  <span
-                    className={`shrink-0 px-1.5 py-0.5 rounded ${
-                      isRegionCentre
-                        ? 'text-[#E9AD51] bg-[#E9AD51]/10 border border-[#E9AD51]/20'
-                        : 'text-[#AFB3BA] bg-[#272A2D] border border-[#363A3F]'
-                    }`}
-                  >
+                  <span className="shrink-0 px-1.5 py-0.5 rounded text-[#94A3B8] bg-[#1E293B] border border-[#334155]">
                     {isRegionCentre ? 'Region centre' : 'Specific site'}
                   </span>
                 )}
               </div>
 
               {/* Line 3: Set A | Set B | Details */}
-              <div className="flex items-center justify-between gap-2 pt-1 mt-0.5 border-t border-[#363A3F] font-mono">
+              <div className="flex items-center justify-between gap-2 pt-1 mt-0.5 border-t border-[#1E2633] font-mono">
                 <div className="flex items-center gap-1 text-3xs">
                   {s.verified ? (
-                    <span className="text-[#30C48D]"> Verified</span>
+                    <span className="text-[#2DD4BF]">Verified</span>
                   ) : (
-                    <span className="text-[#E9AD51]">Unverified</span>
+                    <span className="text-[#64748B]">Unverified</span>
                   )}
                 </div>
                 <div className="flex items-center gap-1.5 text-3xs">
@@ -178,10 +166,10 @@ export default function MissionExplorer({ sites, onAssignScenario }: MissionExpl
                     onClick={() => assignScenario(s, 'A')}
                     className={`px-2 py-0.5 rounded font-medium transition-colors ${
                       isA
-                        ? 'bg-[#E9AD51] text-[#111113] font-bold'
+                        ? 'bg-[#F5A623] text-[#080A0E] font-bold'
                         : hasCoords
-                        ? 'bg-[#E9AD51]/15 text-[#E9AD51] hover:bg-[#E9AD51]/30 border border-[#E9AD51]/40'
-                        : 'opacity-40 cursor-not-allowed bg-[#272A2D] text-[#777D86]'
+                        ? 'bg-[#F5A623]/15 text-[#F5A623] hover:bg-[#F5A623]/30 border border-[#F5A623]/40'
+                        : 'opacity-40 cursor-not-allowed bg-[#18202C] text-[#64748B]'
                     }`}
                     title={hasCoords ? 'Set as Scenario A' : 'Cannot compute geometry: coordinates not published'}
                   >
@@ -192,10 +180,10 @@ export default function MissionExplorer({ sites, onAssignScenario }: MissionExpl
                     onClick={() => assignScenario(s, 'B')}
                     className={`px-2 py-0.5 rounded font-medium transition-colors ${
                       isB
-                        ? 'bg-[#638BFF] text-[#111113] font-bold'
+                        ? 'bg-[#38BDF8] text-[#080A0E] font-bold'
                         : hasCoords
-                        ? 'bg-[#638BFF]/15 text-[#638BFF] hover:bg-[#638BFF]/30 border border-[#638BFF]/40'
-                        : 'opacity-40 cursor-not-allowed bg-[#272A2D] text-[#777D86]'
+                        ? 'bg-[#38BDF8]/15 text-[#38BDF8] hover:bg-[#38BDF8]/30 border border-[#38BDF8]/40'
+                        : 'opacity-40 cursor-not-allowed bg-[#18202C] text-[#64748B]'
                     }`}
                     title={hasCoords ? 'Set as Scenario B' : 'Cannot compute geometry: coordinates not published'}
                   >
@@ -204,7 +192,7 @@ export default function MissionExplorer({ sites, onAssignScenario }: MissionExpl
                   <button
                     type="button"
                     onClick={() => setDetailSite(s)}
-                    className="px-1.5 py-0.5 rounded bg-[#272A2D] hover:bg-[#363A3F] text-[#EDEEF0] border border-[#363A3F] transition-colors"
+                    className="px-1.5 py-0.5 rounded bg-[#18202C] hover:bg-[#232B36] text-[#F1F5F9] border border-[#1E2633] transition-colors"
                   >
                     Details ↗
                   </button>
