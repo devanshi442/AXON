@@ -70,7 +70,7 @@ An intuitive scientific modeling engine and interactive dashboard designed for m
 ![AXON LunarSight Landing Dashboard](screenshots/landing_updated.png)
 *Figure 1: AXON LunarSight Mission Overview Dashboard — Featuring the mission intelligence landing page with live UTC telemetry (2026-11-15 10:54 UTC), candidate landing site registry (10 candidate sites, 2 reference sites), and direct access to the Lunar Site Explorer and Scientific Methods documentation.*
 
-Missions to the Moon's South Pole—such as NASA's Commercial Lunar Payload Services (CLPS) landers and Artemis crewed missions—face extreme lighting and communication environments. Because the Moon's spin axis has an obliquity of only $1.54^\circ$ relative to the ecliptic pole, the Sun perpetually skims low along the horizon, casting multi-kilometer shadows across deep impact basins while elevated crater rims and ridge massifs receive extended periods of illumination. Similarly, the Earth remains low in the lunar sky, oscillating over a $\approx 27.3\text{-day}$ libration cycle that periodically occults direct line-of-sight behind local topography.
+Missions to the Moon's South Pole—such as NASA's Commercial Lunar Payload Services (CLPS) landers and Artemis crewed missions—face extreme lighting and communication environments. Because the Moon's spin axis has an obliquity of only 1.54° relative to the ecliptic pole, the Sun perpetually skims low along the horizon, casting multi-kilometer shadows across deep impact basins while elevated crater rims and ridge massifs receive extended periods of illumination. Similarly, the Earth remains low in the lunar sky, oscillating over a ~27.3-day libration cycle that periodically occults direct line-of-sight behind local topography.
 
 Traditional trajectory and mission planning tools present steep learning curves, require specialized software installations, or model the Moon as an idealized flat sphere. AXON LunarSight addresses this gap by providing:
 1. **Rapid Site & Date Trade-Offs:** Direct side-by-side evaluations between candidate landing sites (Scenario A vs Scenario B) across arbitrary UTC epochs between 2024 and 2028.
@@ -104,9 +104,9 @@ AXON addresses every dimension of this challenge:
 > [!IMPORTANT]
 > **AXON LunarSight models deterministic topocentric line-of-sight geometry and clear-sky solar irradiance, NOT an empirical electrical power system or RF telecommunications link-budget simulation.**
 
-- **Solar Visibility $\ne$ Delivered Electrical Power:** A site is counted as illuminated when the Sun's upper limb ($\text{elevation}_{\text{center}} + 0.267^\circ$) rises above the local terrain skyline ($f_{\text{sun}} > 0$). In flight operations, delivered kilowatt-hours depend on photovoltaic cell conversion efficiency ($\eta$), solar incidence angle ($\cos i$), thermal bandgap derating during lunar midday, battery round-trip storage efficiency, and regolith dust contamination from descent engine plumes.
-- **Earth Line-of-Sight $\ne$ Telecommunications Link Margin:** Direct-to-Earth visibility indicates an unobstructed geometric vector from the lunar surface to Earth's center of mass. Actual radio communications depend on antenna gain patterns, transmitter EIRP, free-space path loss (~210 dB at X/Ka-band), ground station receiver sensitivity (e.g. NASA DSN 34m/70m dishes), and lunar surface multipath reflections.
-- **The "Flat Sphere, 0 Deg Horizon" Baseline:** The baseline comparison models the Moon as an idealized, uniform sphere ($R = 1,737.4\text{ km}$, $\text{elevation} = 0\text{ m}$) with an unoccluded $0.0^\circ$ tangent horizon. It is **not** an equivalent horizon at the site's elevation: high mountain summits (such as Connecting Ridge at $+1,653\text{ m}$) look downward over surrounding lowlands, depressing the local horizon dip angle below $0^\circ$ (down to $-3.37^\circ$), which enables peaks to capture solar illumination even when the Sun dips below the flat sphere datum.
+- **Solar Visibility ≠ Delivered Electrical Power:** A site is counted as illuminated when the Sun's upper limb ($\text{elevation}_{\text{center}} + 0.267^\circ$) rises above the local terrain skyline ($f_{\text{sun}} > 0$). In flight operations, delivered kilowatt-hours depend on photovoltaic cell conversion efficiency ($\eta$), solar incidence angle ($\cos i$), thermal bandgap derating during lunar midday, battery round-trip storage efficiency, and regolith dust contamination from descent engine plumes.
+- **Earth Line-of-Sight ≠ Telecommunications Link Margin:** Direct-to-Earth visibility indicates an unobstructed geometric vector from the lunar surface to Earth's center of mass. Actual radio communications depend on antenna gain patterns, transmitter EIRP, free-space path loss (~210 dB at X/Ka-band), ground station receiver sensitivity (e.g. NASA DSN 34m/70m dishes), and lunar surface multipath reflections.
+- **The "Flat Sphere, 0 Deg Horizon" Baseline:** The baseline comparison models the Moon as an idealized, uniform sphere ($R = 1,737.4\text{ km}$, $\text{elevation} = 0\text{ m}$) with an unoccluded 0.0° tangent horizon. It is **not** an equivalent horizon at the site's elevation: high mountain summits (such as Connecting Ridge at +1,653 m) look downward over surrounding lowlands, depressing the local horizon dip angle below 0° (down to -3.37°), which enables peaks to capture solar illumination even when the Sun dips below the flat sphere datum.
 
 ---
 
@@ -130,21 +130,21 @@ Evaluated across the full 5-year multi-lunation baseline (43,848 hourly ephemeri
 | **Blue Ghost 1 (Mare Crisium)** | +18.560°, +61.810° | `LDEM_64` (~474 m/px) | -3,651.3 m | 50.0% | **49.8%** | 355.0 h | 100.0% | Equatorial / near-side |
 
 *Key Scientific Insights:*
-- **Topographic Peak Illumination Gain:** At Connecting Ridge ($-89.534^\circ\text{S}$), terrain illumination ($58.3\%$) exceeds the flat sphere datum ($53.4\%$) because its $+1,653\text{ m}$ elevation dips the local horizon to $-3.37^\circ$, capturing low-angle sunlight throughout polar winter.
-- **Region Centroid vs Ridge Crest:** At Malapert Massif, the stated exploration region centroid ($-85.99^\circ\text{S}, -2.93^\circ\text{E}$) suffers $0.0\%$ Earth visibility due to a local northern ridge obstacle. However, the DEM-derived crest $\approx 1.4\text{ km}$ away ($-85.9627^\circ\text{S}, -2.3725^\circ\text{E}, 4,993\text{ m}$) achieves continuous **$100.0\%$ Earth line-of-sight**.
-- **Permanently Shadowed Regions (PSR):** The interior floor of Shackleton Crater ($-89.68^\circ\text{S}$) receives exactly $0.0\%$ direct sunlight year-round ($43,848\text{ h}$ max dark gap), confirming valid PSR shadow trapping.
+- **Topographic Peak Illumination Gain:** At Connecting Ridge ($-89.534^\circ\text{S}$), terrain illumination (58.3%) exceeds the flat sphere datum (53.4%) because its +1,653 m elevation dips the local horizon to -3.37°, capturing low-angle sunlight throughout polar winter.
+- **Region Centroid vs Ridge Crest:** At Malapert Massif, the stated exploration region centroid ($-85.99^\circ\text{S}, -2.93^\circ\text{E}$) suffers 0.0% Earth visibility due to a local northern ridge obstacle. However, the DEM-derived crest $\approx 1.4\text{ km}$ away ($-85.9627^\circ\text{S}, -2.3725^\circ\text{E}, 4,993\text{ m}$) achieves continuous **100.0% Earth line-of-sight**.
+- **Permanently Shadowed Regions (PSR):** The interior floor of Shackleton Crater ($-89.68^\circ\text{S}$) receives exactly 0.0% direct sunlight year-round (43,848 h max dark gap), confirming valid PSR shadow trapping.
 
 ---
 
 ## 4. Main Features
 
 - **Side-by-Side Scenario Comparison:** Compare Scenario A and Scenario B with synchronized UTC dates, independent site selection, mast heights, array orientations, and antenna clearance margins.
-- **Topographic Skyline Ray-Marching:** Generates 360-degree horizon profiles at $1.0^\circ$ azimuth resolution by marching rays through LOLA DEM rasters out to $50\text{ km}$.
-- **Solar Disk Fraction ($f_{\text{sun}}$):** Evaluates partial solar disk occultation using the analytical circular segment area formula across the Sun's $0.533^\circ$ apparent diameter.
+- **Topographic Skyline Ray-Marching:** Generates 360-degree horizon profiles at 1.0° azimuth resolution by marching rays through LOLA DEM rasters out to 50 km.
+- **Solar Disk Fraction ($f_{\text{sun}}$):** Evaluates partial solar disk occultation using the analytical circular segment area formula across the Sun's 0.533° apparent diameter.
 - **Solar Array Architectural Models:** Models power potential across 4 panel architectures: horizontal flat, vertical fixed, vertical azimuth-tracking mast, and dual-axis solar tracking.
 - **Direct-to-Earth Line-of-Sight:** Computes geometric visibility to Earth's center of mass with customizable antenna elevation clearance buffers ($\mu \ge 0.0^\circ$) and support for full disk and limb criteria.
 - **30-Day Opportunity Timeline:** 720-hour interactive timeline displaying contiguous daylight windows, communication passes, and dark blackout gaps.
-- **Sub-Minute Event Refinement:** Refines sunrise, sunset, AOS, and LOS transition edges down to $< 60\text{ seconds}$ using SPICE bisection root-finding.
+- **Sub-Minute Event Refinement:** Refines sunrise, sunset, AOS, and LOS transition edges down to < 60 seconds using SPICE bisection root-finding.
 - **Best Landing Window Discovery:** Automated combinatorial search across arbitrary date windows identifying optimum operational landing opportunities matching customizable daylight and communication constraints.
 - **Live Ground-Truth Verification:** Interactive verification tool comparing SPICE ephemerides against live NASA JPL Horizons observer tables.
 - **Interactive 2D/3D Map Picker:** Click-to-pick coordinate capture on 2D polar stereographic/cylindrical maps and 3D WebGL lunar globe.
@@ -252,7 +252,7 @@ The interactive Lunar Site Explorer (*Figure 2*) integrates dual-scenario config
   - **Observer Mast Height:** Discretized height selectors (`0m`, `1.5m`, `2.5m` [selected], `5m`, `10m`) that depress the local horizon skyline to model solar arrays and communications antennas elevated above the lander deck.
   - **Forecast Window Range:** Window duration selectors (`12h`, `24h`, `7d`, `14d`, `30d` [selected]) configuring the temporal horizon for downstream ephemeris calculations.
   - **Execution & Parameter Dropdowns:** Action button `[COMPARE & VIEW FORECAST ↓]` triggers multi-site analysis, while `[Physics ▾]` reveals configurable parameters including antenna clearance angle ($\mu_{\text{clearance}}$), solar array architecture, and threshold angle ($\tau$).
-- **South Polar Targeting Canvas ($70^\circ\text{S} - 90^\circ\text{S}$):**
+- **South Polar Targeting Canvas (70°S – 90°S):**
   - **View Layout Selector:** Supports dynamic switching between `[Split View]` (side-by-side 3D globe and 2D map), `[3D Globe]` full view, and `[Flat Polar Map]` full view.
   - **3D South Pole Globe:** Interactive WebGL sphere centered directly over the lunar south pole. Supports drag-to-rotate, scroll/pinch-to-zoom, and an instant `[Reset South Pole]` viewpoint button, rendering synchronized custom landing markers.
   - **2D South Polar Stereographic Map:** Cartographic projection utilizing high-contrast LROC Wide Angle Camera (WAC) imagery and LOLA digital elevation relief covering latitudes $70^\circ\text{S}$ to $90^\circ\text{S}$. Features concentric latitude parallels ($70^\circ\text{S}, 75^\circ\text{S}, 80^\circ\text{S}, 85^\circ\text{S}$), 4-quadrant longitude axes, and interactive color-coded custom site markers (`A` in amber at $-86.00^\circ\text{S}, 124.20^\circ\text{E}$ and `B` in cyan at $-79.50^\circ\text{S}, 100.90^\circ\text{E}$).
@@ -263,8 +263,8 @@ The interactive Lunar Site Explorer (*Figure 2*) integrates dual-scenario config
 
 The backend is built with FastAPI (`api/main.py` and `api/routes.py`):
 - **SPICE Thread Safety:** NASA NAIF SPICE C-libraries are not thread-safe for concurrent kernel pool mutations. AXON LunarSight encapsulates all SPICE evaluations behind a global process lock `_SPICE_LOCK` in `api/services/analysis_service.py` and enforces single-process deployment (`--workers 1`).
-- **Memory Caching (`api/cache.py`):** Thread-safe LRU memory caches store computed ephemeris blocks and 360-degree horizon masks, reducing repeat calculation latency from hundreds of milliseconds to $< 0.1\text{ ms}$.
-- **Rate Limiting & Safety:** Per-IP sliding-window rate limiting, request payload limits ($1.0\text{ MB}$), input coordinate bounds enforcement, and execution timeouts ($30.0\text{ seconds}$).
+- **Memory Caching (`api/cache.py`):** Thread-safe LRU memory caches store computed ephemeris blocks and 360-degree horizon masks, reducing repeat calculation latency from hundreds of milliseconds to < 0.1 ms.
+- **Rate Limiting & Safety:** Per-IP sliding-window rate limiting, request payload limits (1.0 MB), input coordinate bounds enforcement, and execution timeouts (30.0 seconds).
 - **Standardized Error Envelope:** All validation errors, timeouts, and exceptions emit a consistent JSON schema:
   ```json
   {
@@ -305,40 +305,83 @@ AXON LunarSight integrates Lunar Orbiter Laser Altimeter (LOLA) Gridded Data Rec
 | `LDEM_75S_30M.JP2` | Polar Stereographic | 30 m/pixel | 75.0°S to 90.0°S | `terrain/LDEM_75S_30M.JP2` |
 | `LDEM_64.JP2` | Equirectangular Cylindrical | 64 ppd (~474 m/px) | 90.0°S to 90.0°N | `terrain/global/LDEM_64.JP2` |
 
-### Elevation Scaling ($0.5\text{ m/DN}$)
+### Elevation Scaling (0.5 m/DN)
 LOLA DEMs store surface elevations as 16-bit signed integers. In accordance with NASA PDS specifications, raster pixel values are converted to meters above the reference sphere ($R = 1,737.4\text{ km}$):
-$$\text{Elevation (m)} = \text{DN} \times 0.5\text{ m}$$
+
+$$
+\text{Elevation (m)} = \text{DN} \times 0.5\text{ m}
+$$
 
 ### Windowed Raster Caching
-To prevent multi-gigabyte memory allocations during raster reads, `terrain.py` uses `rasterio.windows.Window` to slice only the bounding sub-box encompassing the $50\text{ km}$ horizon radius around the site.
+To prevent multi-gigabyte memory allocations during raster reads, `terrain.py` uses `rasterio.windows.Window` to slice only the bounding sub-box encompassing the 50 km horizon radius around the site.
 
 ---
 
 ## 11. 3D Ray-Marching Horizon Methodology
 
 Horizon masks are computed by marching rays in full 3D Cartesian space directly in the `MOON_ME` body-fixed frame:
-1. **Azimuth Cadence:** Evaluates 360 discrete azimuth bins ($1.0^\circ$ increments).
+1. **Azimuth Cadence:** Evaluates 360 discrete azimuth bins (1.0° increments).
 2. **Radial Stepping:** Steps outward along lunar great-circle arcs from $s_{\text{min}} = 40\text{ m}$ to $s_{\text{max}} = 50.0\text{ km}$ at half-pixel increments ($\Delta s = \Delta x / 2$).
 3. **Cartesian Spherical Curvature:** The 3D position of the ray at distance $s$ along azimuth $\theta$ is:
-   $$\mathbf{u}(s) = \cos(s/R)\,\mathbf{u}_{\text{site}} + \sin(s/R)\,(\cos\theta\,\mathbf{u}_{\text{North}} + \sin\theta\,\mathbf{u}_{\text{East}})$$
-   $$\mathbf{p}_{\text{terrain}}(s) = (R_0 + \text{DEM}(s) \times 0.5)\,\mathbf{u}(s)$$
+
+
+$$
+\mathbf{u}(s) = \cos(s/R)\,\mathbf{u}_{\text{site}} + \sin(s/R)\,(\cos\theta\,\mathbf{u}_{\text{North}} + \sin\theta\,\mathbf{u}_{\text{East}})
+$$
+
+
+
+$$
+\mathbf{p}_{\text{terrain}}(s) = (R_0 + \text{DEM}(s) \times 0.5)\,\mathbf{u}(s)
+$$
+
 4. **Observer Elevation & Mast Height:** For an observer at elevation $z_0$ with mast height $h$:
-   $$\mathbf{p}_{\text{obs}} = (R_0 + z_0 + h)\,\mathbf{u}_{\text{site}}$$
+
+
+$$
+\mathbf{p}_{\text{obs}} = (R_0 + z_0 + h)\,\mathbf{u}_{\text{site}}
+$$
+
    The skyline elevation is the maximum angular elevation over all ray steps:
-   $$h_{\text{mask}}(\theta) = \max_s \text{atan2}(\mathbf{d} \cdot \mathbf{u}_{\text{Up}}, \sqrt{(\mathbf{d} \cdot \mathbf{u}_{\text{East}})^2 + (\mathbf{d} \cdot \mathbf{u}_{\text{North}})^2})$$
-5. **Unclamped Negative Horizons:** Horizon angles are **never** clamped to $\ge 0.0^\circ$. Elevated mountain ridges look out over lower terrain, producing negative horizon angles (down to $-3.37^\circ$) that represent the true physical dip of the horizon.
+
+
+$$
+h_{\text{mask}}(\theta) = \max_s \text{atan2}(\mathbf{d} \cdot \mathbf{u}_{\text{Up}}, \sqrt{(\mathbf{d} \cdot \mathbf{u}_{\text{East}})^2 + (\mathbf{d} \cdot \mathbf{u}_{\text{North}})^2})
+$$
+
+5. **Unclamped Negative Horizons:** Horizon angles are **never** clamped to $\ge 0.0^\circ$. Elevated mountain ridges look out over lower terrain, producing negative horizon angles (down to -3.37°) that represent the true physical dip of the horizon.
 
 ---
 
 ## 12. Solar Illumination & Disk Fraction Formulation
 
 - **Sun "Up" Definition:** A site is illuminated when the upper limb of the solar disk rises above the local terrain skyline:
-  $$\text{el}_{\text{sun, center}} + 0.267^\circ > h_{\text{mask}}(\text{az}) + \tau_{\text{threshold}}$$
+
+
+$$
+\text{el}_{\text{sun, center}} + 0.267^\circ > h_{\text{mask}}(\text{az}) + \tau_{\text{threshold}}
+$$
+
 - **Analytical Solar Disk Fraction ($f_{\text{sun}}$):**
   The Sun has an apparent angular diameter of $\approx 0.533^\circ$ ($r_{\text{sun}} \approx 0.2665^\circ$). Across the solar disk, the fraction $f_{\text{sun}} \in [0, 1]$ visible above the horizon knife-edge is evaluated using the circular segment area formula:
-  $$h_{\text{above}} = \text{clip}(\text{el}_{\text{sun}} + r_{\text{sun}} - h_{\text{mask}}(\text{az}), 0.0, 2\,r_{\text{sun}})$$
-  $$d_{\text{norm}} = \text{clip}\left(1.0 - \frac{h_{\text{above}}}{r_{\text{sun}}}, -1.0, 1.0\right)$$
-  $$\theta = \arccos(d_{\text{norm}}), \quad f_{\text{sun}} = \frac{\theta - d_{\text{norm}}\sin\theta}{\pi}$$
+
+
+$$
+h_{\text{above}} = \text{clip}(\text{el}_{\text{sun}} + r_{\text{sun}} - h_{\text{mask}}(\text{az}), 0.0, 2\,r_{\text{sun}})
+$$
+
+
+
+$$
+d_{\text{norm}} = \text{clip}\left(1.0 - \frac{h_{\text{above}}}{r_{\text{sun}}}, -1.0, 1.0\right)
+$$
+
+
+
+$$
+\theta = \arccos(d_{\text{norm}}), \quad f_{\text{sun}} = \frac{\theta - d_{\text{norm}}\sin\theta}{\pi}
+$$
+
   - $f_{\text{sun}} = 0.0$: Solar disk fully shadowed.
   - $0.0 < f_{\text{sun}} < 1.0$: Partial solar occultation (grazing illumination).
   - $f_{\text{sun}} = 1.0$: Full solar disk unoccluded.
@@ -348,12 +391,20 @@ Horizon masks are computed by marching rays in full 3D Cartesian space directly 
 ## 13. Solar Power Generation Potential Models
 
 Clear-sky top-of-atmosphere solar flux follows the inverse-square law:
-$$S(d) = S_0 \left(\frac{1\text{ AU}}{d_{\text{sun}}(t)}\right)^2, \quad S_0 = 1,361.0\text{ W/m}^2\text{ (SORCE / IAU 2015)}$$
+
+$$
+S(d) = S_0 \left(\frac{1\text{ AU}}{d_{\text{sun}}(t)}\right)^2, \quad S_0 = 1,361.0\text{ W/m}^2\text{ (SORCE / IAU 2015)}
+$$
+
 Delivered electrical power potential:
-$$P(t) = S(d(t)) \cdot A \cdot \eta \cdot \max(0, \cos i) \cdot f_{\text{sun}}(t)$$
+
+$$
+P(t) = S(d(t)) \cdot A \cdot \eta \cdot \max(0, \cos i) \cdot f_{\text{sun}}(t)
+$$
+
 Where $A = 1.0\text{ m}^2$ baseline area and $\eta = 0.28$ (triple-junction GaAs reference efficiency).
 
-### Array Orientations & Incidence Factor ($\cos i$)
+### Array Orientations & Incidence Factor (cos i)
 1. **Horizontal Flat Array:** $\cos i = \sin(\text{el})$ (inefficient at lunar poles where solar elevation is only $1^\circ\text{--}2^\circ$).
 2. **Vertical Mast (Azimuth Tracking):** $\cos i = \cos(\text{el})$ (optimal for polar missions, capturing near-normal grazing sunlight).
 3. **Vertical Fixed Array:** $\cos i = \cos(\text{el}) \cdot \cos(\text{az} - \text{az}_0)$ (fixed planar panel facing azimuth $\text{az}_0$).
@@ -364,7 +415,11 @@ Where $A = 1.0\text{ m}^2$ baseline area and $\eta = 0.28$ (triple-junction GaAs
 ## 14. Earth Visibility & Communication Windows
 
 Direct-to-Earth (DTE) visibility models geometric line-of-sight to Earth's center of mass, accounting for lunar orbital libration and customizable antenna elevation clearance buffers ($\mu \ge 0.0^\circ$):
-$$h_{\text{req}} = h_{\text{mask}}(\text{az}_{\text{earth}}) + \mu_{\text{clearance}}$$
+
+$$
+h_{\text{req}} = h_{\text{mask}}(\text{az}_{\text{earth}}) + \mu_{\text{clearance}}
+$$
+
 Supported criteria:
 - **Center LOS (Default):** $\text{el}_{\text{earth, center}} \ge h_{\text{req}}$
 - **Full Disk Clear:** $\text{el}_{\text{earth, center}} - r_{\text{earth}} \ge h_{\text{req}}$ ($r_{\text{earth}} \approx 0.949^\circ$)
@@ -391,14 +446,14 @@ The custom coordinate targeting interface (*Figure 3*) provides immediate diagno
   - **Scenario B (Cyan, `CUSTOM-B`):** Custom coordinates set to $\phi = -79.5000^\circ\text{S}, \lambda = +100.9000^\circ\text{E}$. Bound dynamically into Scenario B, extracting terrain coverage across the $75^\circ\text{S} - 80^\circ\text{S}$ polar transition zone.
   - **Asynchronous Feedback:** Entry fields transition to `COMPUTING...` status while background workers query SPICE geometry and rasterio slices, updating action buttons (`RUN SCENARIO A`, `RUN SCENARIO B`) upon completion.
 - **Instantaneous Topocentric Physics Readouts (at 2026-11-15 10:54 UTC):**
-  - **Scenario A ($-86.00^\circ\text{S}, 124.20^\circ\text{E}$):**
-    - **Solar Status:** Apparent elevation is $+2.49^\circ$, but local terrain skyline rises to $4.0^\circ$. Because the Sun is below the terrain knife-edge, the status is flagged as **In Shadow** and delivered electrical power drops to $0.0\text{ W}$.
-    - **Earth DTE Status:** Apparent elevation is $-3.63^\circ$ against a $-0.9^\circ$ skyline, correctly marked as **Occulted** (no direct line-of-sight).
-    - **30-Day Cumulative Forecast:** Despite instantaneous shadow, the elevated position captures sunlight for $81.7\%$ of the 30-day lunation ($588\text{ of } 719\text{ h}$) at mast height $2.5\text{ m}$, yielding a total solar energy potential of $196.79\text{ kWh/m}^2$.
-  - **Scenario B ($-79.50^\circ\text{S}, 100.90^\circ\text{E}$):**
-    - **Solar Status:** Apparent elevation is $+11.95^\circ$ against a $2.6^\circ$ local skyline. The disk is unoccluded, flagged as **Fully Lit**, delivering $381.8\text{ W}$ of electrical power.
-    - **Earth DTE Status:** Apparent elevation is $-5.51^\circ$ against a $3.4^\circ$ skyline, marked as **Occulted**.
-    - **30-Day Cumulative Forecast:** Due to lower latitude and standard diurnal setting, sunlight availability is only $44.3\%$ ($319\text{ of } 719\text{ h}$), producing $121.3\text{ kWh/m}^2$.
+  - **Scenario A (-86.00°S, 124.20°E):**
+    - **Solar Status:** Apparent elevation is +2.49°, but local terrain skyline rises to 4.0°. Because the Sun is below the terrain knife-edge, the status is flagged as **In Shadow** and delivered electrical power drops to 0.0 W.
+    - **Earth DTE Status:** Apparent elevation is -3.63° against a -0.9° skyline, correctly marked as **Occulted** (no direct line-of-sight).
+    - **30-Day Cumulative Forecast:** Despite instantaneous shadow, the elevated position captures sunlight for 81.7% of the 30-day lunation ($588\text{ of } 719\text{ h}$) at mast height $2.5\text{ m}$, yielding a total solar energy potential of $196.79\text{ kWh/m}^2$.
+  - **Scenario B (-79.50°S, 100.90°E):**
+    - **Solar Status:** Apparent elevation is +11.95° against a 2.6° local skyline. The disk is unoccluded, flagged as **Fully Lit**, delivering $381.8\text{ W}$ of electrical power.
+    - **Earth DTE Status:** Apparent elevation is -5.51° against a 3.4° skyline, marked as **Occulted**.
+    - **30-Day Cumulative Forecast:** Due to lower latitude and standard diurnal setting, sunlight availability is only 44.3% ($319\text{ of } 719\text{ h}$), producing $121.3\text{ kWh/m}^2$.
 
 ---
 
@@ -409,24 +464,24 @@ The custom coordinate targeting interface (*Figure 3*) provides immediate diagno
 
 - **Synchronized Trade-Off Analysis:** Simultaneously evaluate up to 4 sites across matching timeframes, computing baseline deltas ($B - A$), pairwise differences, and multi-metric rankings.
 - **Contiguous Window Extraction:** Segments hourly timeseries into discrete continuous illuminated and communication passes.
-- **Sub-Minute Event Refinement:** Bisection root-finding queries SPICE topocentric states recursively to refine sunrise, sunset, AOS, and LOS events down to $< 60\text{ seconds}$ precision.
+- **Sub-Minute Event Refinement:** Bisection root-finding queries SPICE topocentric states recursively to refine sunrise, sunset, AOS, and LOS events down to < 60 seconds precision.
 - **Candidate Landing Window Search:** Discovers optimal mission opportunities over multi-month date ranges based on minimum continuous daylight, maximum communication availability, and acceptable blackout limits.
 
 ### 30-Day Opportunity Timelines & Operational Metrics
 The timeline interface (*Figure 4*) visualizes the stark operational contrast between polar summit sites and lower-latitude lunar terrains over 720 continuous hourly samples:
 - **Diurnal Mechanics & Elevation Curves:**
-  - **Scenario A (Amber Curve, Custom Polar Summit Site):** Solar elevation skims near the horizon, oscillating mildly between $+0.5^\circ$ and $+3.5^\circ$ above the $0.0^\circ$ baseline. This stable polar grazing behavior illustrates how elevated summits maintain near-continuous solar exposure throughout the lunar synodic month.
+  - **Scenario A (Amber Curve, Custom Polar Summit Site):** Solar elevation skims near the horizon, oscillating mildly between $+0.5^\circ$ and $+3.5^\circ$ above the 0.0° baseline. This stable polar grazing behavior illustrates how elevated summits maintain near-continuous solar exposure throughout the lunar synodic month.
   - **Scenario B (Cyan Curve, Custom Sub-Polar Site):** Solar elevation exhibits a wide sinusoidal excursion typical of lower latitudes, ascending to $+12.9^\circ$ at local solar noon and plunging to $-9.8^\circ$ during the ~14-day lunar night.
 - **Mission Window Summary Cards:**
-  - **Solar Illumination (30-Day):** Scenario A provides $588\text{ h}$ ($81.7\%$) vs Scenario B $319\text{ h}$ ($44.3\%$), granting Scenario A a $+269\text{ hour}$ solar advantage.
-  - **Direct-to-Earth Comm (30-Day):** Scenario A maintains $321\text{ h}$ ($44.6\%$) vs Scenario B $59\text{ h}$ ($8.2\%$), representing an additional $+262\text{ hours}$ of direct communication coverage.
-  - **Joint Power + Comm (30-Day):** Scenario A achieves $301\text{ h}$ ($41.8\%$) of simultaneous power and communication availability, while Scenario B yields $0\text{ h}$ ($0.0\%$) due to the out-of-phase relationship between Earth libration visibility and daylight.
+  - **Solar Illumination (30-Day):** Scenario A provides 588 h (81.7%) vs Scenario B 319 h (44.3%), granting Scenario A a $+269\text{ hour}$ solar advantage.
+  - **Direct-to-Earth Comm (30-Day):** Scenario A maintains 321 h (44.6%) vs Scenario B 59 h (8.2%), representing an additional $+262\text{ hours}$ of direct communication coverage.
+  - **Joint Power + Comm (30-Day):** Scenario A achieves 301 h (41.8%) of simultaneous power and communication availability, while Scenario B yields 0 h (0.0%) due to the out-of-phase relationship between Earth libration visibility and daylight.
 - **Interactive Timestamp Hover Inspection (at Hour +140h):**
   - Hovering the cursor across the chart triggers interactive crosshairs and dark-glass inspection tooltips (captured at `Hour +140h` / `2026-11-21 15:00 UTC`):
     - **Scenario A Elevations:** $\text{Sun } +1.68^\circ \ / \ \text{Earth } +4.34^\circ$.
     - **Scenario B Elevations:** $\text{Sun } +5.68^\circ \ / \ \text{Earth } +1.76^\circ$.
     - **Elevation Difference:** $\Delta(B - A) = +4.10^\circ$ (favoring Scenario B at this specific point in the lunation).
-    - **Synchronized Solar Power Readout:** The instantaneous solar power indicator dynamically computes $+372.8\text{ W}$, reflecting the instantaneous solar flux and panel incidence angle.
+    - **Synchronized Solar Power Readout:** The instantaneous solar power indicator dynamically computes +372.8 W, reflecting the instantaneous solar flux and panel incidence angle.
 - **Diverging Side-by-Side Advantage (B vs A):**
   - Visual delta bars provide instant trade-off comprehension: bars extending left in amber highlight operational parameters favoring Scenario A, while bars extending right in cyan highlight metrics favoring Scenario B.
 
@@ -441,8 +496,8 @@ AXON LunarSight pins 5 authentic NASA NAIF SPICE kernels:
 | `de440s.bsp` | SPK | 32.7 MB | `c1c7feeab882263fc493a9d5a5b2ddd71b54826cdf65d8d17a76126b260a49f2` | Planetary ephemeris (Sun, Earth, Moon barycentre) |
 | `moon_pa_de440_200625.bpc` | PCK | 12.9 MB | `60cd55aa401ea2ea97360636f567554bfe4e37bb829f901b4460a455dfaf783f` | Lunar principal axis high-accuracy orientation |
 | `moon_de440_250416.tf` | FK | 20.0 KB | `a47c71e9c9f33796bdafb2c9d69a7ee447b6016ecad80f71cd6f3e479f9cf768` | Frame kernel linking `MOON_PA` to `MOON_ME` |
-| `naif0012.tls` | LSK | 5.4 KB | `678e32bdb5a744117a467cd9601cd6b373f0e9bc9bbde1371d5eee39600a039b` | Leap seconds kernel for UTC $\leftrightarrow$ ET conversion |
-| `pck00011.tpc` | PCK | 135.5 KB | `3dff7b1dbeceaa01f25467767d3fa25816051c85d162d1edf04acb310ee28bb1` | Planetary constants and IAU mean lunar radius ($1,737.4\text{ km}$) |
+| `naif0012.tls` | LSK | 5.4 KB | `678e32bdb5a744117a467cd9601cd6b373f0e9bc9bbde1371d5eee39600a039b` | Leap seconds kernel for UTC ↔ ET conversion |
+| `pck00011.tpc` | PCK | 135.5 KB | `3dff7b1dbeceaa01f25467767d3fa25816051c85d162d1edf04acb310ee28bb1` | Planetary constants and IAU mean lunar radius (1,737.4 km) |
 
 All kernel checksums are strictly verified against `kernels.lock`.
 
@@ -673,44 +728,44 @@ Executes all SPICE planetary transformations, ENU coordinate math, API response 
 pytest science/tests/ -v -m "not needs_dems"
 ```
 - **JPL Horizons Ground Truth:** 7 golden fixtures spanning 4,111 timestamps verified within sub-arcsecond precision:
-  - Max Elevation Difference: **$0.000203^\circ$** ($0.73\text{ arcseconds}$)
-  - Max Azimuth Difference: **$0.000050^\circ$** ($0.18\text{ arcseconds}$)
+  - Max Elevation Difference: **0.000203°** (0.73 arcseconds)
+  - Max Azimuth Difference: **0.000050°** (0.18 arcseconds)
 - **CSPICE `azlcpo` Parity:** Verified against CSPICE native topocentric routines ($\Delta < 1.4 \times 10^{-6\circ}$).
-- **Far-Side Isolation:** Asserts strictly $0.0\%$ Earth line-of-sight across 5 years at $0^\circ\text{N}, 180^\circ\text{E}$.
+- **Far-Side Isolation:** Asserts strictly 0.0% Earth line-of-sight across 5 years at $0^\circ\text{N}, 180^\circ\text{E}$.
 - **Anti-Meridian Longitude Seam:** Asserts symmetric illumination across the $\pm 180^\circ$ longitude boundary.
 
 ### Ground-Truth Verification Dashboard & Live Horizons Residual Checker
 The interactive Methods interface (*Figure 5*) provides live peer-reviewable verification against NASA JPL Horizons observer ephemerides:
 - **Regression Status & Precision Metrics:**
-  - **Overall Pass Rate:** `4,111 / 4,111 SAMPLES PASSED` ($100.0\%$ pass rate with zero tolerance breaches).
+  - **Overall Pass Rate:** `4,111 / 4,111 SAMPLES PASSED` (100.0% pass rate with zero tolerance breaches).
   - **Total Fixtures:** `7 Locations` spanning the lunar south pole, equatorial landing basins, extreme limbs, and far-side control sites.
   - **Maximum Elevation Difference:** `0.000203°` across all timestamps (strict acceptance tolerance: $< 0.01^\circ$).
   - **Maximum Azimuth Difference:** `0.000050°` across all timestamps (strict acceptance tolerance: $< 0.01^\circ$).
   - **Sub-Arcsecond Accuracy:** `0.73 arcsec` overall angular accuracy, matching the physical precision limit of double-precision floating point ephemeris evaluation.
 - **Fixture Breakdown Table:**
-  - **IM-1 (Malapert A, $-80.13^\circ, 1.44^\circ$):** 697 samples, Max $\Delta\text{El} = 0.000076^\circ$, Max $\Delta\text{Az} = 0.000001^\circ$ (PASSED).
-  - **Blue Ghost 1 (Mare Crisium, $18.56^\circ, 61.81^\circ$):** 673 samples, Max $\Delta\text{El} = 0.000025^\circ$, Max $\Delta\text{Az} = 0.000003^\circ$ (PASSED).
-  - **IM-2 (Mons Mouton, $-84.79^\circ, 29.28^\circ$):** 573 samples, Max $\Delta\text{El} = 0.000026^\circ$, Max $\Delta\text{Az} = 0.000001^\circ$ (PASSED).
-  - **Apollo 11 (Mare Tranquillitatis, $0.69^\circ, 23.43^\circ$):** 49 samples, Max $\Delta\text{El} = 0.000203^\circ$, Max $\Delta\text{Az} = 0.000050^\circ$ (PASSED).
-  - **Peak Near Shackleton ($-89.68^\circ, 129.00^\circ$):** 673 samples, Max $\Delta\text{El} = 0.000027^\circ$, Max $\Delta\text{Az} = 0.000001^\circ$ (PASSED).
-  - **Far-side Control ($0.00^\circ\text{N}, 180.00^\circ\text{E}$):** 673 samples, Max $\Delta\text{El} = 0.000004^\circ$, Max $\Delta\text{Az} = 0.000038^\circ$ (PASSED). Confirms $0.0\%$ Earth visibility due to lunar occultation.
-  - **Near-limb Control ($0.00^\circ\text{N}, 90.00^\circ\text{E}$):** 673 samples, Max $\Delta\text{El} = 0.000027^\circ$, Max $\Delta\text{Az} = 0.000003^\circ$ (PASSED). Evaluates tangential geometric limb tracking.
+  - **IM-1 (Malapert A, -80.13°, 1.44°):** 697 samples, Max $\Delta\text{El} = 0.000076^\circ$, Max $\Delta\text{Az} = 0.000001^\circ$ (PASSED).
+  - **Blue Ghost 1 (Mare Crisium, 18.56°, 61.81°):** 673 samples, Max $\Delta\text{El} = 0.000025^\circ$, Max $\Delta\text{Az} = 0.000003^\circ$ (PASSED).
+  - **IM-2 (Mons Mouton, -84.79°, 29.28°):** 573 samples, Max $\Delta\text{El} = 0.000026^\circ$, Max $\Delta\text{Az} = 0.000001^\circ$ (PASSED).
+  - **Apollo 11 (Mare Tranquillitatis, 0.69°, 23.43°):** 49 samples, Max $\Delta\text{El} = 0.000203^\circ$, Max $\Delta\text{Az} = 0.000050^\circ$ (PASSED).
+  - **Peak Near Shackleton (-89.68°, 129.00°):** 673 samples, Max $\Delta\text{El} = 0.000027^\circ$, Max $\Delta\text{Az} = 0.000001^\circ$ (PASSED).
+  - **Far-side Control (0.00°N, 180.00°E):** 673 samples, Max $\Delta\text{El} = 0.000004^\circ$, Max $\Delta\text{Az} = 0.000038^\circ$ (PASSED). Confirms 0.0% Earth visibility due to lunar occultation.
+  - **Near-limb Control (0.00°N, 90.00°E):** 673 samples, Max $\Delta\text{El} = 0.000027^\circ$, Max $\Delta\text{Az} = 0.000003^\circ$ (PASSED). Evaluates tangential geometric limb tracking.
 - **Live "Verify with Horizons" Interactive Residual Check:**
   - Allows mission planners and researchers to query NASA JPL Horizons on-demand for any lunar coordinates (latitude, longitude) and UTC timestamp.
   - Computes instantaneous topocentric residuals ($\Delta\text{Azimuth}$ and $\Delta\text{Elevation}$) against AXON's SPICE kernel engine (`SpiceyPy` + `de440s.bsp` + `moon_pa_de440_200625.bpc`).
   - Features quick preset coordinate buttons for high-priority mission sites (`[IM-1 Malapert]`, `[IM-2 Mons Mouton]`, `[Shackleton Rim]`).
   - Shown pre-populated with IM-1 Malapert coordinates (Latitude $-80.13^\circ$, Longitude $1.44^\circ$, UTC Time `01-03-2026 12:00 PM`) and the `[Run Live Verification]` action trigger.
 - **Dynamic Benchmark Ingestion:** All metrics are dynamically loaded from `science/validation/benchmark.json`—no passes or tolerances are hardcoded.
-- **Unified Astronomical Standards:** Transparently publishes all reference conventions: UTC time inputs, Ephemeris Time (ET) via NAIF `naif0012.tls`, East-positive longitudes ($-180^\circ$ to $+180^\circ$), planetocentric latitudes, `MOON_ME` body-fixed frame, $1,737.4\text{ km}$ mean radius (`pck00011.tpc`), zero atmospheric refraction, and the $+0.267^\circ$ upper-limb solar visibility threshold.
+- **Unified Astronomical Standards:** Transparently publishes all reference conventions: UTC time inputs, Ephemeris Time (ET) via NAIF `naif0012.tls`, East-positive longitudes ($-180^\circ$ to $+180^\circ$), planetocentric latitudes, `MOON_ME` body-fixed frame, 1,737.4 km mean radius (`pck00011.tpc`), zero atmospheric refraction, and the $+0.267^\circ$ upper-limb solar visibility threshold.
 
 ### 2. Job B — Terrain Integration (16 Tests, Real LOLA DEMs)
 Executes 3D ray-marching against authentic LOLA DEM rasters in `terrain/`:
 ```bash
 pytest science/tests/ -v -m "needs_dems"
 ```
-- **Shackleton Crater Floor:** Asserts that deep floor coordinates remain in permanent shadow ($0.0\%$ direct sunlight).
-- **Connecting Ridge Summit:** Asserts terrain illumination exceeds flat sphere baseline ($58.3\%$ vs $53.4\%$).
-- **Observer Mast Monotonicity:** Asserts that sunlight and communications visibility are strictly monotonically non-decreasing as mast height increases ($0\text{ m} \to 10\text{ m}$).
+- **Shackleton Crater Floor:** Asserts that deep floor coordinates remain in permanent shadow (0.0% direct sunlight).
+- **Connecting Ridge Summit:** Asserts terrain illumination exceeds flat sphere baseline (58.3% vs 53.4%).
+- **Observer Mast Monotonicity:** Asserts that sunlight and communications visibility are strictly monotonically non-decreasing as mast height increases (0 m → 10 m).
 
 ### 3. Frontend Unit Tests (11 Tests)
 ```bash
@@ -724,11 +779,11 @@ Verifies scenario date clamping, circular shortest-path azimuth interpolation, a
 ## 28. Performance Benchmarks & Caching Architecture
 
 Measured on production-equivalent runner hardware:
-- **Single-Site Analysis:** Cold p50: **$85.33\text{ ms}$**, Warm p50: **$16.73\text{ ms}$**.
-- **3D Terrain Horizon Build (360 rays, 50 km):** Cold p50: **$678.35\text{ ms}$**, Warm p50: **$0.01\text{ ms}$**.
-- **4-Site Synchronized Comparison:** Cold p50: **$342.08\text{ ms}$**, Warm p50: **$15.76\text{ ms}$**.
-- **Process Memory Footprint:** Whole-process RSS peak: **$195.66\text{ MB}$**.
-- **Async `/api/health` Latency under Heavy Load:** p50: **$14.80\text{ ms}$**, p95: **$76.84\text{ ms}$**.
+- **Single-Site Analysis:** Cold p50: **85.33 ms**, Warm p50: **16.73 ms**.
+- **3D Terrain Horizon Build (360 rays, 50 km):** Cold p50: **678.35 ms**, Warm p50: **0.01 ms**.
+- **4-Site Synchronized Comparison:** Cold p50: **342.08 ms**, Warm p50: **15.76 ms**.
+- **Process Memory Footprint:** Whole-process RSS peak: **195.66 MB**.
+- **Async `/api/health` Latency under Heavy Load:** p50: **14.80 ms**, p95: **76.84 ms**.
 
 ---
 
@@ -745,7 +800,7 @@ Measured on production-equivalent runner hardware:
   - *Fix:* Verify kernel files exist in `kernels/` and execute `python pipeline/step2_kernels.py`.
 - **`HTTP 504: Calculation exceeded timeout`:**
   - *Cause:* An excessively large date range or very fine step size was requested on custom coordinates.
-  - *Fix:* Restrict on-demand API date ranges to $\le 90\text{ days}$ with step size $\ge 3600\text{ seconds}$.
+  - *Fix:* Restrict on-demand API date ranges to ≤ 90 days with step size ≥ 3600 seconds.
 
 ---
 
