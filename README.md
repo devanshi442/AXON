@@ -426,7 +426,7 @@ Supported criteria:
 - **Full Disk Clear:** Entire Earth disk clears the local skyline ($r_{\text{earth}} \approx 0.949^\circ$):
   $$\text{el}_{\text{center}} - r_{\text{earth}} \ge h_{\text{req}}$$
 - **Any Limb Visible:** Upper limb rises above the local skyline:
-  $$\text{el}_{\text{center}} + r_{\text{earth}} \ge h_{\text{req}}$$
+  $$\text{el}_{\text{center}} + r_{\text{earth}} \ge h_{\text{req}}$$ 
 
 Applying an antenna clearance margin $\mu_{\text{clearance}} > 0^\circ$ strictly contracts the communication window, providing link margin against diffraction over local ridges.
 
