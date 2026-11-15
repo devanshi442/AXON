@@ -6,11 +6,15 @@
 > *Real sources. Clear calculations. Useful comparisons.*
 
 ![Backend CI](https://github.com/devanshi442/AXON/actions/workflows/backend-ci.yml/badge.svg)
+![Live App](https://img.shields.io/badge/Live%20App-axon--lunarsight.onrender.com-46E3B7?style=flat&logo=render&logoColor=white)
 ![Tests: 112 Passing](https://img.shields.io/badge/tests-112%20passing-brightgreen)
 ![Python 3.12](https://img.shields.io/badge/python-3.12-blue)
 ![React 18](https://img.shields.io/badge/react-18-61dafb)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 ![SPICE Verified](https://img.shields.io/badge/SPICE-verified%204%2C111%20samples-orange)
+
+> 🚀 **Live Production Application:** **[https://axon-lunarsight.onrender.com/](https://axon-lunarsight.onrender.com/)**  
+> Access the live, fully interactive AXON LunarSight platform deployed on Render: explore 3D lunar terrain, compare candidate Artemis landing sites, compute solar illumination and Earth visibility windows, and run topocentric ephemerides.
 
 An intuitive scientific modeling engine and interactive dashboard designed for mission planners, aerospace engineers, educators, and the public to evaluate and compare candidate lunar landing sites and dates. AXON LunarSight calculates high-precision topocentric Sun and Earth positions using NASA NAIF SPICE kernels and traces lines-of-sight against 3D ray-marched terrain horizons derived from Lunar Orbiter Laser Altimeter (LOLA) Digital Elevation Models (DEMs). The application models solar disk fraction illumination, photovoltaic power potential across multiple array architectures, and Direct-to-Earth (DTE) communication visibility under lunar libration.
 
@@ -20,6 +24,7 @@ An intuitive scientific modeling engine and interactive dashboard designed for m
 
 | Want to... | Go here |
 |---|---|
+| **Launch the live app** | **[https://axon-lunarsight.onrender.com/](https://axon-lunarsight.onrender.com/)** |
 | **Run locally (5 min)** | [§21 Backend Setup](#21-backend-setup--virtual-environment) → [§22 Frontend](#22-frontend-setup--build) |
 | **Download terrain data** | [Kaggle Dataset](#24-required-datasets--lockfiles) (`devansen/terrain-moon`) |
 | **Read the science** | [§11 Ray-Marching](#11-3d-ray-marching-horizon-methodology) → [§12 Solar Model](#12-solar-illumination--disk-fraction-formulation) |
@@ -896,6 +901,11 @@ Measured on production-equivalent runner hardware:
 ---
 
 ## 30. Deployment & CI/CD Pipeline
+
+### 🌐 Live Production Service (Render)
+- **Live URL:** **[https://axon-lunarsight.onrender.com/](https://axon-lunarsight.onrender.com/)**
+- **Hosting Model:** Unified single-container architecture running FastAPI (uvicorn) on Debian slim with Python 3.12, serving both the REST API (`/api/*`) and optimized production React single-page frontend.
+- **Health & Readiness Endpoints:** `/api/health` (process responsiveness) and `/api/ready` (ephemeris & DEM assets readiness).
 
 The project features a fully automated 3-job GitHub Actions CI/CD pipeline (`.github/workflows/backend-ci.yml`):
 - **Job A (Core CI):** Runs Python 3.12, installs GDAL/spatial dependencies, downloads NAIF SPICE kernels, validates checksums, and executes all 96 core non-DEM tests.
