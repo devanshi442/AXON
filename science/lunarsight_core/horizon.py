@@ -47,8 +47,10 @@ def compute_horizon_raymarch(
         lat_deg, lon_deg, max_range_km=max_range_km, preferred_dem_id=preferred_dem_id
     )
 
+    n_bins = int(round(360.0 / az_step_deg))
+    actual_az_step = 360.0 / n_bins
+
     if dem_info is None or coverage_status == "unavailable":
-        n_bins = int(round(360.0 / az_step_deg))
         return {
             "lat": lat_deg,
             "lon": lon_deg,
@@ -56,7 +58,7 @@ def compute_horizon_raymarch(
             "dem_id": None,
             "resolution_m": None,
             "max_range_km": max_range_km,
-            "az_step": az_step_deg,
+            "az_step": round(actual_az_step, 4),
             "mask_deg": [0.0] * n_bins,
             "coverage_status": "unavailable",
             "max_valid_range_km": [0.0] * n_bins,
@@ -93,11 +95,12 @@ def compute_horizon_raymarch(
     # Step parameters: half-pixel spacing
     step_m = max(10.0, float(dem_info.resolution_m) / 2.0)
     n_bins = int(round(360.0 / az_step_deg))
+    actual_az_step = 360.0 / n_bins
     mask_deg = []
     actual_valid_ranges = []
 
     for i in range(n_bins):
-        az = i * az_step_deg
+        az = i * actual_az_step
         az_rad = math.radians(az)
         v_dir = math.cos(az_rad) * north + math.sin(az_rad) * east
 
@@ -163,7 +166,7 @@ def compute_horizon_raymarch(
         "dem_id": dem_info.id,
         "resolution_m": dem_info.resolution_m,
         "max_range_km": max_range_km,
-        "az_step": az_step_deg,
+        "az_step": round(actual_az_step, 4),
         "mask_deg": mask_deg,
         "coverage_status": coverage_status,
         "max_valid_range_km": actual_valid_ranges,
@@ -194,6 +197,7 @@ def compute_horizon_multi(
     )
 
     n_bins = int(round(360.0 / az_step_deg))
+    actual_az_step = 360.0 / n_bins
 
     masks: Dict[str, List[float]] = {
         f"h_{str(h).replace('.', '_')}m": [] for h in observer_heights_m
@@ -244,7 +248,7 @@ def compute_horizon_multi(
     step_m = max(10.0, float(dem_info.resolution_m) / 2.0)
 
     for i in range(n_bins):
-        az = i * az_step_deg
+        az = i * actual_az_step
         az_rad = math.radians(az)
         v_dir = math.cos(az_rad) * north + math.sin(az_rad) * east
 
@@ -474,12 +478,14 @@ def lookup_horizon(mask: Dict[str, Any] | List[float], az_deg: float) -> float:
     """
     if isinstance(mask, dict):
         mask_deg = mask["mask_deg"]
-        az_step = mask.get("az_step", 1.0)
     else:
         mask_deg = mask
-        az_step = 360.0 / len(mask_deg)
 
     n = len(mask_deg)
+    if n == 0:
+        return 0.0
+
+    az_step = 360.0 / n
     az_norm = az_deg % 360.0
     idx_f = az_norm / az_step
     idx0 = int(math.floor(idx_f)) % n

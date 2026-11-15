@@ -196,6 +196,28 @@ def compute_site_timeseries(
 
         et += step_seconds
 
+    # Ensure exact stop epoch is sampled if et_stop was not reached due to step division
+    last_sampled_et = et - step_seconds
+    if last_sampled_et < et_stop - 1e-3:
+        et = et_stop
+        utc_str = spice.et2utc(et, "ISOC", 0) + "Z"
+        times_utc.append(utc_str)
+
+        s_az, s_el, s_dist = compute_topocentric_state(C.SUN_NAIF_ID, et, pos_site, east, north, up)
+        e_az, e_el, e_dist = compute_topocentric_state(C.EARTH_NAIF_ID, et, pos_site, east, north, up)
+
+        sun_az.append(round(s_az, 4))
+        sun_el.append(round(s_el, 4))
+        earth_az.append(round(e_az, 4))
+        earth_el.append(round(e_el, 4))
+        sun_dist.append(round(s_dist, 1))
+        earth_dist.append(round(e_dist, 1))
+
+        s_rad = math.degrees(math.atan(C.SUN_RADIUS_KM / s_dist))
+        e_rad = math.degrees(math.atan(C.EARTH_EQUATORIAL_RADIUS_KM / e_dist))
+        sun_ang_radius.append(round(s_rad, 5))
+        earth_ang_radius.append(round(e_rad, 5))
+
     return {
         "start_utc": start_utc,
         "stop_utc": stop_utc,

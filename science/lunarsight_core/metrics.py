@@ -371,17 +371,28 @@ def compute_comprehensive_metrics(
         sub_sun = sun_mask[start_i:end_i]
         sub_earth = earth_mask[start_i:end_i]
         sub_joint = joint_mask[start_i:end_i]
-        sub_hours = len(sub_sun) * (step_s / 3600.0)
 
-        s_hrs = sum(sub_sun) * (step_s / 3600.0)
-        e_hrs = sum(sub_earth) * (step_s / 3600.0)
-        j_hrs = sum(sub_joint) * (step_s / 3600.0)
+        end_utc_idx = end_i if end_i < n_samples else (n_samples - 1)
+        start_utc_str = times[start_i]
+        end_utc_str = times[end_utc_idx]
+
+        try:
+            dt_s = datetime.datetime.fromisoformat(start_utc_str.replace("Z", "+00:00"))
+            dt_e = datetime.datetime.fromisoformat(end_utc_str.replace("Z", "+00:00"))
+            elapsed_h = (dt_e - dt_s).total_seconds() / 3600.0
+            sub_hours = elapsed_h if elapsed_h > 0 else (len(sub_sun) * (step_s / 3600.0))
+        except Exception:
+            sub_hours = len(sub_sun) * (step_s / 3600.0)
+
+        s_hrs = min(sub_hours, sum(sub_sun) * (step_s / 3600.0))
+        e_hrs = min(sub_hours, sum(sub_earth) * (step_s / 3600.0))
+        j_hrs = min(sub_hours, sum(sub_joint) * (step_s / 3600.0))
         dark_gap = _longest_run_hours(sub_sun, step_s, False)
 
         lunations.append({
             "lunation_index": len(lunations) + 1,
-            "start_utc": times[start_i],
-            "end_utc": times[end_i - 1],
+            "start_utc": start_utc_str,
+            "end_utc": end_utc_str,
             "total_hours": round(sub_hours, 1),
             "sun_hours": round(s_hrs, 1),
             "sun_percentage": round(s_hrs / sub_hours * 100.0, 1) if sub_hours else 0.0,
