@@ -87,9 +87,11 @@ Sun "up" (illuminated) is defined by the solar upper limb clearing the local sky
 $$\text{el}_{\text{sun, center}} + 0.267^\circ > h_{\text{mask}}(\text{az}) + \tau_{\text{sun}}$$
 Where $\tau_{\text{sun}}$ is an optional elevation threshold (default $0.0^\circ$).
 
-### Local-Flat-Mask Solar Disk Fraction
-The geometric fraction $f_{\text{sun}} \in [0, 1]$ of the solar disk above the local terrain skyline $h_{\text{mask}}(\text{az})$ is modeled by the linear disk-overlap approximation:
-$$f_{\text{sun}} = \text{clip}\left(\frac{\text{el}_{\text{sun}} + r_{\text{sun}} - (h_{\text{mask}}(\text{az}) + \tau_{\text{sun}})}{2\,r_{\text{sun}}}, 0.0, 1.0\right)$$
+### Circular-Segment Solar Disk Fraction
+The geometric fraction $f_{\text{sun}} \in [0, 1]$ of the solar disk above the local terrain skyline $h_{\text{mask}}(\text{az})$ is evaluated analytically using the circular segment area formula:
+$$h_{\text{above}} = \text{clip}(\text{el}_{\text{sun}} + r_{\text{sun}} - (h_{\text{mask}}(\text{az}) + \tau_{\text{sun}}), 0.0, 2\,r_{\text{sun}})$$
+$$d_{\text{norm}} = \text{clip}\left(1.0 - \frac{h_{\text{above}}}{r_{\text{sun}}}, -1.0, 1.0\right)$$
+$$\theta = \arccos(d_{\text{norm}}), \quad f_{\text{sun}} = \frac{\theta - d_{\text{norm}}\sin\theta}{\pi}$$
 - $f_{\text{sun}} = 0.0$: Solar disk completely behind topography (shadow).
 - $0.0 < f_{\text{sun}} < 1.0$: Partial solar occultation (grazing limb).
 - $f_{\text{sun}} = 1.0$: Full solar disk unoccluded above horizon.
@@ -104,8 +106,9 @@ Delivered electrical power potential:
 $$P(t) = S(d(t)) \cdot A \cdot \eta \cdot \max(0, \cos i) \cdot f_{\text{sun}}(t)$$
 Where $A$ is array area ($1.0\text{ m}^2$ baseline), $\eta = 0.28$ (triple-junction GaAs reference efficiency), and incidence angle factor $\cos i$:
 1. **Horizontal Flat Array:** $\cos i = \sin(\text{el})$ (poor at poles where $\text{el} \approx 1^\circ\text{–}2^\circ$).
-2. **Vertical Mast Array (Azimuth Tracking):** $\cos i = \cos(\text{el})$ (optimal for polar grazing sunlight, intercepting near-normal flux).
-3. **Full 2-Axis Tracking Array:** $\cos i = 1.0$.
+2. **Vertical Fixed Array:** $\cos i = \sin(\text{el})\cos(\text{tilt}) + \cos(\text{el})\sin(\text{tilt})\cos(\text{az} - \text{az}_0)$ (planar panel tilted and oriented towards azimuth $\text{az}_0$).
+3. **Vertical Mast Array (Azimuth Tracking):** $\cos i = \cos(\text{el})$ (optimal for polar grazing sunlight, intercepting near-normal flux).
+4. **Full 2-Axis Tracking Array:** $\cos i = 1.0$ (normal beam incidence).
 
 ---
 

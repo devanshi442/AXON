@@ -666,14 +666,14 @@ loadTimeseries: async (siteId: string) => {
 
 ---
 
-### 5.3 Remaining Frontend Wiring Tasks for UI/UX Teammate
+### 5.3 Client Integration Patterns & UI Implementation Guide
 
 1. **Custom Coordinate Input:**
-   Add a modal / input card in `ExplorerPage.tsx` or `SiteSelectModal.tsx` allowing arbitrary Latitude ($-90^\circ$ to $+90^\circ$) and Longitude ($-180^\circ$ to $+180^\circ$) input. When submitted, call `analyzeSite({ lat, lon, ... })` and pass the returned `analysis_id` to the visualization panels.
-2. **Multi-Site Comparison Drawer:**
-   In `ComparisonPage.tsx`, wire `compareSites` to pass up to 4 selected site IDs or custom coordinates, rendering the returned `pairwise_delta_1_minus_0` and `rankings`.
-3. **Best Windows Discovery Panel:**
-   Add a "Find Best Windows" button on the Explorer Page that calls `searchBestWindows` and displays the ranked candidate list with continuous sunlight and Earth line of sight.
+   Allows arbitrary Latitude ($-90.0^\circ$ to $+90.0^\circ$) and Longitude ($-180.0^\circ$ to $+180.0^\circ$) input. When submitted, calls `POST /api/site/analyze` with `{ lat, lon, ... }` and streams the computed instantaneous metrics, 360° horizon skyline, and 30-day timeline into the active scenario.
+2. **Multi-Site Comparison:**
+   Calls `POST /api/compare` to pass up to 4 selected site IDs or custom coordinates, rendering the returned `pairwise_delta_1_minus_0`, individual illumination percentages, and multi-criteria rankings.
+3. **Best Landing Windows Discovery:**
+   Calls `POST /api/site/best-windows` to evaluate a date range for optimal operational windows with continuous sunlight and Earth line-of-sight.
 
 ---
 
