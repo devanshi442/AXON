@@ -272,7 +272,7 @@ export default function MoonMap({
 
       <div
         ref={viewportRef}
-        className="relative w-full h-[420px] min-h-[420px] bg-[#080A0E] rounded overflow-hidden border border-[#1E2633] select-none cursor-grab active:cursor-grabbing touch-none"
+        className="relative w-full h-[420px] min-h-[420px] bg-[#080A0E] rounded overflow-hidden border border-[#1E2633] select-none cursor-grab active:cursor-grabbing touch-none map-container map-wrapper"
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}

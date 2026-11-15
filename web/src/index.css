@@ -83,6 +83,12 @@ body {
 .leaflet-container {
   background: #111113;
   font-family: inherit;
+  touch-action: none;
+}
+
+.map-container,
+.map-wrapper {
+  touch-action: none;
 }
 .leaflet-control-attribution {
   background: rgba(13, 16, 20, 0.9) !important;

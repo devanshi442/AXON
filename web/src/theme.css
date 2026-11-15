@@ -16,6 +16,13 @@
   --scenario-b: #38BDF8;
 }
 
+/* Prevent scroll-blocking passive event listener warnings on map container */
+.leaflet-container,
+.map-container,
+.map-wrapper {
+  touch-action: none;
+}
+
 html,
 body,
 #root {

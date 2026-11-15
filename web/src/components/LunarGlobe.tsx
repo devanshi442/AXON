@@ -720,6 +720,7 @@ export default function LunarGlobe({
       markersGroupRef.current = null
       ensureTerrainDetailRef.current = null
       renderer.dispose()
+      renderer.forceContextLoss()
       activeSphereGeometry.dispose()
       sphereMat.dispose()
       moonTexture.dispose()
@@ -834,64 +835,64 @@ export default function LunarGlobe({
     addCustomScenarioMarker('B', scenarioPoints.b, scenarioBId)
 
     markerSites.forEach((site) => {
-        if (site.lat === null || site.lon === null) return
+      if (site.lat === null || site.lon === null) return
 
-        const isA = site.id === scenarioAId
-        const isB = site.id === scenarioBId
-        const isSelected = site.id === selectedSiteId
-        const isRegionCentre =
-          site.coord_kind === 'region_centre' ||
-          site.coord_kind === 'planned_region_center'
+      const isA = site.id === scenarioAId
+      const isB = site.id === scenarioBId
+      const isSelected = site.id === selectedSiteId
+      const isRegionCentre =
+        site.coord_kind === 'region_centre' ||
+        site.coord_kind === 'planned_region_center'
 
-        let color = colorWhite
-        if (isA) color = colorA
-        else if (isB) color = colorB
+      let color = colorWhite
+      if (isA) color = colorA
+      else if (isB) color = colorB
 
-        const position = latLonToVector3(site.lat, site.lon, GLOBE_RADIUS * 1.006)
-        const normal = position.clone().normalize()
-        const quaternion = new THREE.Quaternion().setFromUnitVectors(
-          new THREE.Vector3(0, 0, 1),
-          normal
-        )
+      const position = latLonToVector3(site.lat, site.lon, GLOBE_RADIUS * 1.006)
+      const normal = position.clone().normalize()
+      const quaternion = new THREE.Quaternion().setFromUnitVectors(
+        new THREE.Vector3(0, 0, 1),
+        normal
+      )
 
-        const markerGroup = new THREE.Group()
-        markerGroup.position.copy(position)
-        markerGroup.quaternion.copy(quaternion)
-        markerGroup.userData = { site }
+      const markerGroup = new THREE.Group()
+      markerGroup.position.copy(position)
+      markerGroup.quaternion.copy(quaternion)
+      markerGroup.userData = { site }
 
-        const geometry = isRegionCentre ? hollowRingGeom : filledDotGeom
-        const material = new THREE.MeshBasicMaterial({
-          color,
+      const geometry = isRegionCentre ? hollowRingGeom : filledDotGeom
+      const material = new THREE.MeshBasicMaterial({
+        color,
+        side: THREE.DoubleSide,
+        depthTest: true,
+      })
+      const baseMesh = new THREE.Mesh(geometry, material)
+      baseMesh.userData = { site }
+      markerGroup.add(baseMesh)
+
+      if (isSelected) {
+        const selectedMaterial = new THREE.MeshBasicMaterial({
+          color: colorHighlight,
           side: THREE.DoubleSide,
           depthTest: true,
         })
-        const baseMesh = new THREE.Mesh(geometry, material)
-        baseMesh.userData = { site }
-        markerGroup.add(baseMesh)
+        const selectedMesh = new THREE.Mesh(selectionRingGeom, selectedMaterial)
+        selectedMesh.position.z += 0.002
+        selectedMesh.userData = { site }
+        markerGroup.add(selectedMesh)
+      }
 
-        if (isSelected) {
-          const selectedMaterial = new THREE.MeshBasicMaterial({
-            color: colorHighlight,
-            side: THREE.DoubleSide,
-            depthTest: true,
-          })
-          const selectedMesh = new THREE.Mesh(selectionRingGeom, selectedMaterial)
-          selectedMesh.position.z += 0.002
-          selectedMesh.userData = { site }
-          markerGroup.add(selectedMesh)
-        }
-
-        const hitGeom = new THREE.CircleGeometry(0.08, 12)
-        const hitMaterial = new THREE.MeshBasicMaterial({
-          visible: false,
-          side: THREE.DoubleSide,
-        })
-        const hitMesh = new THREE.Mesh(hitGeom, hitMaterial)
-        hitMesh.userData = { site }
-        markerGroup.add(hitMesh)
-
-        group.add(markerGroup)
+      const hitGeom = new THREE.CircleGeometry(0.08, 12)
+      const hitMaterial = new THREE.MeshBasicMaterial({
+        visible: false,
+        side: THREE.DoubleSide,
       })
+      const hitMesh = new THREE.Mesh(hitGeom, hitMaterial)
+      hitMesh.userData = { site }
+      markerGroup.add(hitMesh)
+
+      group.add(markerGroup)
+    })
   }, [
     selectedSiteId,
     scenarioAId,
@@ -964,11 +965,10 @@ export default function LunarGlobe({
             <button
               type="button"
               onClick={setCameraView}
-              className={`px-2.5 py-1.5 rounded text-3xs font-mono font-medium transition-colors cursor-pointer ${
-                currentView === 'south_pole'
+              className={`px-2.5 py-1.5 rounded text-3xs font-mono font-medium transition-colors cursor-pointer ${currentView === 'south_pole'
                   ? 'bg-[#638BFF]/15 text-[#A8BDFF] border border-[#638BFF]/50'
                   : 'bg-[#111113] text-[#AFB3BA] hover:text-[#EDEEF0] border border-[#363A3F]'
-              }`}
+                }`}
             >
               Reset South Pole
             </button>
