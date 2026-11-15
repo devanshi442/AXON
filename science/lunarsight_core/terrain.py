@@ -513,8 +513,10 @@ def get_windowed_dem(
             d_deg = (max_range_km + 5.0) / (C.MOON_RADIUS_KM * math.pi / 180.0)
             norm_lon = ((lon_deg + 180.0) % 360.0) - 180.0
             col_center_f, row_center_f = inv_trans @ (norm_lon, lat_deg)
-            half_w = int(math.ceil(d_deg / transform[0])) + 2
-            half_h = int(math.ceil(d_deg / abs(transform[4]))) + 2
+            cos_lat = max(math.cos(math.radians(lat_deg)), 0.01)
+            d_lon_deg = d_deg / cos_lat
+            half_w = min(int(math.ceil(d_lon_deg / transform[0])) + 2, src.width // 2)
+            half_h = min(int(math.ceil(d_deg / abs(transform[4]))) + 2, src.height // 2)
 
             r_min = max(0, int(math.floor(row_center_f - half_h)))
             r_max = min(src.height, int(math.ceil(row_center_f + half_h)))

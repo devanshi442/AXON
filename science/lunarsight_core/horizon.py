@@ -106,7 +106,7 @@ def compute_horizon_raymarch(
 
         dists = np.arange(min_range_m, max_dist_m + step_m * 0.5, step_m, dtype=np.float64)
         if len(dists) == 0:
-            mask_deg.append(0.0)
+            mask_deg.append(float("nan"))
             actual_valid_ranges.append(0.0)
             continue
 
@@ -129,7 +129,7 @@ def compute_horizon_raymarch(
 
         valid_pts = ~np.isnan(heights)
         if not np.any(valid_pts):
-            mask_deg.append(0.0)
+            mask_deg.append(float("nan"))
             actual_valid_ranges.append(0.0)
             continue
 
@@ -254,7 +254,7 @@ def compute_horizon_multi(
         dists = np.arange(min_range_m, max_dist_m + step_m * 0.5, step_m, dtype=np.float64)
         if len(dists) == 0:
             for k in masks:
-                masks[k].append(0.0)
+                masks[k].append(float("nan"))
             for k in sensitivity:
                 sensitivity[k].append(0.0)
             continue
@@ -279,7 +279,7 @@ def compute_horizon_multi(
         valid_pts = ~np.isnan(heights)
         if not np.any(valid_pts):
             for k in masks:
-                masks[k].append(0.0)
+                masks[k].append(float("nan"))
             for k in sensitivity:
                 sensitivity[k].append(0.0)
             continue

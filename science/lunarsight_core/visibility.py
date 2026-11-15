@@ -32,7 +32,8 @@ def get_mask_elevation(
         return np.zeros_like(az_deg, dtype=np.float64) if isinstance(az_deg, np.ndarray) else 0.0
 
     if isinstance(az_deg, (int, float)):
-        return horizon.lookup_horizon(mask, float(az_deg))
+        res = horizon.lookup_horizon(mask, float(az_deg))
+        return 0.0 if (res is None or math.isnan(res)) else float(res)
 
     # Array of azimuths
     azs = np.asarray(az_deg, dtype=np.float64)
@@ -50,7 +51,8 @@ def get_mask_elevation(
     idx1 = (idx0 + 1) % n
     frac = idx_f - np.floor(idx_f)
 
-    return (1.0 - frac) * mask_deg[idx0] + frac * mask_deg[idx1]
+    result = (1.0 - frac) * mask_deg[idx0] + frac * mask_deg[idx1]
+    return np.nan_to_num(result, nan=0.0)
 
 
 def compute_sun_visibility(
