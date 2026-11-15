@@ -804,14 +804,3 @@ docker run -d --name axon-api -p 8000:8000 \
   - NASA JPL Solar System Dynamics Group (Horizons Ephemeris System).
 
 ---
-
-### Team
-
-> *Built for the **2026 NASA Space Apps Challenge** — "Lunar Landing Site Navigator"*
-
-| Member | Role |
-|---|---|
-| Devanshi Saxena | Project Lead / Frontend (React, TypeScript, WebGL) |
-| *(add teammates)* | *(add roles)* |
-
-**Team Repository:** [github.com/devanshi442/AXON](https://github.com/devanshi442/AXON)
