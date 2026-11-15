@@ -46,6 +46,9 @@ An intuitive scientific modeling engine and interactive dashboard designed for m
 
 ## 1. Project Overview & Problem Statement
 
+![AXON LunarSight Landing Dashboard](screenshots/landing_updated.png)
+*Figure 1: AXON LunarSight Mission Overview Dashboard — Featuring the mission intelligence landing page with live UTC telemetry (2026-11-15 10:54 UTC), candidate landing site registry (10 candidate sites, 2 reference sites), and direct access to the Lunar Site Explorer and Scientific Methods documentation.*
+
 Missions to the Moon's South Pole—such as NASA's Commercial Lunar Payload Services (CLPS) landers and Artemis crewed missions—face extreme lighting and communication environments. Because the Moon's spin axis has an obliquity of only $1.54^\circ$ relative to the ecliptic pole, the Sun perpetually skims low along the horizon, casting multi-kilometer shadows across deep impact basins while elevated crater rims and ridge massifs receive extended periods of illumination. Similarly, the Earth remains low in the lunar sky, oscillating over a $\approx 27.3\text{-day}$ libration cycle that periodically occults direct line-of-sight behind local topography.
 
 Traditional trajectory and mission planning tools present steep learning curves, require specialized software installations, or model the Moon as an idealized flat sphere. AXON LunarSight addresses this gap by providing:
@@ -55,6 +58,12 @@ Traditional trajectory and mission planning tools present steep learning curves,
 4. **Direct-to-Earth (DTE) Communication Windows:** Geometric line-of-sight analysis incorporating customizable RF antenna elevation clearance margins.
 5. **Interactive Opportunity Visualizer:** A 30-day timeline visualizer (720 hourly segments) computing contiguous illuminated windows and dark survival gap durations.
 6. **Dual Execution Architecture:** Seamless operation either as an offline, serverless static application powered by precomputed JSON assets or as a dynamic real-time system backed by a FastAPI/SPICE computation server.
+
+### Visual Architecture & Landing Page Scope
+The mission overview dashboard (*Figure 1*) serves as the primary operational entry point:
+- **Live Ephemeris & Data Telemetry:** Tracks real-time UTC ephemeris time (`2026-11-15 10:54 UTC`) and displays verified system status (`• SPICE / LOLA DATA`) indicating that both NAIF planetary ephemerides and LOLA DEM rasters are fully initialized.
+- **Curated Site Registry:** Surfaces 10 prime candidate landing regions spanning high-priority Artemis III exploration zones (Connecting Ridge, Shackleton Rim, Faustini, Haworth, Nobile, Malapert Massif) alongside 2 reference baseline sites (Apollo 11 in Mare Tranquillitatis and Blue Ghost 1 in Mare Crisium).
+- **Dual Mission Pathways:** Provides immediate routing to either the dual-scenario **Lunar Site Explorer** (`OPEN THE EXPLORER ↗`) or the fully transparent **Science Methods & Validation** documentation (`Methods and limitations →`).
 
 ---
 
@@ -183,6 +192,9 @@ flowchart TD
 
 ## 7. Frontend Architecture
 
+![South Polar Targeting Canvas & Scenario Controls for Custom Sites](screenshots/explorer_custom_canvas.png)
+*Figure 2: Lunar Site Explorer & South Polar Targeting Canvas for Custom Sites — Split-view workspace featuring the 3D South Pole WebGL Globe (left) and 2D South Polar Stereographic Map (right, 70°S to 90°S) displaying synchronized custom landing targets (A: CUSTOM-A in amber and B: CUSTOM-B in cyan) across polar latitudes.*
+
 The frontend is structured under `web/src/` with clear separation of concerns:
 - **`pages/`**:
   - `LandingPage.tsx`: Hero overview, product scope, and navigation.
@@ -198,6 +210,20 @@ The frontend is structured under `web/src/` with clear separation of concerns:
 - **`stores/`**:
   - `scenarioStore.ts`: Primary application state managing active sites, UTC date clamping, mast heights, panel configurations, and caching of precomputed vs live API data.
 - **`utils/scienceMath.ts`**: Pure client-side implementation of solar disk fraction, horizon mask lookups, and power potential formulas, enabling complete offline functionality without a running backend server.
+
+### Explorer Interface & South Polar Targeting Canvas
+The interactive Lunar Site Explorer (*Figure 2*) integrates dual-scenario configuration controls with synchronized geographic visualizations:
+- **Scenario Configuration Controls:**
+  - **Scenario Selectors:** Quick selection buttons for Scenario A (`A: CUSTOM-A`, rendered in amber) and Scenario B (`B: CUSTOM-B`, rendered in cyan), enabling simultaneous evaluation of two user-defined custom exploration targets or distinct mission configurations.
+  - **Temporal Controls:** UTC Forecast Date input (`15-11-2026 10:54 AM`) with `Sync B` lock checkbox, allowing users to analyze synchronized flight epochs or compare seasonal lighting variations across disparate arrival dates.
+  - **Topographic Horizon Mode Switch:** Interactive toggle between authentic 3D ray-marched terrain horizons (`[Terrain]`, green active) and an idealized smooth lunar sphere (`[Flat]`), immediately illustrating the shadow effects cast by surrounding crater rims and ridges.
+  - **Observer Mast Height:** Discretized height selectors (`0m`, `1.5m`, `2.5m` [selected], `5m`, `10m`) that depress the local horizon skyline to model solar arrays and communications antennas elevated above the lander deck.
+  - **Forecast Window Range:** Window duration selectors (`12h`, `24h`, `7d`, `14d`, `30d` [selected]) configuring the temporal horizon for downstream ephemeris calculations.
+  - **Execution & Parameter Dropdowns:** Action button `[COMPARE & VIEW FORECAST ↓]` triggers multi-site analysis, while `[Physics ▾]` reveals configurable parameters including antenna clearance angle ($\mu_{\text{clearance}}$), solar array architecture, and threshold angle ($\tau$).
+- **South Polar Targeting Canvas ($70^\circ\text{S} - 90^\circ\text{S}$):**
+  - **View Layout Selector:** Supports dynamic switching between `[Split View]` (side-by-side 3D globe and 2D map), `[3D Globe]` full view, and `[Flat Polar Map]` full view.
+  - **3D South Pole Globe:** Interactive WebGL sphere centered directly over the lunar south pole. Supports drag-to-rotate, scroll/pinch-to-zoom, and an instant `[Reset South Pole]` viewpoint button, rendering synchronized custom landing markers.
+  - **2D South Polar Stereographic Map:** Cartographic projection utilizing high-contrast LROC Wide Angle Camera (WAC) imagery and LOLA digital elevation relief covering latitudes $70^\circ\text{S}$ to $90^\circ\text{S}$. Features concentric latitude parallels ($70^\circ\text{S}, 75^\circ\text{S}, 80^\circ\text{S}, 85^\circ\text{S}$), 4-quadrant longitude axes, and interactive color-coded custom site markers (`A` in amber at $-86.00^\circ\text{S}, 124.20^\circ\text{E}$ and `B` in cyan at $-79.50^\circ\text{S}, 100.90^\circ\text{E}$).
 
 ---
 
@@ -318,19 +344,59 @@ Applying an antenna clearance margin $\mu_{\text{clearance}} > 0^\circ$ strictly
 
 ## 15. Landing-Site Evaluation & Custom Coordinates
 
+![Arbitrary Coordinate Targeting Panels for Custom Sites](screenshots/explorer_custom_sites.png)
+*Figure 3: Dual Scenario Arbitrary Coordinate Targeting Panels — Custom coordinate evaluation interface allowing direct entry of arbitrary polar coordinates (-86.00°, 124.20° in Scenario A and -79.50°, 100.90° in Scenario B), dynamic LOLA DEM proxy binding, instantaneous shadow detection, and 30-day solar energy forecast summary.*
+
 The application supports both curated catalog locations and arbitrary user-defined lunar coordinates:
 - **Curated Mission Sites:** Actual landed coordinates (e.g. Apollo 11, IM-1 Malapert A) and planned CLPS targets (e.g. IM-2 Mons Mouton, Blue Ghost 1 Mare Crisium, Griffin-1).
 - **Candidate Exploration Regions:** Artemis III exploration zones (Connecting Ridge, Shackleton, Faustini, Haworth, Malapert Massif, Nobile).
 - **Arbitrary Custom Coordinates:** Users can enter any latitude $\phi \in [-90.0^\circ, +90.0^\circ]$ and longitude $\lambda \in [-180.0^\circ, +180.0^\circ]$ via manual entry or 2D/3D map clicking. The backend dynamically determines the optimal LOLA DEM, extracts the local elevation, computes the 360° horizon skyline, and evaluates Sun/Earth ephemerides.
 
+### Arbitrary Coordinate Panels & Instantaneous Physics
+The custom coordinate targeting interface (*Figure 3*) provides immediate diagnostic telemetry across both custom sites:
+- **Coordinate Entry & DEM Proxy Binding:**
+  - **Scenario A (Amber, `CUSTOM-A`):** Custom coordinates set to $\phi = -86.0000^\circ\text{S}, \lambda = +124.2000^\circ\text{E}$. The engine automatically associates the target with the nearest precomputed DEM proxy (`Peak Near Shackleton (Evaluated Site)` on `LDEM_85S_20M`), providing immediate high-resolution horizon calculations.
+  - **Scenario B (Cyan, `CUSTOM-B`):** Custom coordinates set to $\phi = -79.5000^\circ\text{S}, \lambda = +100.9000^\circ\text{E}$. Bound dynamically into Scenario B, extracting terrain coverage across the $75^\circ\text{S} - 80^\circ\text{S}$ polar transition zone.
+  - **Asynchronous Feedback:** Entry fields transition to `COMPUTING...` status while background workers query SPICE geometry and rasterio slices, updating action buttons (`RUN SCENARIO A`, `RUN SCENARIO B`) upon completion.
+- **Instantaneous Topocentric Physics Readouts (at 2026-11-15 10:54 UTC):**
+  - **Scenario A ($-86.00^\circ\text{S}, 124.20^\circ\text{E}$):**
+    - **Solar Status:** Apparent elevation is $+2.49^\circ$, but local terrain skyline rises to $4.0^\circ$. Because the Sun is below the terrain knife-edge, the status is flagged as **In Shadow** and delivered electrical power drops to $0.0\text{ W}$.
+    - **Earth DTE Status:** Apparent elevation is $-3.63^\circ$ against a $-0.9^\circ$ skyline, correctly marked as **Occulted** (no direct line-of-sight).
+    - **30-Day Cumulative Forecast:** Despite instantaneous shadow, the elevated position captures sunlight for $81.7\%$ of the 30-day lunation ($588\text{ of } 719\text{ h}$) at mast height $2.5\text{ m}$, yielding a total solar energy potential of $196.79\text{ kWh/m}^2$.
+  - **Scenario B ($-79.50^\circ\text{S}, 100.90^\circ\text{E}$):**
+    - **Solar Status:** Apparent elevation is $+11.95^\circ$ against a $2.6^\circ$ local skyline. The disk is unoccluded, flagged as **Fully Lit**, delivering $381.8\text{ W}$ of electrical power.
+    - **Earth DTE Status:** Apparent elevation is $-5.51^\circ$ against a $3.4^\circ$ skyline, marked as **Occulted**.
+    - **30-Day Cumulative Forecast:** Due to lower latitude and standard diurnal setting, sunlight availability is only $44.3\%$ ($319\text{ of } 719\text{ h}$), producing $121.3\text{ kWh/m}^2$.
+
 ---
 
 ## 16. Mission Planning & Multi-Site Comparison
+
+![30-Day Opportunity Timelines & Interactive Hover Tooltip for Custom Sites](screenshots/explorer_custom_timeline.png)
+*Figure 4: 30-Day Opportunity Timelines & Side-by-Side Advantage Analysis for Custom Sites — Continuous 720-hour topocentric Sun elevation profiles at 1-hour resolution comparing Scenario A (custom summit site at -86.00°, 124.20°, stable polar grazing elevation in amber) against Scenario B (custom sub-polar site at -79.50°, 100.90°, wide diurnal excursion in cyan), complete with diverging baseline advantage bars and interactive timestamp hover inspection.*
 
 - **Synchronized Trade-Off Analysis:** Simultaneously evaluate up to 4 sites across matching timeframes, computing baseline deltas ($B - A$), pairwise differences, and multi-metric rankings.
 - **Contiguous Window Extraction:** Segments hourly timeseries into discrete continuous illuminated and communication passes.
 - **Sub-Minute Event Refinement:** Bisection root-finding queries SPICE topocentric states recursively to refine sunrise, sunset, AOS, and LOS events down to $< 60\text{ seconds}$ precision.
 - **Candidate Landing Window Search:** Discovers optimal mission opportunities over multi-month date ranges based on minimum continuous daylight, maximum communication availability, and acceptable blackout limits.
+
+### 30-Day Opportunity Timelines & Operational Metrics
+The timeline interface (*Figure 4*) visualizes the stark operational contrast between polar summit sites and lower-latitude lunar terrains over 720 continuous hourly samples:
+- **Diurnal Mechanics & Elevation Curves:**
+  - **Scenario A (Amber Curve, Custom Polar Summit Site):** Solar elevation skims near the horizon, oscillating mildly between $+0.5^\circ$ and $+3.5^\circ$ above the $0.0^\circ$ baseline. This stable polar grazing behavior illustrates how elevated summits maintain near-continuous solar exposure throughout the lunar synodic month.
+  - **Scenario B (Cyan Curve, Custom Sub-Polar Site):** Solar elevation exhibits a wide sinusoidal excursion typical of lower latitudes, ascending to $+12.9^\circ$ at local solar noon and plunging to $-9.8^\circ$ during the ~14-day lunar night.
+- **Mission Window Summary Cards:**
+  - **Solar Illumination (30-Day):** Scenario A provides $588\text{ h}$ ($81.7\%$) vs Scenario B $319\text{ h}$ ($44.3\%$), granting Scenario A a $+269\text{ hour}$ solar advantage.
+  - **Direct-to-Earth Comm (30-Day):** Scenario A maintains $321\text{ h}$ ($44.6\%$) vs Scenario B $59\text{ h}$ ($8.2\%$), representing an additional $+262\text{ hours}$ of direct communication coverage.
+  - **Joint Power + Comm (30-Day):** Scenario A achieves $301\text{ h}$ ($41.8\%$) of simultaneous power and communication availability, while Scenario B yields $0\text{ h}$ ($0.0\%$) due to the out-of-phase relationship between Earth libration visibility and daylight.
+- **Interactive Timestamp Hover Inspection (at Hour +140h):**
+  - Hovering the cursor across the chart triggers interactive crosshairs and dark-glass inspection tooltips (captured at `Hour +140h` / `2026-11-21 15:00 UTC`):
+    - **Scenario A Elevations:** $\text{Sun } +1.68^\circ \ / \ \text{Earth } +4.34^\circ$.
+    - **Scenario B Elevations:** $\text{Sun } +5.68^\circ \ / \ \text{Earth } +1.76^\circ$.
+    - **Elevation Difference:** $\Delta(B - A) = +4.10^\circ$ (favoring Scenario B at this specific point in the lunation).
+    - **Synchronized Solar Power Readout:** The instantaneous solar power indicator dynamically computes $+372.8\text{ W}$, reflecting the instantaneous solar flux and panel incidence angle.
+- **Diverging Side-by-Side Advantage (B vs A):**
+  - Visual delta bars provide instant trade-off comprehension: bars extending left in amber highlight operational parameters favoring Scenario A, while bars extending right in cyan highlight metrics favoring Scenario B.
 
 ---
 
@@ -561,6 +627,9 @@ The FastAPI service exposes 14 REST endpoints under prefix `/api`:
 
 ## 27. Verification, Validation & Automated Tests (112 Tests)
 
+![Automated Verification Gate & Live Horizons Residual Check](screenshots/methods_live_verification.png)
+*Figure 5: Automated Verification Gate & Live Horizons Interactive Residual Check — Top: Live regression validation dashboard executing 4,111 ephemeris verification samples across 7 distinct lunar locations, confirming sub-arcsecond angular accuracy (0.73 arcsec) and zero mathematical regressions against NASA JPL Horizons observer tables. Bottom: Interactive "Verify with Horizons" residual checking tool querying NASA JPL Horizons live for arbitrary coordinates and UTC epochs.*
+
 The backend scientific engine is verified by an exhaustive suite of **112 pytest unit and integration tests** organized into two disjoint verification groups:
 
 ### 1. Job A — Core CI (96 Tests, Non-DEM)
@@ -574,6 +643,30 @@ pytest science/tests/ -v -m "not needs_dems"
 - **CSPICE `azlcpo` Parity:** Verified against CSPICE native topocentric routines ($\Delta < 1.4 \times 10^{-6\circ}$).
 - **Far-Side Isolation:** Asserts strictly $0.0\%$ Earth line-of-sight across 5 years at $0^\circ\text{N}, 180^\circ\text{E}$.
 - **Anti-Meridian Longitude Seam:** Asserts symmetric illumination across the $\pm 180^\circ$ longitude boundary.
+
+### Ground-Truth Verification Dashboard & Live Horizons Residual Checker
+The interactive Methods interface (*Figure 5*) provides live peer-reviewable verification against NASA JPL Horizons observer ephemerides:
+- **Regression Status & Precision Metrics:**
+  - **Overall Pass Rate:** `4,111 / 4,111 SAMPLES PASSED` ($100.0\%$ pass rate with zero tolerance breaches).
+  - **Total Fixtures:** `7 Locations` spanning the lunar south pole, equatorial landing basins, extreme limbs, and far-side control sites.
+  - **Maximum Elevation Difference:** `0.000203°` across all timestamps (strict acceptance tolerance: $< 0.01^\circ$).
+  - **Maximum Azimuth Difference:** `0.000050°` across all timestamps (strict acceptance tolerance: $< 0.01^\circ$).
+  - **Sub-Arcsecond Accuracy:** `0.73 arcsec` overall angular accuracy, matching the physical precision limit of double-precision floating point ephemeris evaluation.
+- **Fixture Breakdown Table:**
+  - **IM-1 (Malapert A, $-80.13^\circ, 1.44^\circ$):** 697 samples, Max $\Delta\text{El} = 0.000076^\circ$, Max $\Delta\text{Az} = 0.000001^\circ$ (PASSED).
+  - **Blue Ghost 1 (Mare Crisium, $18.56^\circ, 61.81^\circ$):** 673 samples, Max $\Delta\text{El} = 0.000025^\circ$, Max $\Delta\text{Az} = 0.000003^\circ$ (PASSED).
+  - **IM-2 (Mons Mouton, $-84.79^\circ, 29.28^\circ$):** 573 samples, Max $\Delta\text{El} = 0.000026^\circ$, Max $\Delta\text{Az} = 0.000001^\circ$ (PASSED).
+  - **Apollo 11 (Mare Tranquillitatis, $0.69^\circ, 23.43^\circ$):** 49 samples, Max $\Delta\text{El} = 0.000203^\circ$, Max $\Delta\text{Az} = 0.000050^\circ$ (PASSED).
+  - **Peak Near Shackleton ($-89.68^\circ, 129.00^\circ$):** 673 samples, Max $\Delta\text{El} = 0.000027^\circ$, Max $\Delta\text{Az} = 0.000001^\circ$ (PASSED).
+  - **Far-side Control ($0.00^\circ\text{N}, 180.00^\circ\text{E}$):** 673 samples, Max $\Delta\text{El} = 0.000004^\circ$, Max $\Delta\text{Az} = 0.000038^\circ$ (PASSED). Confirms $0.0\%$ Earth visibility due to lunar occultation.
+  - **Near-limb Control ($0.00^\circ\text{N}, 90.00^\circ\text{E}$):** 673 samples, Max $\Delta\text{El} = 0.000027^\circ$, Max $\Delta\text{Az} = 0.000003^\circ$ (PASSED). Evaluates tangential geometric limb tracking.
+- **Live "Verify with Horizons" Interactive Residual Check:**
+  - Allows mission planners and researchers to query NASA JPL Horizons on-demand for any lunar coordinates (latitude, longitude) and UTC timestamp.
+  - Computes instantaneous topocentric residuals ($\Delta\text{Azimuth}$ and $\Delta\text{Elevation}$) against AXON's SPICE kernel engine (`SpiceyPy` + `de440s.bsp` + `moon_pa_de440_200625.bpc`).
+  - Features quick preset coordinate buttons for high-priority mission sites (`[IM-1 Malapert]`, `[IM-2 Mons Mouton]`, `[Shackleton Rim]`).
+  - Shown pre-populated with IM-1 Malapert coordinates (Latitude $-80.13^\circ$, Longitude $1.44^\circ$, UTC Time `01-03-2026 12:00 PM`) and the `[Run Live Verification]` action trigger.
+- **Dynamic Benchmark Ingestion:** All metrics are dynamically loaded from `science/validation/benchmark.json`—no passes or tolerances are hardcoded.
+- **Unified Astronomical Standards:** Transparently publishes all reference conventions: UTC time inputs, Ephemeris Time (ET) via NAIF `naif0012.tls`, East-positive longitudes ($-180^\circ$ to $+180^\circ$), planetocentric latitudes, `MOON_ME` body-fixed frame, $1,737.4\text{ km}$ mean radius (`pck00011.tpc`), zero atmospheric refraction, and the $+0.267^\circ$ upper-limb solar visibility threshold.
 
 ### 2. Job B — Terrain Integration (16 Tests, Real LOLA DEMs)
 Executes 3D ray-marching against authentic LOLA DEM rasters in `terrain/`:
