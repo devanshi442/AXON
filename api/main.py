@@ -36,7 +36,8 @@ from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 try:
@@ -335,6 +336,81 @@ async def unhandled_exception_handler(request: Request, exc: Exception):
 
 
 # ---------------------------------------------------------------------------
+# Frontend Static Asset Mounting & Single-Page Application (SPA) Fallback
+# ---------------------------------------------------------------------------
+
+_DIST_DIR = ROOT / "web" / "dist"
+
+if _DIST_DIR.is_dir():
+    # Mount build artifacts (hashed JS/CSS bundles)
+    if (_DIST_DIR / "assets").is_dir():
+        app.mount("/assets", StaticFiles(directory=_DIST_DIR / "assets"), name="frontend-assets")
+    # Mount precomputed scientific datasets (19 site timeseries, horizons, events)
+    if (_DIST_DIR / "data").is_dir():
+        app.mount("/data", StaticFiles(directory=_DIST_DIR / "data"), name="frontend-data")
+    # Mount 3D heightmaps and terrain texture layers
+    if (_DIST_DIR / "terrain").is_dir():
+        app.mount("/terrain", StaticFiles(directory=_DIST_DIR / "terrain"), name="frontend-terrain")
+    if (_DIST_DIR / "images").is_dir():
+        app.mount("/images", StaticFiles(directory=_DIST_DIR / "images"), name="frontend-images")
+
+    @app.get("/", include_in_schema=False)
+    async def serve_spa_root():
+        """Serve the React production application root."""
+        index_file = _DIST_DIR / "index.html"
+        if index_file.is_file():
+            return FileResponse(index_file)
+        return {"status": "ok", "service": "AXON LunarSight API", "message": "Frontend build not found"}
+
+    @app.api_route(
+        "/{full_path:path}",
+        methods=["GET", "HEAD", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+        include_in_schema=False,
+    )
+    async def serve_spa_fallback(request: Request, full_path: str):
+        """
+        Fallback router for React client-side routing (e.g. /explorer, /methods).
+        Does NOT intercept /api, /docs, /redoc, or /openapi.json.
+        """
+        if full_path == "api" or full_path.startswith("api/"):
+            req_path = "/" + full_path.rstrip("/")
+            for r in router.routes:
+                if hasattr(r, "path_regex") and r.path_regex.match(req_path):
+                    supported = getattr(r, "methods", set())
+                    if request.method not in supported:
+                        raise HTTPException(
+                            status_code=status.HTTP_405_METHOD_NOT_ALLOWED,
+                            detail="Method Not Allowed",
+                        )
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="API endpoint not found",
+            )
+
+        if full_path in ("docs", "redoc", "openapi.json"):
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Documentation endpoint not found")
+
+        # Static assets and SPA navigation only accept GET and HEAD
+        if request.method not in ("GET", "HEAD"):
+            raise HTTPException(status_code=status.HTTP_405_METHOD_NOT_ALLOWED, detail="Method Not Allowed")
+
+        # 1. Exact static file matches (e.g. favicon.svg, robots.txt) with traversal protection
+        try:
+            candidate = (_DIST_DIR / full_path.lstrip("/\\")).resolve()
+            if candidate.is_file() and candidate.is_relative_to(_DIST_DIR.resolve()):
+                return FileResponse(candidate)
+        except Exception:
+            pass
+
+        # 2. Client-side routing fallback to index.html
+        index_file = _DIST_DIR / "index.html"
+        if index_file.is_file():
+            return FileResponse(index_file)
+
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Resource not found")
+
+
+# ---------------------------------------------------------------------------
 # Backwards-compatibility helper functions & re-exports
 # ---------------------------------------------------------------------------
 
@@ -347,6 +423,8 @@ def get_benchmark_data() -> Dict[str, Any]:
 
 
 if __name__ == "__main__":
+    import os
     import uvicorn
-    uvicorn.run("api.main:app", host="0.0.0.0", port=8000, workers=1)
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run("api.main:app", host="0.0.0.0", port=port, workers=1)
 
