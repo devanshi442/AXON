@@ -1,6 +1,9 @@
-# Git LFS tracking for binary ephemeris kernels and terrain rasters
-*.bsp filter=lfs diff=lfs merge=lfs -text
-*.bpc filter=lfs diff=lfs merge=lfs -text
+# Binary ephemeris kernels (tracked directly in git without Git LFS)
+*.bsp binary
+*.bpc binary
+
+# Git LFS tracking for raw terrain rasters
 *.JP2 filter=lfs diff=lfs merge=lfs -text
 *.TIF filter=lfs diff=lfs merge=lfs -text
 *.tif filter=lfs diff=lfs merge=lfs -text
+
