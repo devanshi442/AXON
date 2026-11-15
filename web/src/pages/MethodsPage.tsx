@@ -237,7 +237,7 @@ export default function MethodsPage() {
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-[#638BFF] animate-pulse"></span>
             <h2 className="text-sm font-semibold text-[#EDEEF0] uppercase tracking-wider">
-              🔭 Live "Verify with Horizons" Interactive Residual Check
+              Live "Verify with Horizons" Interactive Residual Check
             </h2>
           </div>
           <p className="text-xs text-[#AFB3BA] mt-1">
@@ -488,7 +488,7 @@ export default function MethodsPage() {
       {/* Limitations & Verification Rules */}
       <div className="p-5 bg-[#18191B] border border-[#363A3F] rounded flex flex-col gap-3">
         <h2 className="text-sm font-semibold text-[#EDEEF0] uppercase tracking-wider flex items-center gap-2">
-          <span>⚠️</span> Scientific Caveats &amp; Model Limitations
+          <span>️</span> Scientific Caveats &amp; Model Limitations
         </h2>
         <ul className="text-xs text-[#AFB3BA] space-y-2 list-disc list-inside leading-relaxed">
           <li>

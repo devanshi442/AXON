@@ -58,10 +58,40 @@ async function post<TRequest, TResponse>(
   })
 
   if (!response.ok) {
-    const message = await response.text()
-    throw new Error(
-      message || `API request failed: ${response.status}`
-    )
+    const responseText = await response.text()
+    let detail = responseText
+    let requestId = response.headers.get('X-Request-ID')
+
+    if (responseText) {
+      try {
+        const body = JSON.parse(responseText) as {
+          detail?: unknown
+          error?: { message?: unknown; request_id?: unknown }
+        }
+        const value = body.detail ?? body.error?.message
+        if (typeof value === 'string' && value.trim()) detail = value
+        else if (value !== undefined) detail = JSON.stringify(value)
+        if (typeof body.error?.request_id === 'string') requestId = body.error.request_id
+      } catch {
+        // Preserve a plain-text reverse-proxy or gateway response.
+      }
+    }
+
+    if (!detail.trim() && response.status >= 500) {
+      let apiHealthy = false
+      try {
+        const health = await fetch(API_BASE + '/health', { method: 'GET' })
+        apiHealthy = health.ok
+      } catch {
+        apiHealthy = false
+      }
+      detail = apiHealthy
+        ? 'The API is responding, but analysis failed with HTTP ' + response.status + '. Check the backend traceback for this request.'
+        : 'The AXON API backend is unavailable or not ready (HTTP ' + response.status + '). Start it with: python -m uvicorn api.main:app --host 127.0.0.1 --port 8000'
+    }
+
+    if (requestId) detail += ' (Request ID: ' + requestId + ')'
+    throw new Error(detail || 'API request failed: HTTP ' + response.status)
   }
 
   return response.json() as Promise<TResponse>

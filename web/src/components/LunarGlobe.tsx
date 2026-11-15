@@ -15,6 +15,10 @@ export interface LunarGlobeProps {
   onPickCoords?: (lat: number, lon: number) => void
   scenarioAId?: string
   scenarioBId?: string
+  scenarioPoints?: {
+    a: { lat: number; lon: number } | null
+    b: { lat: number; lon: number } | null
+  }
   autoRotate?: boolean
   autoRotateSpeed?: number
   heightClass?: string
@@ -211,6 +215,7 @@ export default function LunarGlobe({
   onPickCoords,
   scenarioAId,
   scenarioBId,
+  scenarioPoints = { a: null, b: null },
   autoRotate = false,
   autoRotateSpeed = 0.5,
   heightClass = 'h-[420px]',
@@ -803,9 +808,32 @@ export default function LunarGlobe({
     const hollowRingGeom = new THREE.RingGeometry(0.018, 0.038, 24)
     const selectionRingGeom = new THREE.RingGeometry(0.046, 0.062, 24)
 
-    sitesRef.current
+    const markerSites = sitesRef.current
       .filter((site) => site.lat !== null && site.lat <= -70 && site.lon !== null)
-      .forEach((site) => {
+
+    const addCustomScenarioMarker = (
+      label: 'A' | 'B',
+      point: { lat: number; lon: number } | null,
+      id: string | undefined
+    ) => {
+      if (!point || point.lat > -70 || point.lat < -90 || !Number.isFinite(point.lon)) return
+      if (markerSites.some((site) => site.id === id)) return
+      markerSites.push({
+        id: id || ('custom-scenario-' + label.toLowerCase()),
+        name: 'Scenario ' + label,
+        kind: 'custom',
+        lat: point.lat,
+        lon: point.lon,
+        isMission: false,
+        coord_kind: 'actual',
+        coord_status: 'ok',
+      })
+    }
+
+    addCustomScenarioMarker('A', scenarioPoints.a, scenarioAId)
+    addCustomScenarioMarker('B', scenarioPoints.b, scenarioBId)
+
+    markerSites.forEach((site) => {
         if (site.lat === null || site.lon === null) return
 
         const isA = site.id === scenarioAId
@@ -864,7 +892,16 @@ export default function LunarGlobe({
 
         group.add(markerGroup)
       })
-  }, [selectedSiteId, scenarioAId, scenarioBId, mode])
+  }, [
+    selectedSiteId,
+    scenarioAId,
+    scenarioBId,
+    scenarioPoints.a?.lat,
+    scenarioPoints.a?.lon,
+    scenarioPoints.b?.lat,
+    scenarioPoints.b?.lon,
+    mode,
+  ])
 
   if (!webGLSupported) {
     return (

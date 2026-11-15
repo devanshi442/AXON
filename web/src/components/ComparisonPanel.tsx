@@ -129,7 +129,7 @@ export default function ComparisonPanel({ sites }: ComparisonPanelProps) {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>
           <h2 className="text-sm font-semibold text-[#EDEEF0] uppercase tracking-wider flex items-center gap-2">
-            <span>⚖️</span> Side-by-Side Advantage (B vs A)
+            <span>️</span> Side-by-Side Advantage (B vs A)
           </h2>
           <p className="text-2xs text-[#AFB3BA] mt-0.5">
             Diverging baseline comparison. Bars extending right (<span className="text-[#638BFF]">Blue</span>) favor Scenario B. Bars extending left (<span className="text-[#E9AD51]">Orange</span>) favor Scenario A.
@@ -139,7 +139,7 @@ export default function ComparisonPanel({ sites }: ComparisonPanelProps) {
 
       {hasRegionCentre && (
         <div className="p-2.5 rounded bg-[#2A1210] border border-[#7F2318] text-3xs text-[#E9AD51] font-medium font-sans">
-          ⚠️ Note: One or both selections are generic region centres. Metrics will differ wildly from actual peaks.
+          Note: One or both selections are generic region centres. Metrics will differ wildly from actual peaks.
         </div>
       )}
 
@@ -148,7 +148,7 @@ export default function ComparisonPanel({ sites }: ComparisonPanelProps) {
         {/* Physical Context */}
         <div className="bg-[#111113] border border-[#363A3F] rounded p-3">
           <h3 className="text-xs font-semibold text-[#638BFF] uppercase tracking-wider mb-2 font-mono flex items-center gap-2">
-            <span>📍</span> Geography &amp; Context
+            <span></span> Geography &amp; Context
           </h3>
           <div className="flex flex-col text-3xs font-mono text-[#AFB3BA] gap-1.5">
             <div className="flex justify-between border-b border-[#363A3F] pb-1.5">
@@ -169,7 +169,7 @@ export default function ComparisonPanel({ sites }: ComparisonPanelProps) {
         {/* Instantaneous Lighting */}
         <div className="bg-[#111113] border border-[#363A3F] rounded p-3">
           <h3 className="text-xs font-semibold text-[#EDEEF0] uppercase tracking-wider mb-2 font-mono flex items-center gap-2">
-            <span>☀️</span> Instantaneous (At UTC)
+            <span>️</span> Instantaneous (At UTC)
           </h3>
           <DivergingBar label="Solar Array Power" valA={pWattsA} valB={pWattsB} unit="W" maxDelta={100} />
           <DivergingBar label="Sun Elevation" valA={elA.sunElevation} valB={elB.sunElevation} unit="°" maxDelta={5} />
@@ -179,7 +179,7 @@ export default function ComparisonPanel({ sites }: ComparisonPanelProps) {
         {/* 30-Day Aggregates */}
         <div className="md:col-span-2 bg-[#111113] border border-[#363A3F] rounded p-3">
           <h3 className="text-xs font-semibold text-[#30C48D] uppercase tracking-wider mb-2 font-mono flex items-center gap-2">
-            <span>⚡</span> {windowDays}-Day Mission Windows
+            <span></span> {windowDays}-Day Mission Windows
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
             <div>

@@ -50,9 +50,9 @@ export default function MissionExplorer({ sites, onAssignScenario }: MissionExpl
 
   const filterOptions: { id: FilterType; label: string }[] = [
     { id: 'all', label: 'All Sites' },
-    { id: 'south_pole', label: '🏔️ South Pole (< -70°)' },
-    { id: 'candidate', label: '🎯 Artemis / Candidates' },
-    { id: 'mission', label: '🚀 CLPS Missions' },
+    { id: 'south_pole', label: 'South Pole (< -70°)' },
+    { id: 'candidate', label: 'Artemis / Candidates' },
+    { id: 'mission', label: 'CLPS Missions' },
     { id: 'landed', label: 'Landed' },
     { id: 'planned', label: 'Planned' },
   ]
@@ -62,7 +62,7 @@ export default function MissionExplorer({ sites, onAssignScenario }: MissionExpl
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h2 className="text-sm font-semibold text-[#EDEEF0] uppercase tracking-wider flex items-center gap-1.5">
-            <span>🚀</span> Lunar Landing Sites Directory
+            <span></span> Lunar Landing Sites Directory
           </h2>
           <p className="text-2xs text-[#AFB3BA] mt-0.5">
             CLPS missions &amp; Artemis candidate regions with cited primary sources.
@@ -167,9 +167,9 @@ export default function MissionExplorer({ sites, onAssignScenario }: MissionExpl
               <div className="flex items-center justify-between gap-2 pt-1 mt-0.5 border-t border-[#363A3F] font-mono">
                 <div className="flex items-center gap-1 text-3xs">
                   {s.verified ? (
-                    <span className="text-[#30C48D]">✓ Verified</span>
+                    <span className="text-[#30C48D]"> Verified</span>
                   ) : (
-                    <span className="text-[#E9AD51]">⚠️ Unverified</span>
+                    <span className="text-[#E9AD51]">Unverified</span>
                   )}
                 </div>
                 <div className="flex items-center gap-1.5 text-3xs">
@@ -246,7 +246,7 @@ export default function MissionExplorer({ sites, onAssignScenario }: MissionExpl
                   </span>
                   {detailSite.verified && (
                     <span className="text-3xs text-[#30C48D] font-mono font-medium">
-                      ✓ 2nd-Reviewer Verified
+                       2nd-Reviewer Verified
                     </span>
                   )}
                 </div>
@@ -372,7 +372,7 @@ export default function MissionExplorer({ sites, onAssignScenario }: MissionExpl
                           rel="noopener noreferrer"
                           className="text-[#638BFF] hover:underline font-semibold flex items-center gap-1 truncate"
                         >
-                          <span>🔗</span> {src.title || src.url}
+                          <span></span> {src.title || src.url}
                         </a>
                         {src.accessed && (
                           <span className="text-[#AFB3BA] shrink-0 ml-2">Accessed: {src.accessed}</span>

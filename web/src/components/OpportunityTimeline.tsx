@@ -169,7 +169,7 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>
           <h2 className="text-sm font-semibold text-[#EDEEF0] uppercase tracking-wider flex items-center gap-2">
-            <span>📈</span> {windowLabel} Opportunity Timelines &amp; Science Windows (1-Hour Granularity)
+            <span></span> {windowLabel} Opportunity Timelines &amp; Science Windows (1-Hour Granularity)
           </h2>
           <p className="text-2xs text-[#AFB3BA] mt-0.5">
             Continuous hourly Sun elevation for <span className="text-[#E9AD51] font-semibold">Scenario A ({nameA})</span> vs{' '}
@@ -197,7 +197,7 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="p-3 bg-[#111113] rounded border border-[#E9AD51]/40 flex flex-col justify-between">
               <span className="text-3xs uppercase tracking-wider text-[#E9AD51] font-semibold font-mono">
-                ☀️ Solar Illumination ({windowLabel})
+                Solar Illumination ({windowLabel})
               </span>
               <div className="flex items-baseline gap-4 mt-1">
                 <div>
@@ -214,7 +214,7 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
 
             <div className="p-3 bg-[#111113] rounded border border-[#638BFF]/40 flex flex-col justify-between">
               <span className="text-3xs uppercase tracking-wider text-[#638BFF] font-semibold font-mono">
-                📡 Direct-To-Earth Comm ({windowLabel})
+                Direct-To-Earth Comm ({windowLabel})
               </span>
               <div className="flex items-baseline gap-4 mt-1">
                 <div>
@@ -231,7 +231,7 @@ export default function OpportunityTimeline({ sites }: OpportunityTimelineProps)
 
             <div className="p-3 bg-[#111113] rounded border border-[#30C48D]/40 flex flex-col justify-between">
               <span className="text-3xs uppercase tracking-wider text-[#30C48D] font-semibold font-mono">
-                ⚡ Joint Power + Comm ({windowLabel})
+                Joint Power + Comm ({windowLabel})
               </span>
               <div className="flex items-baseline gap-4 mt-1">
                 <div>

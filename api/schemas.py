@@ -123,6 +123,10 @@ class TimeseriesRequest(BaseModel):
 
 
 class TimeseriesResponse(BaseModel):
+    site_id: Optional[str] = None
+    site_name: Optional[str] = None
+    lat: Optional[float] = None
+    lon: Optional[float] = None
     start_utc: str
     stop_utc: str
     step_seconds: int
@@ -322,6 +326,8 @@ class SiteAnalyzeResponse(BaseModel):
     tier: Optional[str] = Field(default=None, description="Convenience alias for coverage_tier: T1 | T2 | T3")
     site_origin: Optional[str] = Field(default=None, description="Site origin classification: official_mission | published_candidate | user_defined | dem_derived")
     site_elevation_m: Optional[float] = None
+    timeseries: Optional[TimeseriesResponse] = None
+    horizon: Optional[HorizonResponse] = None
     instantaneous: Optional[InstantaneousGeometrySchema] = None
     sun: BodyOpportunitySchema
     earth: BodyOpportunitySchema

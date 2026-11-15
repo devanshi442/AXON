@@ -428,7 +428,7 @@ export default function GlobeTestPage() {
       {/* Orientation Proof & Ground Truth Verification Section */}
       <section className="p-5 bg-[#18191B] border border-[#363A3F] rounded flex flex-col gap-3">
         <div className="flex items-center gap-2">
-          <span className="text-base">🧭</span>
+          <span className="text-base"></span>
           <h2 className="text-sm font-semibold text-[#EDEEF0] uppercase tracking-wider">
             Orientation Proof: Verification Against Known Visible Lunar Features
           </h2>

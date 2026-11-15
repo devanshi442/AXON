@@ -9,6 +9,10 @@ import {
 interface MoonMapProps {
   viewState: LunarViewState
   selectedPoint: { lat: number; lon: number } | null
+  scenarioPoints?: {
+    a: { lat: number; lon: number } | null
+    b: { lat: number; lon: number } | null
+  }
   onViewChange: (view: LunarViewState) => void
   onPickCoords?: (lat: number, lon: number) => void
 }
@@ -52,6 +56,7 @@ function getPixelsPerMeter(minDimension: number, zoom: number) {
 export default function MoonMap({
   viewState,
   selectedPoint,
+  scenarioPoints = { a: null, b: null },
   onViewChange,
   onPickCoords,
 }: MoonMapProps) {
@@ -369,6 +374,34 @@ export default function MoonMap({
           className="absolute w-2 h-2 rounded-full bg-[#E9AD51] border border-[#111113] -translate-x-1/2 -translate-y-1/2 pointer-events-none"
           style={{ left: metrics.poleX, top: metrics.poleY }}
         />
+
+        {([
+          { key: 'a', label: 'A', point: scenarioPoints.a, color: '#E9AD51' },
+          { key: 'b', label: 'B', point: scenarioPoints.b, color: '#638BFF' },
+        ] as const).map(({ key, label, point, color }) => {
+          if (!point || point.lat > -70 || point.lat < -90 || !Number.isFinite(point.lon)) return null
+          const { x, y } = worldToScreen(latLonToPolar(point.lat, point.lon))
+          return (
+            <div
+              key={key}
+              data-scenario-marker={label}
+              aria-label={'Scenario ' + label + ' at ' + point.lat.toFixed(3) + ' degrees latitude, ' + point.lon.toFixed(3) + ' degrees longitude'}
+              className="absolute z-20 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+              style={{ left: x, top: y }}
+            >
+              <span
+                className="absolute left-1/2 top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 shadow-[0_0_0_2px_rgba(17,17,19,0.9)]"
+                style={{ borderColor: color, backgroundColor: 'rgba(17,17,19,0.92)' }}
+              />
+              <span
+                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[9px] font-bold font-mono"
+                style={{ color }}
+              >
+                {label}
+              </span>
+            </div>
+          )
+        })}
 
         {selectedPoint && (() => {
           const { x, y } = worldToScreen(latLonToPolar(selectedPoint.lat, selectedPoint.lon))

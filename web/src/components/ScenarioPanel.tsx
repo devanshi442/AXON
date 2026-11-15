@@ -132,6 +132,20 @@ export default function ScenarioPanel({
       const hor = result.horizon as any
       const customId = type === 'A' ? 'custom-a' : 'custom-b'
 
+      // The API response carries the analysed coordinates at the top level;
+      // its nested timeseries payload does not reliably repeat them. Store
+      // them with the cached series so ExplorerPage can place the active A/B
+      // marker from the same source of truth used by the scenario selector.
+      if (tsr && typeof tsr === 'object') {
+        tsr.site_id = customId
+        tsr.site_name =
+          typeof result.site_name === 'string'
+            ? result.site_name
+            : `Custom Site (${lat.toFixed(2)}°, ${lon.toFixed(2)}°)`
+        tsr.lat = lat
+        tsr.lon = lon
+      }
+
       if (tsr && tsr.sun_elevation_deg) {
         if (!tsr.times && tsr.start_utc && tsr.step_seconds) {
           const n = tsr.sun_elevation_deg.length
@@ -142,20 +156,24 @@ export default function ScenarioPanel({
           )
         }
 
+        const availableMasks = Array.isArray(hor?.mask_deg)
+          ? ({ ['h_' + mastHeightM.toFixed(1) + 'm']: hor.mask_deg } as HorizonProfile['masks'])
+          : undefined
         const injectedHorizon: HorizonProfile | undefined = hor
           ? {
               site_id: customId,
-              site_name: `Custom Site (${lat.toFixed(2)}°, ${lon.toFixed(2)}°)`,
+              site_name: 'Custom Site (' + lat.toFixed(2) + '°, ' + lon.toFixed(2) + '°)',
               kind: 'custom',
               lat,
               lon,
               coord_status: 'ok',
-              site_height_m: 0,
-              resolution_m: 20,
-              default_range_km: 50,
-              masks: hor.masks,
-              dem_id: hor.dem_id || 'LOLA DEM',
-              coverage_status: hor.coverage_status || 'ok',
+              site_height_m: hor.site_height_m ?? 0,
+              resolution_m: hor.resolution_m ?? 20,
+              default_range_km: hor.max_range_km ?? 50,
+              masks: availableMasks ?? ({} as HorizonProfile['masks']),
+              dem_id: hor.dem_id || result.dem_id || 'LOLA DEM',
+              coverage_status: hor.coverage_status || result.coverage_status || 'ok',
+              generated_at: hor.generated,
             }
           : undefined
 
@@ -166,7 +184,7 @@ export default function ScenarioPanel({
         })
         onCustomAnalysisComplete?.(type)
       } else {
-        setApiResult(result)
+        setApiError('The analysis endpoint returned summary metrics but no hourly timeseries. Restart the API after updating the backend, then retry.')
       }
     } catch (err) {
       // Offline / No-Backend Fallback: clone nearest known South Polar site's timeseries
@@ -339,7 +357,7 @@ export default function ScenarioPanel({
           >
             {siteId.startsWith('custom-') && (
               <option value={siteId}>
-                📍 Custom Point ({ts?.lat ?? customLat}°, {ts?.lon ?? customLon}°)
+                 Custom Point ({ts?.lat ?? customLat}°, {ts?.lon ?? customLon}°)
               </option>
             )}
             <optgroup label="Artemis III Candidate Sites (South Pole)">
@@ -369,7 +387,7 @@ export default function ScenarioPanel({
           onClick={() => setShowCustomForm((v) => !v)}
           className="self-start sm:self-end shrink-0 px-3 py-1.5 rounded text-3xs font-mono font-semibold text-[#30C48D] bg-[#30C48D]/15 border border-[#30C48D]/40 hover:bg-[#30C48D]/25 transition-colors"
         >
-          {showCustomForm ? '− Hide Custom Coords' : '🎯 Custom Lat/Lon'}
+          {showCustomForm ? '− Hide Custom Coords' : 'Custom Lat/Lon'}
         </button>
       </div>
 
@@ -433,7 +451,7 @@ export default function ScenarioPanel({
               disabled={apiLoading}
               className="w-full px-4 py-1.5 rounded bg-[#30C48D] hover:bg-[#5aa877] text-[#111113] text-xs font-bold font-mono uppercase tracking-wider disabled:opacity-50 transition-colors cursor-pointer"
             >
-              {apiLoading ? 'Computing...' : `⚡ Run Scenario ${type}`}
+              {apiLoading ? 'Computing...' : `Run Scenario ${type}`}
             </button>
           </div>
 
@@ -442,7 +460,7 @@ export default function ScenarioPanel({
           {apiResult && (
             <div className="p-2 rounded bg-[#132A1C] border border-[#2A5C3D] flex items-center justify-between">
               <span className="text-3xs text-[#30C48D] font-mono">
-                ✓ {typeof apiResult.__banner === 'string' ? apiResult.__banner : `Custom site loaded into Scenario ${type}.`}
+                 {typeof apiResult.__banner === 'string' ? apiResult.__banner : `Custom site loaded into Scenario ${type}.`}
               </span>
             </div>
           )}
@@ -547,7 +565,7 @@ export default function ScenarioPanel({
               </span>
             </div>
             <span className="text-3xs font-mono text-[#30C48D]">
-              ⚡ {opp?.solar_energy_kwh ?? 0} kWh/m²
+              {opp?.solar_energy_kwh ?? 0} kWh/m²
             </span>
           </div>
         </div>

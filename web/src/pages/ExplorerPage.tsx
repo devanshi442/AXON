@@ -72,6 +72,7 @@ export default function ExplorerPage() {
     setEarthCriterion,
     solarArrayType,
     setSolarArrayType,
+    timeseriesCache,
   } = useScenarioStore()
 
   useEffect(() => {
@@ -257,6 +258,21 @@ export default function ExplorerPage() {
 
   const siteA = selectableSites.find((s) => s.id === scenarioAId)
   const siteB = selectableSites.find((s) => s.id === scenarioBId)
+  const cachedScenarioA = timeseriesCache[scenarioAId]
+  const cachedScenarioB = timeseriesCache[scenarioBId]
+  const scenarioPointA =
+    siteA && siteA.lat !== null && siteA.lon !== null
+      ? { lat: siteA.lat, lon: siteA.lon }
+      : cachedScenarioA?.lat != null && cachedScenarioA.lon != null
+        ? { lat: cachedScenarioA.lat, lon: cachedScenarioA.lon }
+        : null
+  const scenarioPointB =
+    siteB && siteB.lat !== null && siteB.lon !== null
+      ? { lat: siteB.lat, lon: siteB.lon }
+      : cachedScenarioB?.lat != null && cachedScenarioB.lon != null
+        ? { lat: cachedScenarioB.lat, lon: cachedScenarioB.lon }
+        : null
+  const scenarioPoints = { a: scenarioPointA, b: scenarioPointB }
 
   return (
     <div className="flex flex-col gap-5 animate-fade-in pb-12">
@@ -383,7 +399,7 @@ export default function ExplorerPage() {
               onClick={runComparisonAndScroll}
               className="px-3 py-1 rounded text-3xs font-mono font-bold uppercase tracking-wider bg-[#30C48D] hover:bg-[#5aa877] text-[#111113] transition-colors cursor-pointer shadow"
             >
-              ⚡ Compare &amp; View Forecast ↓
+              Compare &amp; View Forecast ↓
             </button>
 
             <button
@@ -487,7 +503,7 @@ export default function ExplorerPage() {
                     : 'bg-[#111113] text-[#AFB3BA] hover:text-[#EDEEF0] border border-[#363A3F]'
                 }`}
               >
-                ⚡ Split View (3D Globe + Flat Polar Map)
+                Split View (3D Globe + Flat Polar Map)
               </button>
               <button
                 type="button"
@@ -498,7 +514,7 @@ export default function ExplorerPage() {
                     : 'bg-[#111113] text-[#AFB3BA] hover:text-[#EDEEF0] border border-[#363A3F]'
                 }`}
               >
-                🌐 3D Globe Only
+                3D Globe Only
               </button>
               <button
                 type="button"
@@ -509,7 +525,7 @@ export default function ExplorerPage() {
                     : 'bg-[#111113] text-[#AFB3BA] hover:text-[#EDEEF0] border border-[#363A3F]'
                 }`}
               >
-                🗺️ Flat Polar Map Only
+                Flat Polar Map Only
               </button>
             </div>
           </div>
@@ -531,6 +547,7 @@ export default function ExplorerPage() {
                     onPickCoords={handlePickCoordsFromMapOrGlobe}
                     scenarioAId={scenarioAId}
                     scenarioBId={scenarioBId}
+                    scenarioPoints={scenarioPoints}
                     heightClass="h-[420px]"
                     viewState={lunarViewState}
                     onViewChange={handleLunarViewChange}
@@ -545,6 +562,7 @@ export default function ExplorerPage() {
               <div className={`${mapViewMode === 'both' ? 'lg:col-span-6' : ''} flex flex-col h-[540px]`}>
                 <MoonMap
                   viewState={lunarViewState}
+                  scenarioPoints={scenarioPoints}
                   selectedPoint={
                     selectedLocation?.kind === 'coords'
                       ? { lat: selectedLocation.lat, lon: selectedLocation.lon }
@@ -608,13 +626,13 @@ export default function ExplorerPage() {
                       onClick={() => requestCustomPointAnalysis('A')}
                       className="px-3 py-1.5 rounded bg-[#E9AD51] text-[#111113] font-bold font-mono transition-colors cursor-pointer"
                     >
-                      ⚡ Analyze in Scenario A
+                      Analyze in Scenario A
                     </button>
                     <button
                       onClick={() => requestCustomPointAnalysis('B')}
                       className="px-3 py-1.5 rounded bg-[#638BFF] text-[#111113] font-bold font-mono transition-colors cursor-pointer"
                     >
-                      ⚡ Analyze in Scenario B
+                      Analyze in Scenario B
                     </button>
                   </>
                 )}
@@ -660,7 +678,7 @@ export default function ExplorerPage() {
           onClick={runComparisonAndScroll}
           className="px-5 py-2 rounded bg-[#30C48D] hover:bg-[#5aa877] text-[#111113] text-xs font-bold font-mono uppercase tracking-wider transition-colors cursor-pointer shrink-0 shadow-md"
         >
-          ⚡ Run Comparison &amp; 30-Day Forecast ↓
+          Run Comparison &amp; 30-Day Forecast ↓
         </button>
       </div>
 
@@ -678,7 +696,7 @@ export default function ExplorerPage() {
       <div className="bg-[#18191B] border border-[#363A3F] rounded p-3">
         <div className="flex items-center justify-between cursor-pointer" onClick={() => setShowEducationalCard(!showEducationalCard)}>
           <span className="text-xs font-semibold text-[#AFB3BA] uppercase tracking-wider font-mono">
-            🎓 Reference Guide: Grazing Polar Sunlight (~1.54° Tilt) &amp; Lunar Libration
+            Reference Guide: Grazing Polar Sunlight (~1.54° Tilt) &amp; Lunar Libration
           </span>
           <span className="text-3xs text-[#638BFF] font-mono">
             {showEducationalCard ? 'Hide ▲' : 'Expand ▼'}
@@ -687,15 +705,15 @@ export default function ExplorerPage() {
         {showEducationalCard && (
           <div className="mt-3 pt-3 border-t border-[#363A3F] grid grid-cols-1 md:grid-cols-3 gap-3 text-3xs text-[#AFB3BA]">
             <div className="bg-[#111113] p-2.5 rounded border border-[#363A3F]">
-              <strong className="text-[#E9AD51] block mb-1">☀️ Grazing Polar Sunlight</strong>
+              <strong className="text-[#E9AD51] block mb-1">Grazing Polar Sunlight</strong>
               The Moon's axis is tilted only 1.54° to the ecliptic. At the South Pole, the Sun skims the horizon—topographic peaks stay lit while crater floors stay in shadow.
             </div>
             <div className="bg-[#111113] p-2.5 rounded border border-[#363A3F]">
-              <strong className="text-[#638BFF] block mb-1">🌍 Lunar Libration &amp; DTE</strong>
+              <strong className="text-[#638BFF] block mb-1">Lunar Libration &amp; DTE</strong>
               Orbital libration (~±6.7° latitude over 27.3 days) makes Earth bob above and below local terrain horizons.
             </div>
             <div className="bg-[#111113] p-2.5 rounded border border-[#363A3F]">
-              <strong className="text-[#30C48D] block mb-1">⚡ Joint Operations Window</strong>
+              <strong className="text-[#30C48D] block mb-1">Joint Operations Window</strong>
               Solar-powered landers without relay satellites require simultaneous sunlight and direct Earth line-of-sight.
             </div>
           </div>
