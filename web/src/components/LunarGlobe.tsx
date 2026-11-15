@@ -227,6 +227,7 @@ export default function LunarGlobe({
   restrictToSouthPole = false,
 }: LunarGlobeProps) {
   const mountRef = useRef<HTMLDivElement>(null)
+  const rendererRef = useRef<THREE.WebGLRenderer | null>(null)
   const controlsRef = useRef<OrbitControls | null>(null)
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null)
   const defaultDistanceRef = useRef<number>(3.9)
@@ -374,11 +375,15 @@ export default function LunarGlobe({
       camera.lookAt(0, 0, 0)
     }
 
-    const renderer = new THREE.WebGLRenderer({
-      antialias: true,
-      alpha: mode === 'hero',
-      powerPreference: 'high-performance',
-    })
+    let renderer = rendererRef.current
+    if (!renderer) {
+      renderer = new THREE.WebGLRenderer({
+        antialias: true,
+        alpha: mode === 'hero',
+        powerPreference: 'high-performance',
+      })
+      rendererRef.current = renderer
+    }
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
     renderer.outputColorSpace = THREE.SRGBColorSpace
     renderer.domElement.style.width = '100%'
@@ -719,8 +724,6 @@ export default function LunarGlobe({
       cameraRef.current = null
       markersGroupRef.current = null
       ensureTerrainDetailRef.current = null
-      renderer.dispose()
-      renderer.forceContextLoss()
       activeSphereGeometry.dispose()
       sphereMat.dispose()
       moonTexture.dispose()
@@ -733,9 +736,38 @@ export default function LunarGlobe({
       }
       terrainGeometry?.dispose()
       terrainTexture?.dispose()
-      if (container.contains(renderer.domElement)) container.removeChild(renderer.domElement)
+      if (renderer) {
+        if (renderer.domElement && container.contains(renderer.domElement)) {
+          container.removeChild(renderer.domElement)
+        }
+        renderer.dispose()
+        renderer.forceContextLoss()
+        ;(renderer as any).domElement = null
+        rendererRef.current = null
+      }
     }
   }, [webGLSupported, mode, autoRotate, autoRotateSpeed, prefersReducedMotion, publishCurrentView, restrictToSouthPole])
+
+  useEffect(() => {
+    const mapElement = document.querySelector('.leaflet-container') || document.querySelector('canvas')
+    const preventPassiveSpam = (e: Event) => {
+      e.preventDefault()
+    }
+
+    if (mapElement) {
+      mapElement.addEventListener('wheel', preventPassiveSpam, { passive: false })
+      mapElement.addEventListener('touchstart', preventPassiveSpam, { passive: false })
+      mapElement.addEventListener('touchmove', preventPassiveSpam, { passive: false })
+    }
+
+    return () => {
+      if (mapElement) {
+        mapElement.removeEventListener('wheel', preventPassiveSpam)
+        mapElement.removeEventListener('touchstart', preventPassiveSpam)
+        mapElement.removeEventListener('touchmove', preventPassiveSpam)
+      }
+    }
+  }, [])
 
   useEffect(() => {
     if (mode !== 'interactive') return

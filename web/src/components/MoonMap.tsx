@@ -92,6 +92,27 @@ export default function MoonMap({
     return () => observer.disconnect()
   }, [])
 
+  useEffect(() => {
+    const mapElement = document.querySelector('.leaflet-container') || document.querySelector('canvas')
+    const preventPassiveSpam = (e: Event) => {
+      e.preventDefault()
+    }
+
+    if (mapElement) {
+      mapElement.addEventListener('wheel', preventPassiveSpam, { passive: false })
+      mapElement.addEventListener('touchstart', preventPassiveSpam, { passive: false })
+      mapElement.addEventListener('touchmove', preventPassiveSpam, { passive: false })
+    }
+
+    return () => {
+      if (mapElement) {
+        mapElement.removeEventListener('wheel', preventPassiveSpam)
+        mapElement.removeEventListener('touchstart', preventPassiveSpam)
+        mapElement.removeEventListener('touchmove', preventPassiveSpam)
+      }
+    }
+  }, [])
+
   const metrics = useMemo<MapMetrics>(() => {
     const { width, height } = viewportSize
     const pixelsPerMeter = getPixelsPerMeter(Math.min(width, height), viewState.zoom)
