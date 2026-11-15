@@ -1,10 +1,31 @@
 # AXON LunarSight
 
-**CLPS & Artemis Lunar Landing Site Evaluation Model — NASA Space Apps Challenge 2026**
+**[Lunar Landing Site Navigator](https://www.spaceappschallenge.org/) — 2026 NASA Space Apps Challenge**
+*Subjects: Human Exploration · Moon · Software · Space Exploration | Difficulty: Advanced / Intermediate*
 
 > *Real sources. Clear calculations. Useful comparisons.*
 
+![Backend CI](https://github.com/devanshi442/AXON/actions/workflows/backend-ci.yml/badge.svg)
+![Tests: 112 Passing](https://img.shields.io/badge/tests-112%20passing-brightgreen)
+![Python 3.12](https://img.shields.io/badge/python-3.12-blue)
+![React 18](https://img.shields.io/badge/react-18-61dafb)
+![License: MIT](https://img.shields.io/badge/license-MIT-green)
+![SPICE Verified](https://img.shields.io/badge/SPICE-verified%204%2C111%20samples-orange)
+
 An intuitive scientific modeling engine and interactive dashboard designed for mission planners, aerospace engineers, educators, and the public to evaluate and compare candidate lunar landing sites and dates. AXON LunarSight calculates high-precision topocentric Sun and Earth positions using NASA NAIF SPICE kernels and traces lines-of-sight against 3D ray-marched terrain horizons derived from Lunar Orbiter Laser Altimeter (LOLA) Digital Elevation Models (DEMs). The application models solar disk fraction illumination, photovoltaic power potential across multiple array architectures, and Direct-to-Earth (DTE) communication visibility under lunar libration.
+
+---
+
+## ⚡ Quick Start
+
+| Want to... | Go here |
+|---|---|
+| **Run locally (5 min)** | [§21 Backend Setup](#21-backend-setup--virtual-environment) → [§22 Frontend](#22-frontend-setup--build) |
+| **Read the science** | [§11 Ray-Marching](#11-3d-ray-marching-horizon-methodology) → [§12 Solar Model](#12-solar-illumination--disk-fraction-formulation) |
+| **See the site data** | [§3 Key Sites Table](#3-key-polar-landing-sites-summary-table) |
+| **Verify ground truth** | [§27 Validation & 112 Tests](#27-verification-validation--automated-tests-112-tests) |
+| **Explore the API** | [§26 REST Endpoints](#26-rest-api-endpoints-reference) |
+| **Deploy with Docker** | [§30 CI/CD Pipeline](#30-deployment--cicd-pipeline) |
 
 ---
 
@@ -64,6 +85,17 @@ The mission overview dashboard (*Figure 1*) serves as the primary operational en
 - **Live Ephemeris & Data Telemetry:** Tracks real-time UTC ephemeris time (`2026-11-15 10:54 UTC`) and displays verified system status (`• SPICE / LOLA DATA`) indicating that both NAIF planetary ephemerides and LOLA DEM rasters are fully initialized.
 - **Curated Site Registry:** Surfaces 10 prime candidate landing regions spanning high-priority Artemis III exploration zones (Connecting Ridge, Shackleton Rim, Faustini, Haworth, Nobile, Malapert Massif) alongside 2 reference baseline sites (Apollo 11 in Mare Tranquillitatis and Blue Ghost 1 in Mare Crisium).
 - **Dual Mission Pathways:** Provides immediate routing to either the dual-scenario **Lunar Site Explorer** (`OPEN THE EXPLORER ↗`) or the fully transparent **Science Methods & Validation** documentation (`Methods and limitations →`).
+
+### NASA Space Apps Challenge Alignment
+
+AXON LunarSight was built for the **"Lunar Landing Site Navigator"** challenge prompt at the **2026 NASA Space Apps Challenge** (Subjects: Human Exploration · Moon · Software · Space Exploration | Difficulty: Advanced / Intermediate). The challenge calls for an intuitive tool that lets mission planners, educators, and the public compare landing sites and dates quickly — visualizing Sun and Earth positions relative to the terrain horizon to assess power generation potential and Direct-to-Earth communication windows.
+
+AXON addresses every dimension of this challenge:
+- **Intuitive comparison:** Dual-scenario A vs B explorer with synchronized UTC epochs and instant metric cards (solar hours, comm hours, joint windows).
+- **Sun/Earth relative to terrain:** 3D ray-marched LOLA DEM horizons with topocentric SPICE geometry — not a flat-sphere approximation.
+- **Power generation potential:** Solar disk fraction ($f_\text{sun}$) with 4 solar array architecture models and instantaneous watt readouts per scenario.
+- **DTE communication windows:** Terrain-aware geometric line-of-sight to Earth's center of mass with customizable antenna mast-height clearance buffers.
+- **Accessible to all audiences:** Serverless static mode runs with zero backend for public and educational use; full dynamic mode available for mission planners.
 
 ---
 
@@ -454,8 +486,11 @@ AXON/
 ├── kernels/                           # NASA NAIF SPICE ephemeris kernels
 ├── pipeline/                          # Automated data pipeline scripts
 │   ├── build_all.py                   # Master idempotent precomputation build
+│   ├── build_geometry.py              # Precomputes timeseries & horizon data
 │   ├── download_dems.py               # Robust LOLA DEM downloader with resume
-│   ├── fetch_kernels.py               # NAIF SPICE kernel fetcher
+│   ├── fetch_kernels.py               # NAIF SPICE kernel fetcher & verifier
+│   ├── step2_kernels.py               # Loads and validates SPICE kernel pool
+│   ├── step3_terrain.py               # Terrain asset staging & verification
 │   └── validate_missions.py           # Catalog schema compiler
 ├── science/                           # lunarsight_core Python package
 │   ├── lunarsight_core/               # Geometry, terrain, horizon, power, metrics
@@ -737,10 +772,25 @@ docker run -d --name axon-api -p 8000:8000 \
 
 ## 31. Planned Enhancements & Roadmap
 
-- **Multi-Bounce Albedo Scattering:** Model secondary solar reflections from illuminated crater rims onto permanently shadowed crater floors.
-- **Dynamic Terrain Horizon Ray-Casting in WebGL:** Client-side compute-shader ray-marching directly on GPU heightmaps.
-- **Deep Space Network (DSN) Station Scheduling:** Integrate terrestrial ground station view periods (Goldstone, Madrid, Canberra) with elevation cutoffs.
+### Near-Term (< 3 months)
+- **KML / GeoJSON Export:** Download evaluated site comparisons as standard geospatial formats for import into QGIS, Google Earth, and NASA Worldwind.
+- **Crewed Surface EVA Windows:** Add a "joint power + comm + thermal" combined window metric for crewed surface operations planning.
+- **Extended Site Registry:** Add all 13 NASA Artemis III Exploration Zones and 2026/2027 CLPS mission targets as catalog entries.
+
+### Medium-Term (3–6 months)
+- **Deep Space Network (DSN) Station Scheduling:** Integrate terrestrial ground station view periods (Goldstone, Madrid, Canberra) with configurable elevation cutoffs and DSN 34m/70m receiver sensitivity.
+- **Multi-Epoch Illumination Heatmaps:** Generate spatially resolved illumination fraction maps across the South Polar region over selectable date ranges.
+- **Dynamic Terrain Horizon Ray-Casting in WebGL:** Client-side compute-shader ray-marching directly on GPU heightmaps, eliminating backend dependency for terrain horizons.
+
+### Long-Term
+- **Multi-Bounce Albedo Scattering:** Model secondary solar reflections from illuminated crater rims onto permanently shadowed crater floors (PSR volatile sublimation modeling).
 - **High-Resolution Sub-Pixel Rock Hazard Modeling:** Integrate LROC NAC micro-DEMs ($0.5\text{ m/px}$) for localized landing hazard evaluations.
+- **Thermal Survival Gap Analysis:** Combine illumination blackout gaps with surface temperature models to flag sites exceeding lander thermal survival limits.
+
+### Community & Open Science
+- **Public Read-Only API:** Rate-limited free-tier REST API for researchers and educators to query ephemerides and illumination statistics programmatically.
+- **Educational Mode:** Simplified non-technical UI layer showing plain-language illumination and communication explanations for K-12 and public outreach.
+- **Contribution Guide:** `CONTRIBUTING.md` with site registry YAML format, test fixture procedure, and PR template for community DEM coverage expansion.
 
 ---
 
@@ -752,3 +802,16 @@ docker run -d --name axon-api -p 8000:8000 \
   - NASA Goddard Space Flight Center (GSFC) Lunar Reconnaissance Orbiter (LRO) LOLA Science Team.
   - NASA Jet Propulsion Laboratory (JPL) Navigation and Ancillary Information Facility (NAIF).
   - NASA JPL Solar System Dynamics Group (Horizons Ephemeris System).
+
+---
+
+### Team
+
+> *Built for the **2026 NASA Space Apps Challenge** — "Lunar Landing Site Navigator"*
+
+| Member | Role |
+|---|---|
+| Devanshi Saxena | Project Lead / Frontend (React, TypeScript, WebGL) |
+| *(add teammates)* | *(add roles)* |
+
+**Team Repository:** [github.com/devanshi442/AXON](https://github.com/devanshi442/AXON)
