@@ -666,6 +666,36 @@ body {
   color: var(--accent);
 }
 
+.axon-action-github {
+  display: inline-flex;
+  min-height: 32px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 0 12px;
+  color: #fff;
+  background: #0284c7;
+  border: 1px solid #38bdf8;
+  border-radius: 6px;
+  font-family: "Roboto Mono", ui-monospace, monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-decoration: none;
+  transition: transform .16s ease, filter .16s ease, background-color .16s ease;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.35);
+}
+
+.axon-action-github:hover {
+  background: #0369a1;
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.axon-action-github span {
+  color: inherit;
+}
+
 .axon-landing-footer {
   display: flex;
   width: min(1440px, calc(100% - 64px));
