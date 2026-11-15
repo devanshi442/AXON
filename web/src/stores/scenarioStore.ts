@@ -98,11 +98,45 @@ interface ScenarioStore {
 
 export function getMaskForMastHeight(profile?: HorizonProfile | null, mastHeightM: number = 1.5): number[] | null {
   if (!profile || !profile.masks) return null
-  if (mastHeightM <= 0.75) return profile.masks.h_0_0m || null
-  if (mastHeightM <= 2.25) return profile.masks.h_1_5m || profile.masks.h_0_0m || null
-  if (mastHeightM <= 4.0) return profile.masks.h_3_0m || profile.masks.h_1_5m || null
-  if (mastHeightM <= 7.5) return profile.masks.h_5_0m || profile.masks.h_3_0m || null
-  return profile.masks.h_10_0m || profile.masks.h_5_0m || null
+  const masks = profile.masks
+  const levels: [number, number[]][] = [
+    [0.0, masks.h_0_0m],
+    [1.5, masks.h_1_5m],
+    [3.0, masks.h_3_0m],
+    [5.0, masks.h_5_0m],
+    [10.0, masks.h_10_0m],
+  ].filter((item): item is [number, number[]] => Array.isArray(item[1]) && item[1].length > 0)
+
+  if (levels.length === 0) {
+    const firstKey = Object.keys(masks).find(k => Array.isArray(masks[k]) && masks[k].length > 0)
+    return firstKey ? masks[firstKey] : null
+  }
+
+  if (mastHeightM <= levels[0][0]) {
+    return levels[0][1]
+  }
+  const last = levels[levels.length - 1]
+  if (mastHeightM >= last[0]) {
+    return last[1]
+  }
+
+  for (let i = 0; i < levels.length - 1; i++) {
+    const [h0, m0] = levels[i]
+    const [h1, m1] = levels[i + 1]
+    if (mastHeightM >= h0 && mastHeightM <= h1) {
+      if (h1 === h0 || mastHeightM === h0) return m0
+      if (mastHeightM === h1) return m1
+      const t = (mastHeightM - h0) / (h1 - h0)
+      const len = Math.min(m0.length, m1.length)
+      const interpolated = new Array<number>(len)
+      for (let j = 0; j < len; j++) {
+        interpolated[j] = (1.0 - t) * m0[j] + t * m1[j]
+      }
+      return interpolated
+    }
+  }
+
+  return last[1]
 }
 
 export function getDefaultUtcDate(nowDate?: Date): string {

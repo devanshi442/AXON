@@ -45,12 +45,13 @@ def refine_transition_spice(
     margin_deg: float = 0.0,
     criterion: str = "center",
     max_iterations: int = 6,  # 3600s / 64 = 56s (< 1 min)
+    mast_height_m: float = 0.0,
 ) -> float:
     """
     Refine the epoch when the visibility condition flips between et_start and et_end
     using bisection root finding with SPICE topocentric geometry.
     """
-    pos_site, east, north, up = G.site_to_enu(lat_deg, lon_deg)
+    pos_site, east, north, up = G.site_to_enu(lat_deg, lon_deg, mast_height_m=mast_height_m)
 
     def eval_condition(et: float) -> bool:
         az, el, dist = G.compute_topocentric_state(target_body_id, et, pos_site, east, north, up)
@@ -92,6 +93,7 @@ def extract_windows_refined(
     criterion: str = "center",
     refine_edges: bool = True,
     total_period_hours: Optional[float] = None,
+    mast_height_m: float = 0.0,
 ) -> List[Dict[str, Any]]:
     """
     Extract contiguous True intervals with optional ~1-minute SPICE edge refinement.
@@ -131,6 +133,7 @@ def extract_windows_refined(
                         et0, et1, site_lat, site_lon, target_body_id,
                         mask=horizon_mask, threshold_deg=threshold_deg,
                         is_sun=is_sun, margin_deg=margin_deg, criterion=criterion,
+                        mast_height_m=mast_height_m,
                     )
                     start_utc = G.spice.et2utc(et_rise, "ISOC", 0) + "Z"
                     precision = "1-minute"
@@ -146,6 +149,7 @@ def extract_windows_refined(
                         et0, et1, site_lat, site_lon, target_body_id,
                         mask=horizon_mask, threshold_deg=threshold_deg,
                         is_sun=is_sun, margin_deg=margin_deg, criterion=criterion,
+                        mast_height_m=mast_height_m,
                     )
                     end_utc = G.spice.et2utc(et_set, "ISOC", 0) + "Z"
                     precision = "1-minute"
@@ -196,6 +200,7 @@ def extract_windows_refined(
                     et0, et1, site_lat, site_lon, target_body_id,
                     mask=horizon_mask, threshold_deg=threshold_deg,
                     is_sun=is_sun, margin_deg=margin_deg, criterion=criterion,
+                    mast_height_m=mast_height_m,
                 )
                 start_utc = G.spice.et2utc(et_rise, "ISOC", 0) + "Z"
                 precision = "1-minute"
@@ -244,6 +249,7 @@ def compute_comprehensive_metrics(
     refine_edges: bool = False,
     site_lat: Optional[float] = None,
     site_lon: Optional[float] = None,
+    mast_height_m: Optional[float] = None,
 ) -> Dict[str, Any]:
     """
     Compute comprehensive availability windows, power potential, and statistics
@@ -259,6 +265,7 @@ def compute_comprehensive_metrics(
     sun_radius = timeseries.get("sun_angular_radius_deg", C.SUN_ANGULAR_RADIUS_DEG)
     earth_radius = timeseries.get("earth_angular_radius_deg", C.EARTH_ANGULAR_RADIUS_DEG)
     step_s = timeseries.get("step_seconds", 3600)
+    actual_mast_height = mast_height_m if mast_height_m is not None else timeseries.get("mast_height_m", 0.0)
 
     # True elapsed duration calculation
     if "start_utc" in timeseries and "stop_utc" in timeseries:
@@ -301,6 +308,7 @@ def compute_comprehensive_metrics(
         horizon_mask=mask, threshold_deg=sun_threshold_deg, is_sun=True,
         refine_edges=refine_edges,
         total_period_hours=total_hours,
+        mast_height_m=actual_mast_height,
     )
     earth_windows = extract_windows_refined(
         times, earth_mask, step_seconds=step_s,
@@ -308,6 +316,7 @@ def compute_comprehensive_metrics(
         horizon_mask=mask, margin_deg=dte_margin_deg, criterion=earth_criterion, is_sun=False,
         refine_edges=refine_edges,
         total_period_hours=total_hours,
+        mast_height_m=actual_mast_height,
     )
     joint_windows = extract_windows_refined(
         times, joint_mask, step_seconds=step_s,
@@ -315,6 +324,7 @@ def compute_comprehensive_metrics(
         horizon_mask=mask, threshold_deg=sun_threshold_deg, is_sun=True,
         refine_edges=False,  # Joint edge depends on both bodies, keep hourly
         total_period_hours=total_hours,
+        mast_height_m=actual_mast_height,
     )
 
     # Totals and extremes, mathematically bounded by total elapsed period
@@ -467,6 +477,10 @@ def compute_site_flat_and_terrain_metrics(
             "efficiency": kwargs.get("efficiency") or kwargs.get("array_efficiency", 0.28),
         }
 
+    actual_mast_height = kwargs.get("mast_height_m")
+    if actual_mast_height is None:
+        actual_mast_height = timeseries.get("mast_height_m", 0.0)
+
     flat_res = compute_comprehensive_metrics(
         timeseries=timeseries,
         mask=None,
@@ -477,6 +491,7 @@ def compute_site_flat_and_terrain_metrics(
         site_lat=site_lat,
         site_lon=site_lon,
         refine_edges=refine_edges,
+        mast_height_m=actual_mast_height,
     )
 
     if horizon_mask is None or (isinstance(horizon_mask, dict) and horizon_mask.get("coverage_status") == "unavailable"):
@@ -496,6 +511,7 @@ def compute_site_flat_and_terrain_metrics(
         site_lat=site_lat,
         site_lon=site_lon,
         refine_edges=refine_edges,
+        mast_height_m=actual_mast_height,
     )
 
     # Compute headline delta: how wrong flat horizon is

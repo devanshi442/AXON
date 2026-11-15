@@ -200,6 +200,7 @@ def compute_site_timeseries(
         "start_utc": start_utc,
         "stop_utc": stop_utc,
         "step_seconds": step_seconds,
+        "mast_height_m": mast_height_m,
         "times": times_utc,
         "sun_azimuth_deg": sun_az,
         "sun_elevation_deg": sun_el,
