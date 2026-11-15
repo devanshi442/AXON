@@ -421,9 +421,12 @@ h_{\text{req}} = h_{\text{mask}}(\text{az}_{\text{earth}}) + \mu_{\text{clearanc
 $$
 
 Supported criteria:
-- **Center LOS (Default):** $\text{el}_{\text{earth, center}} \ge h_{\text{req}}$
-- **Full Disk Clear:** $\text{el}_{\text{earth, center}} - r_{\text{earth}} \ge h_{\text{req}}$ ($r_{\text{earth}} \approx 0.949^\circ$)
-- **Any Limb Visible:** $\text{el}_{\text{earth, center}} + r_{\text{earth}} \ge h_{\text{req}}$
+- **Center LOS (Default):** Earth center of mass clears the local skyline:
+  $$\text{el}_{\text{center}} \ge h_{\text{req}}$$
+- **Full Disk Clear:** Entire Earth disk clears the local skyline ($r_{\text{earth}} \approx 0.949^\circ$):
+  $$\text{el}_{\text{center}} - r_{\text{earth}} \ge h_{\text{req}}$$
+- **Any Limb Visible:** Upper limb rises above the local skyline:
+  $$\text{el}_{\text{center}} + r_{\text{earth}} \ge h_{\text{req}}$$
 
 Applying an antenna clearance margin $\mu_{\text{clearance}} > 0^\circ$ strictly contracts the communication window, providing link margin against diffraction over local ridges.
 
