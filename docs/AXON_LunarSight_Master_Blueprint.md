@@ -1,5 +1,6 @@
 # AXON LunarSight — Master Blueprint
-**CLPS Lunar Mission Browser · NASA Space Apps Challenge 2026**
+**Lunar Landing Site Navigator · 2026 NASA Space Apps Challenge**
+*(Formerly designated during Phase 0 planning as CLPS Lunar Mission Browser)*
 Standalone reference: strategy, science method, data catalog, architecture, pipeline, plan, risks.
 
 > [!NOTE]
@@ -42,7 +43,7 @@ Standalone reference: strategy, science method, data catalog, architecture, pipe
 
 | Item | Detail |
 |---|---|
-| Challenge | CLPS Lunar Mission Browser (listed Intermediate/Advanced; Subjects: Human Exploration, Moon, Software, Space Exploration) |
+| Challenge | **Lunar Landing Site Navigator** (listed Intermediate/Advanced; Subjects: Human Exploration, Moon, Software, Space Exploration) — *2026 NASA Space Apps Challenge* |
 | Goal | An intuitive tool that lets mission planners, educators and the public **compare landing sites and dates quickly**, visualizing **Sun and Earth positions relative to the local horizon** to judge **power-generation potential** and **direct-to-Earth (DTE) communication windows** |
 | Why it is a strong pick | Geometry is deterministic and checkable against JPL Horizons; no messy data to clean; terrain data is compact [Guide][Research] |
 | Hardest parts | Correct frames and time scales; terrain-aware horizon; a UI that is simpler than Moon Trek / LROC QuickMap |

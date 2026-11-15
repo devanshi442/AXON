@@ -1,7 +1,7 @@
 # CLPS Lunar Mission Browser — Team Playbook (AXON LunarSight)
 
 > [!NOTE]
-> **Historical Planning Artifact:** This document is an internal team playbook prepared during Phase 0–1 (2026-10-24). It is preserved for development provenance and challenge statement alignment history. For authoritative system documentation, refer to [README.md](README.md), [docs/METHODS.md](docs/METHODS.md), [docs/VALIDATION.md](docs/VALIDATION.md), and [DATA_README.md](DATA_README.md).
+> **Historical Planning Artifact:** This document is an internal team playbook prepared during Phase 0–1 (2026-10-24) when the project was provisionally titled *CLPS Lunar Mission Browser*. The official prompt title was confirmed as **"Lunar Landing Site Navigator"** (2026 NASA Space Apps Challenge). It is preserved for development provenance and challenge statement alignment history. For authoritative system documentation, refer to [README.md](README.md), [docs/METHODS.md](docs/METHODS.md), [docs/VALIDATION.md](docs/VALIDATION.md), and [DATA_README.md](DATA_README.md).
 
 *Prepared 2026-10-24 from the uploaded files only. Evidence labels: **[REPO]** seen in the repo dump, **[FIX]** seen in the Horizons fixture files, **[DOC]** stated in the team PDFs, **[UNVERIFIED]** not checked against an authoritative source by me.*
 

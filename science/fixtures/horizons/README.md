@@ -22,7 +22,7 @@ There are 7 reference sites spanning 4,111 total hourly observation records acro
 | **Total** | | | | | **4,111** |
 
 > [!NOTE]
-> In automated test validation (`pytest science/tests/`), **4,107** rows are verified against SPICE ephemerides. 4 boundary rows in the Apollo 11 historical set fall outside the coverage cutoff of `de440s.bsp` (1849-12-25 to 2150-01-01 ephemeris window).
+> All **4,111** fixture sample rows are verified directly against NAIF SPICE ephemerides without omission in `science/tests/test_geometry.py::test_horizons_golden_all_fixtures_all_rows` and `science/lunarsight_core/benchmark.py`. The preliminary 4,107-row figure cited in early planning notes arose from a temporary boundary cutoff filter that was permanently resolved. See [`docs/VALIDATION.md`](../../../docs/VALIDATION.md#3-row-count-accounting-4111-vs-4107) for the exact row-by-row accounting.
 
 ---
 
