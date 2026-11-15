@@ -66,7 +66,7 @@ EXPOSE 8000
 
 # Readiness check confirms scientific engine (SPICE kernels, topocentric geometry) is operational
 HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=5 \
-    CMD curl -fsS http://localhost:${PORT:-8000}/api/ready | grep -q '"ready":true' || exit 1
+    CMD curl -fsS http://localhost:${PORT:-8000}/api/ready | grep -E -q '"ready":\s*true' || exit 1
 
 # Note on concurrency: SpiceyPy C library is process-global.
 # Run single Uvicorn process (threads serialized by _SPICE_LOCK).
