@@ -414,21 +414,54 @@ Where $A = 1.0\text{ m}^2$ baseline area and $\eta = 0.28$ (triple-junction GaAs
 
 ## 14. Earth Visibility & Communication Windows
 
-Direct-to-Earth (DTE) visibility models geometric line-of-sight to Earth's center of mass, accounting for lunar orbital libration and customizable antenna elevation clearance buffers ($\mu \ge 0.0^\circ$):
+Direct-to-Earth (DTE) visibility models geometric line-of-sight to Earth's center of mass, accounting for lunar orbital libration and customizable antenna elevation clearance buffers ($\mu \geq 0.0^\circ$).
+
+The required elevation angle is calculated as:
 
 $$
 h_{\text{req}} = h_{\text{mask}}(\text{az}_{\text{earth}}) + \mu_{\text{clearance}}
 $$
 
-Supported criteria:
-- **Center LOS (Default):** Earth center of mass clears the local skyline:
-  $$\text{el}_{\text{center}} \ge h_{\text{req}}$$
-- **Full Disk Clear:** Entire Earth disk clears the local skyline ($r_{\text{earth}} \approx 0.949^\circ$):
-  $$\text{el}_{\text{center}} - r_{\text{earth}} \ge h_{\text{req}}$$
-- **Any Limb Visible:** Upper limb rises above the local skyline:
-  $$\text{el}_{\text{center}} + r_{\text{earth}} \ge h_{\text{req}}$$ 
+### Supported Visibility Criteria
 
-Applying an antenna clearance margin $\mu_{\text{clearance}} > 0^\circ$ strictly contracts the communication window, providing link margin against diffraction over local ridges.
+**1. Center LOS (Default)**
+
+Earth is considered visible when its center of mass clears the local skyline:
+
+$$
+\text{el}_{\text{center}} \geq h_{\text{req}}
+$$
+
+**2. Full Disk Clear**
+
+The entire Earth disk must clear the local skyline, accounting for Earth's apparent angular radius ($r_{\text{earth}} \approx 0.949^\circ$):
+
+$$
+\text{el}_{\text{center}} - r_{\text{earth}} \geq h_{\text{req}}
+$$
+
+**3. Any Limb Visible**
+
+Earth is considered visible when its upper limb rises above the local skyline:
+
+$$
+\text{el}_{\text{center}} + r_{\text{earth}} \geq h_{\text{req}}
+$$
+
+### Antenna Clearance Margin
+
+Applying an antenna clearance margin ($\mu_{\text{clearance}} > 0^\circ$) strictly contracts the communication window, providing additional link margin against diffraction over local ridges.
+
+### Parameter Definitions
+
+| Parameter | Description |
+|---|---|
+| $h_{\text{req}}$ | Required minimum elevation imposed by the local skyline and clearance margin |
+| $h_{\text{mask}}$ | Local horizon mask elevation at Earth's azimuth |
+| $\text{az}_{\text{earth}}$ | Earth's azimuth angle |
+| $\text{el}_{\text{center}}$ | Elevation angle of Earth's center |
+| $r_{\text{earth}}$ | Earth's apparent angular radius (approximately $0.949^\circ$) |
+| $\mu_{\text{clearance}}$ | Additional antenna elevation clearance margin |
 
 ---
 
