@@ -21,6 +21,7 @@ An intuitive scientific modeling engine and interactive dashboard designed for m
 | Want to... | Go here |
 |---|---|
 | **Run locally (5 min)** | [§21 Backend Setup](#21-backend-setup--virtual-environment) → [§22 Frontend](#22-frontend-setup--build) |
+| **Download terrain data** | [Kaggle Dataset](#24-required-datasets--lockfiles) (`devansen/terrain-moon`) |
 | **Read the science** | [§11 Ray-Marching](#11-3d-ray-marching-horizon-methodology) → [§12 Solar Model](#12-solar-illumination--disk-fraction-formulation) |
 | **See the site data** | [§3 Key Sites Table](#3-key-polar-landing-sites-summary-table) |
 | **Verify ground truth** | [§27 Validation & 112 Tests](#27-verification-validation--automated-tests-112-tests) |
@@ -293,6 +294,9 @@ The scientific engine lives in `science/lunarsight_core/`:
 
 ## 10. Lunar Terrain & LOLA DEM Integration
 
+> [!NOTE]
+> **Terrain Data Download for Judges:** The high-resolution LOLA DEM rasters listed below (~1.5 GB total) are the **only required assets not committed directly to the git repository** due to file size constraints. Judges and evaluators can download the entire packaged terrain dataset directly from **[Kaggle: `devansen/terrain-moon`](https://www.kaggle.com/datasets/devansen/terrain-moon)** and extract it into the `terrain/` directory. See [§24 Required Datasets & Lockfiles](#24-required-datasets--lockfiles) for complete setup steps.
+
 AXON LunarSight integrates Lunar Orbiter Laser Altimeter (LOLA) Gridded Data Record (GDR) Digital Elevation Models:
 
 | DEM Product | Coordinate Projection | Spatial Resolution | Latitude Coverage | Local Path |
@@ -541,6 +545,7 @@ All kernel checksums are strictly verified against `kernels.lock`.
 
 ## 18. Sourced Datasets & Scientific Bibliography
 
+- **Lunar Terrain DEMs (Kaggle Dataset for Judges & Evaluators):** [Kaggle: `devansen/terrain-moon`](https://www.kaggle.com/datasets/devansen/terrain-moon) — Pre-packaged archive of all required Lunar Orbiter Laser Altimeter (LOLA) Digital Elevation Models (DEMs) and slope rasters (~1.5 GB). This is the **only required dataset not hosted on the git repository** due to size limits; judges and evaluators can download it directly from Kaggle and place it into `terrain/`.
 - **IAU Planetary Radii:** Prša et al. (2016), *Nominal Values for Selected Solar and Planetary Quantities*, AJ 152, 41. DOI: [10.3847/0004-6256/152/2/41](https://doi.org/10.3847/0004-6256/152/2/41)
 - **Solar Irradiance:** Coddington et al. (2016), *The SORCE Solar Irradiance Data Products*, BAMS. DOI: [10.1175/BAMS-D-14-00265.1](https://doi.org/10.1175/BAMS-D-14-00265.1)
 - **NASA LRO LOLA Altimetry:** Smith et al. (2010), *The Lunar Orbiter Laser Altimeter Investigation on the Lunar Reconnaissance Orbiter*, Space Sci Rev 150, 209–241. DOI: [10.1007/s11214-009-9512-y](https://doi.org/10.1007/s11214-009-9512-y)
@@ -642,6 +647,16 @@ pip install pytest pytest-asyncio httpx
 # 3. Fetch and verify SPICE kernels
 python pipeline/fetch_kernels.py
 python pipeline/step2_kernels.py
+
+# 4. Install Lunar Terrain DEMs (Only external data required)
+# Recommended for Judges: Download the archive from Kaggle
+# URL: https://www.kaggle.com/datasets/devansen/terrain-moon
+# Extract contents directly into the terrain/ directory at the repo root.
+# Verify installation against terrain.lock:
+python pipeline/download_dems.py --mandatory
+
+# (Alternative: Automated download from NASA PDS/MIT mirrors)
+# python pipeline/download_dems.py --download --mandatory
 ```
 
 ---
@@ -690,10 +705,50 @@ AXON LunarSight supports environment variables for deployment customization:
 ## 24. Required Datasets & Lockfiles
 
 The repository relies on two cryptographic lockfiles:
-1. **`kernels.lock`:** Contains SHA-256 hashes for all 5 SPICE kernels.
+1. **`kernels.lock`:** Contains SHA-256 hashes for all 5 NASA NAIF SPICE ephemeris kernels (automatically verified and downloaded via `python pipeline/fetch_kernels.py`).
 2. **`terrain.lock`:** Contains SHA-256 hashes, sizes, and bounding coordinates for all 19 LOLA DEM rasters and detached `.LBL` headers.
 
-To download and verify all mandatory LOLA DEM assets:
+> [!IMPORTANT]
+> ### 🌙 Terrain Data Download for Judges (Kaggle)
+> The Lunar Reconnaissance Orbiter (LRO) LOLA Digital Elevation Models (~1.5 GB) are the **only required dataset not stored directly in this git repository** due to GitHub file size limits.
+>
+> For judges and evaluators evaluating the application locally, the complete verified terrain dataset has been pre-packaged and hosted on Kaggle:
+>
+> 🔗 **Kaggle Dataset:** **[https://www.kaggle.com/datasets/devansen/terrain-moon](https://www.kaggle.com/datasets/devansen/terrain-moon)**
+>
+> **Quick Setup for Judges:**
+> 1. Download the dataset archive from **[devansen/terrain-moon on Kaggle](https://www.kaggle.com/datasets/devansen/terrain-moon)**:
+>    - Direct web download: click **Download** on Kaggle.
+>    - Or via Kaggle CLI:
+>      ```bash
+>      kaggle datasets download -d devansen/terrain-moon
+>      ```
+> 2. Extract the downloaded zip file directly into the `terrain/` folder at the repository root. Ensure the layout matches:
+>    ```
+>    AXON/
+>    └── terrain/
+>        ├── LDEM_75S_30M.JP2
+>        ├── LDEM_80S_20M.JP2
+>        ├── LDEM_80S_40M.JP2
+>        ├── LDEM_85S_20M.JP2
+>        ├── LDEM_85S_40M.JP2
+>        ├── LDEM_875S_20M.JP2
+>        ├── global/
+>        │   └── LDEM_64.JP2
+>        ├── illumination/
+>        │   └── LPSR_85S_060M_201608.JP2
+>        └── pgda/
+>            ├── LDEM_80S_80MPP_ADJ.TIF
+>            ├── LDEM_80S_80MPP_ADJ_HILL.TIF
+>            └── LDSM_80S_80MPP_ADJ.TIF
+>    ```
+> 3. Verify asset integrity against the cryptographic SHA-256 signatures in `terrain.lock`:
+>    ```bash
+>    python pipeline/download_dems.py --mandatory
+>    ```
+
+### Alternative: Automated PDS/MIT Mirror Download
+If Kaggle is not used, the automated downloader can fetch all mandatory LOLA DEM assets directly from authentic NASA PDS and MIT mirrors with automatic resume:
 ```bash
 python pipeline/download_dems.py --download --mandatory
 python pipeline/download_dems.py --mandatory
