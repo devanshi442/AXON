@@ -2286,6 +2286,13 @@
             "pattern": "^(terrain|flat)$",
             "title": "Horizon Mode",
             "default": "terrain"
+          },
+          "earth_criterion": {
+            "type": "string",
+            "pattern": "^(center|full_disk|any_limb)$",
+            "title": "Earth Criterion",
+            "description": "DTE line-of-sight criterion",
+            "default": "center"
           }
         },
         "type": "object",
@@ -3010,6 +3017,26 @@
             ],
             "title": "Site Elevation M"
           },
+          "timeseries": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TimeseriesResponse"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "horizon": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HorizonResponse"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "instantaneous": {
             "anyOf": [
               {
@@ -3521,6 +3548,50 @@
       },
       "TimeseriesResponse": {
         "properties": {
+          "site_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Site Id"
+          },
+          "site_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Site Name"
+          },
+          "lat": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lat"
+          },
+          "lon": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lon"
+          },
           "start_utc": {
             "type": "string",
             "title": "Start Utc"
